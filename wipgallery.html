@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial;
+}
+
+.header {
+  text-align: center;
+  padding: 32px;
+}
+
+.row {
+  display: -ms-flexbox; /* IE10 */
+  display: flex;
+  -ms-flex-wrap: wrap; /* IE10 */
+  flex-wrap: wrap;
+  padding: 0 4px;
+}
+
+/* Create four equal columns that sits next to each other */
+.column {
+  -ms-flex: 25%; /* IE10 */
+  flex: 25%;
+  max-width: 25%;
+  padding: 0 4px;
+}
+
+.column img {
+  margin-top: 8px;
+  vertical-align: middle;
+  width: 100%;
+  transition: transform 0.2s ease-in-out; /* Add a smooth transition for the hover effect */
+}
+
+/* Add the hover effect to make images bigger */
+.column img:hover {
+  transform: scale(1.05); /* Makes the image 5% larger */
+  cursor: pointer; /* Changes the cursor to a pointer to indicate it's interactive */
+}
+
+/* Responsive layout - makes a two column-layout instead of four columns */
+@media screen and (max-width: 800px) {
+  .column {
+    -ms-flex: 50%;
+    flex: 50%;
+    max-width: 50%;
+  }
+}
+
+/* Responsive layout - makes the two columns stack on top of each other instead of next to each other */
+@media screen and (max-width: 600px) {
+  .column {
+    -ms-flex: 100%;
+    flex: 100%;
+    max-width: 100%;
+  }
+}
+
+/* --- Lightbox Modal Styles --- */
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 100; /* Sit on top of everything */
+  padding-top: 60px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgba(255, 255, 255, 0.9); /* Whitened-out background */
+}
+
+/* Modal Content (the image) */
+.modal-content {
+  margin: auto;
+  display: block;
+  max-width: 80%;
+  max-height: 80vh; /* Limit height to 80% of the viewport height */
+  animation-name: zoom;
+  animation-duration: 0.4s;
+  transition: transform 0.3s ease-in-out; /* Smooth transition for zoom */
+  position: relative; /* Required for absolute positioning of the lens */
+  cursor: zoom-in; /* Indicate it's zoomable */
+}
+
+/* ✨ Style for the zoomed-in image */
+.modal-content.zoomed {
+  transform: scale(1.75); /* The zoom level */
+  cursor: grab; /* Show the grab hand */
+  max-width: none; /* Allow the image to exceed its container */
+}
+
+/* ✨ Style for when the user is actively dragging */
+.modal-content.dragging {
+  cursor: grabbing; /* Show the grabbing hand */
+}
+
+/* Add Animation */
+@keyframes zoom {
+  from {transform: scale(0.1)} 
+  to {transform: scale(1)}
+}
+
+/* The Close Button */
+.close {
+  position: absolute;
+  top: 15px;
+  right: 35px;
+  color: #333; /* Dark color for visibility on white background */
+  font-size: 40px;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.close:hover,
+.close:focus {
+  color: #ff69b4; /* Use your theme's pink for hover */
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* On smaller screens, where height is less, position the close button differently */
+@media only screen and (max-width: 700px){
+  .modal-content {
+    width: 100%;
+  }
+}
+
+</style>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <h1>Gallery</h1>
+  <p>♡newest to oldest works♡</p>
+</div>
+
+<!-- 1️⃣ -->
+<div class="row"> 
+  <div class="column">
+    <img src="img/Gallery/viniemotes.png" style="width:100%">
+  </div>
+  <!-- 2️⃣ -->
+  <div class="column">
+    <img src="img/Gallery/elizapngtuber.png" style="width:100%">
+  </div>  
+  <!-- 3️⃣ -->
+  <div class="column">
+    <img src="img/Gallery/elizaemote.png" style="width:100%">
+  </div>
+  <!-- 4️⃣ -->
+  <div class="column">
+    <img src="img/Gallery/True Love [11-9-23].png" style="width:100%">
+  </div>
+</div>
+
+<!-- The Modal/Lightbox -->
+<div id="myModal" class="modal">
+  <span class="close">&times;</span>
+  <img class="modal-content" id="modal-img">
+</div>
+
+<script>
+// Get the modal
+var modal = document.getElementById("myModal");
+var modalImg = document.getElementById("modal-img");
+var images = document.querySelectorAll(".column img");
+
+// --- ✨ New variables for zoom and pan state ✨ ---
+let zoomLevel = 0; // 0 = no zoom, 1 = first zoom, 2 = second zoom
+const zoomScales = [1, 1.75, 2.5]; // The scale for each zoom level
+let isDragging = false;
+let didDrag = false; // ✨ New flag to track if a drag occurred
+let startX, startY;
+let translateX = 0, translateY = 0;
+
+// Loop through all images and add the click event
+images.forEach(img => {
+  img.onclick = function() {
+    modal.style.display = "block";
+    modalImg.src = this.src;
+    // Reset the state every time a new image is opened
+    zoomLevel = 0;
+    modalImg.classList.remove("zoomed", "dragging");
+    modalImg.style.transform = 'scale(1)';
+    translateX = 0;
+    translateY = 0;
+  }
+});
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+  modal.style.display = "none";
+}
+
+// When the user clicks the modal background, close it
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
+
+// --- ✨ New Zoom and Pan Logic ✨ ---
+
+// 1. Handle clicking the image to toggle zoom
+modalImg.addEventListener('click', (e) => {
+  // Prevent this click from propagating to the window.onclick that closes the modal
+  e.stopPropagation();
+  
+  // If we just finished a drag, don't process this as a click to zoom out.
+  if (didDrag) return;
+
+  // If the image is zoomed, a click should always zoom it out.
+  const isCurrentlyZoomed = modalImg.classList.contains('zoomed');
+
+  if (isCurrentlyZoomed) {
+    // If it's zoomed, reset everything
+    modalImg.classList.remove('zoomed');
+    modalImg.style.transform = 'scale(1)';
+    translateX = 0;
+    translateY = 0;
+  } else {
+    // If it's not zoomed, zoom in. This part handles the initial zoom-in.
+    modalImg.classList.add('zoomed');
+    modalImg.style.transform = `scale(${zoomScales[1]})`; // Use the first zoom level
+  }
+});
+
+// 2. Handle starting the drag
+modalImg.addEventListener('mousedown', (e) => {
+  // Only allow dragging when the image is zoomed
+  if (!modalImg.classList.contains('zoomed')) return;
+  e.preventDefault();
+  isDragging = true;
+  didDrag = false; // Reset drag flag on new mousedown
+  modalImg.classList.add('dragging');
+  startX = e.clientX - translateX;
+  startY = e.clientY - translateY;
+});
+
+// 3. Handle the drag movement
+window.addEventListener('mousemove', (e) => {
+  if (!isDragging) return;
+  didDrag = true; // If the mouse moves while down, it's a drag
+  translateX = e.clientX - startX;
+  translateY = e.clientY - startY;
+  // Ensure we use the correct zoom scale while dragging
+  const currentScale = modalImg.classList.contains('zoomed') ? zoomScales[1] : zoomScales[0];
+  modalImg.style.transform = `scale(${currentScale}) translate(${translateX}px, ${translateY}px)`;
+});
+
+// 4. Handle ending the drag
+window.addEventListener('mouseup', () => {
+  // Use a short timeout to ensure the 'click' event can check the 'didDrag' flag first
+  setTimeout(() => {
+    isDragging = false;
+    didDrag = false;
+  }, 0);
+  modalImg.classList.remove('dragging');
+});
+
+</script>
+
+</body>
+</html>
