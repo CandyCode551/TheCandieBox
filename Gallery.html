@@ -13,6 +13,7 @@
         :root {
             --color-primary-bg: #fefcfb; /* Soft white/cream background */
             --color-accent-pink: #ff69b4; /* Hot Pink (Kawaii pink) */
+            --color-title-pink: #faa1c9; /* New color for the main title */
             --color-accent-pastelpink: #ffb8dc; /* Hot Pink (Kawaii pink) */
             --color-text-dark: #374151;  /* Dark gray for readability */
         }
@@ -88,6 +89,36 @@
           cursor: pointer; /* Changes the cursor to a pointer to indicate it's interactive */
         }
 
+        /* --- ✨ New styles for image title overlay on hover ✨ --- */
+        .image-container {
+            position: relative;
+            margin-top: 8px; /* This was on the img before */
+            overflow: hidden; /* Ensures the overlay corners are rounded if you add rounding */
+            transition: transform 0.2s ease-in-out; /* Moves the hover effect here */
+        }
+
+        .image-container:hover {
+            transform: scale(1.05); /* Makes the container (and image) 5% larger */
+            cursor: pointer; /* Changes the cursor to a pointer */
+        }
+
+        .image-overlay {
+            position: absolute;
+            bottom: 0; /* Position at the bottom */
+            left: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.6); /* Semi-transparent black background */
+            color: #fff;
+            text-align: center;
+            padding: 8px 0; /* Add some padding */
+            opacity: 0; /* Hidden by default */
+            transition: opacity 0.3s ease;
+        }
+
+        .image-container:hover .image-overlay {
+            opacity: 1; /* Show on hover */
+        }
+
         /* Responsive layout - makes a two column-layout instead of four columns */
         @media screen and (max-width: 800px) {
           .column {
@@ -110,7 +141,7 @@
         .modal {
           display: none; /* Hidden by default */
           position: fixed; /* Stay in place */
-          z-index: 100; /* Sit on top of everything */
+          z-index: 1000; /* Sit on top of everything */
           padding-top: 60px; /* Location of the box */
           left: 0;
           top: 0;
@@ -124,6 +155,7 @@
         .modal-content {
           margin: auto;
           display: block;
+          position: relative; /* Ensure it's layered correctly above the canvas */
           max-width: 80%;
           max-height: 80vh; /* Limit height to 80% of the viewport height */
           animation-name: zoom-in;
@@ -137,6 +169,7 @@
         .close {
           position: absolute;
           top: 15px;
+          z-index: 1; /* Ensure it's on top of the canvas */
           right: 35px;
           color: #333; /* Dark color for visibility on white background */
           font-size: 40px;
@@ -149,6 +182,17 @@
           color: #ff69b4; /* Use your theme's pink for hover */
           text-decoration: none;
           cursor: pointer;
+        }
+
+        /* --- ✨ New styles for glitter canvas ✨ --- */
+        #glitter-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0; /* Behind the image but in front of the modal background */
+            pointer-events: none; /* Allows clicks to pass through */
         }
 
         /* --- Page Loader Overlay (full white screen with centered GIF, then fade out) --- */
@@ -203,6 +247,9 @@
         /* Use Fredoka for headlines for a playful look */
         .font-fredoka {
             font-family: 'Fredoka', sans-serif;
+        }
+        .bg-title-pink {
+            background-color: var(--color-title-pink);
         }
 
         .text-pink-accent {
@@ -315,12 +362,66 @@
           from {transform: scale(0.1)} 
           to {transform: scale(1)}
         }
+
+        /* ✨ New style for the back button */
+        .back-button {
+            position: fixed;
+            top: 10rem; /* 40px */
+            left: 1.5rem; /* 24px */
+            z-index: 50;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #ffffff; /* A soft pink */
+            border: 2px solid var(--color-accent-pastelpink);
+            font-size: 24px;
+            color: var(--color-text-dark);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        .back-button:hover {
+            transform: scale(1.1);
+            background-color: var(--color-accent-pastelpink);
+            color: var(--color-primary-bg);
+        }
+
+        /* ✨ New style for the heart overlay */
+        #heart-overlay {
+            position: fixed;
+            z-index: 5; /* Places it above the content but below the header/modal */
+            pointer-events: none; /* Allows clicks to pass through to the gallery */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        #heart-overlay img {
+            position: absolute;
+            /* Position the image relative to the viewport */
+            top: 74%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            /* Set a fixed size that does not scale with the window */
+            width: 1500px; 
+            filter: drop-shadow(0 -4px 5px rgba(146, 52, 94, 0.15));
+            height: auto; /* Maintain aspect ratio */
+            z-index: -1; /* Puts the image behind the text */
+            max-width: none; /* Prevent the browser from overriding the width */
+        }
     </style>
-    </head>
-    <!-- FLOATING FIXED DECORATION IMAGE -->
+</head>
+<!-- 🎨 HEAD & STYLES END 🎨 -->
+
+<!-- 🎀 FLOATING RIBBON START 🎀 -->
+ 
     <div class="fixed top-9 left-1/2 -translate-x-1/2 z-50 hidden md:block">
         <!-- The <a> tag creates the link -->
         <a href="./Homepage.html" title="Home"> 
+        
             <div class="rounded-full">
                  <!-- 
                  *** YOUR PUBLIC GOOGLE DRIVE IMAGE URL IS NOW HERE ***
@@ -330,14 +431,16 @@
                       alt="Ribbon Decoration"
                       class="rounded-full w-20 h-20 object-cover">
             </div>
+            
         </a>
     </div>
-    <!-- END FLOATING FIXED DECORATION IMAGE -->
-<!-- Floating Lace Header -->
+<!-- 🎀 FLOATING RIBBON END 🎀 -->
+
+<!-- 🎀 FLOATING LACE HEADER START 🎀 -->
     <!-- We calculate the exact position: Header starts at top-4, has padding/height ~16 units, so banner starts at top-20. -->
-    <div class="fixed top-7 z-10 hidden md:block">
-        <div class="w-full max-w-9xl mx-auto px-8">
-            <div class="relative w-full overflow-hidden">
+    <div class="fixed top-7 z-10 hidden md:block w-full">
+        <div class="w-full mx-auto">
+            <div class="relative w-full overflow-hidden " >
                  <!-- 
                  Using w-full and h-32 (32 = 8rem) for a rectangular shape.
                  -->
@@ -345,36 +448,70 @@
                       src="img/WebHeader.png"
                       onerror="this.onerror=null; this.src='https://placehold.co/1200x200/F472B6/DB2777?text=Cute+Banner+Image+Placeholder'" 
                       alt="Decorative Banner Image"
-                      class="w-full h-32 object-cover">
+                      class="w-full h-32 object-cover footer-shadow">
             </div>
         </div>
     </div>
-    <!-- END floating lace header -->
+<!-- 🎀 FLOATING LACE HEADER END 🎀 -->
 <body class="antialiased">
 
-    <!-- Header & Navigation -->
+    <!-- Heart Overlay -->
+    <div id="heart-overlay">
+        <img src="img/Heart Window.png" alt="Heart window frame overlay" />
+        <!-- Gallery Text Section -->
+        <div class="text-center" style="position: absolute; top: 19%; left: 50%; transform: translateX(-50%); width: 100%; z-index: 10;">
+            <p class="text-5xl text-pink-accent font-fredoka font-extrabold" style="text-shadow: -2px -2px 0 #fff, 2px -2px 0 #fff, -2px 2px 0 #fff, 2px 2px 0 #fff;">Gallery</p>
+            <p class="text-lg text-gray-600" style="text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;">♡newest to oldest works♡</p>
+        </div>
+    </div>
+
+    <!-- Back Button -->
+    <a href="./Homepage.html" title="Back to Home">
+        <button class="back-button">←</button>
+    </a>
+    <!-- End Back Button -->
+
+    <!-- 🍬 HEADER & NAVIGATION START 🍬 -->
     <header class="bg-white shadow-md sticky top-0 z-10">
         <div class="center-logo">
 </div>
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex justify-between items-center ">
     <h1 class="text-3xl font-fredoka font-bold text-pink-accent tracking-wide">
         <a href="./Homepage.html#commissions" title="Home"> 
                 The Candie Box <span class="text-xl">ʚ ♡ ɞ</span>
             </h1>
         </a>
             <nav class="hidden sm:block">
-    <a href="./Gallery.html" class="text-lg font-medium text-pink-600 hover:text-pink-accent mx-3 transition duration-150 ">Gallery</a>
-    <a href="https://vgen.co/candie_cake" class="text-lg font-medium text-gray-600 hover:text-pink-accent mx-3 transition duration-150">Commissions</a>
+    <span class="text-lg font-medium text-pink-accent mx-3 cursor-default">Gallery</span>
+    <a href="https://vgen.co/candie_cake" class="text-lg font-medium text-gray-600 hover:text-pink-accent mx-3 transition duration-150">Commission</a>
     <a href="#contact" class="text-lg font-medium text-gray-600 hover:text-pink-accent mx-3 transition duration-150">Contact</a>
 </nav>
     </div>
     </header>
-    <!-- Top pink social bar -->
-    <div id="top-social-bar" class="w-full bg-pink-accent text-white fixed top-0 left-0 z-30">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-9 flex items-center justify-end space-x-4">
-            <a href="mailto:candycute551@gmail.com" class="text-sm font-medium hover:underline" aria-label="Email">✉️ Email</a>
-            <a href="https://twitter.com/candie_cake" target="_blank" rel="noopener" class="text-sm font-medium hover:underline" aria-label="Twitter">🐦 Twitter</a>
-            <a href="https://instagram.com/candie__cake" target="_blank" rel="noopener" class="text-sm font-medium hover:underline" aria-label="Instagram">📸 Instagram</a>
+    <!-- 🍬 HEADER & NAVIGATION END 🍬 -->
+
+    <!-- 💖 SOCIAL MEDIA BAR START 💖 -->
+    <div id="top-social-bar" class="w-full bg-title-pink text-white fixed top-0 left-0 z-30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-6 flex items-center justify-end space-x-2">
+            <a href="https://vgen.co/candie_cake" target="_blank" 
+    rel="noopener" 
+   class="text-sm font-medium hover:underline" 
+   aria-label="Vgen">
+   <img src="img/ico/vgen.png" alt="Vgen" class="w-7 h-7 inline-block">
+</a>
+            <a href="https://twitter.com/candie_cake" target="_blank" 
+   rel="noopener" 
+   class="text-sm font-medium hover:underline" 
+   aria-label="Twitter">
+   <img src="img/ico/twitter.png" alt="Twitter" class="w-6 h-6 inline-block">
+</a>
+            <a href="https://instagram.com/candie__cake" 
+   target="_blank" 
+   rel="noopener" 
+   class="text-sm font-medium hover:underline" 
+   aria-label="Instagram">
+   <img src="img/ico/instagram.png" alt="Instagram" class="w-6 h-6 inline-block">
+</a>
         </div>
     </div>
 
@@ -399,31 +536,33 @@
         new MutationObserver(adjustLayout).observe(document.documentElement, { childList: true, subtree: true });
     })();
     </script>
+    <!-- 💖 SOCIAL MEDIA BAR END 💖 -->
     <main>
       <!-- Top section space -->
-        <section class="mt-1">
+        <section class="mt-9">
    ...
 </section>
 <!-- Top Bottom section space -->
-        <!-- Header -->
-        <div class="header">
-          <h1 class="text-4xl font-fredoka font-extrabold text-gray-900">GALLERY</h1>
-          <p class="mt-3 text-lg text-gray-600">♡newest to oldest works♡</p>
-        </div>
 
         <!-- Image Grid -->
         <div class="row"> 
           <div class="column">
-            <img src="img/Gallery/viniemotes.png" style="width:100%">
+           <!-- Empty Bar Left -->
           </div>
           <div class="column">
-            <img src="img/Gallery/elizapngtuber.png" style="width:100%">
+            <div class="image-container">
+              <img src="img/Gallery/elizapngtuber.png" style="width:100%" data-title="Eliza PNGTuber">
+              <div class="image-overlay">Eliza PNGTuber</div>
+            </div>
           </div>  
           <div class="column">
-            <img src="img/Gallery/elizaemote.png" style="width:100%">
+            <div class="image-container">
+              <img src="img/Gallery/elizaemote.png" style="width:100%" data-title="Eliza Emote">
+              <div class="image-overlay">Eliza Emote</div>
+            </div>
           </div>
           <div class="column">
-            <img src="img/Gallery/True Love [11-9-23].png" style="width:100%">
+         <!-- Empty Bar Right -->
           </div>
         </div>
 
@@ -437,43 +576,15 @@
         <!-- The Modal/Lightbox -->
         <div id="myModal" class="modal">
           <span class="close">&times;</span>
+          <canvas id="glitter-canvas"></canvas> <!-- ✨ New canvas for glitter -->
           <img class="modal-content" id="modal-img">
         </div>
-
-
-        
-<!-- We calculate the exact position: Header starts at top-4, has padding/height ~16 units, so banner starts at top-20. -->
-    <div class="fixed bottom-0 left-0 right-0 hidden md:block">
-        <!-- back button -->
-        <a href="./Homepage.html">
-    <button>←</button>
-    </a>
-    <!-- end back button -->
-    <div class="w-full max-w-9xl mx-auto px-8">
-        <div class="relative w-full overflow-hidden rounded-t-xl"></div>
-    <footer>
-        <!-- FOOTER IMAGE SECTION (Now Fixed and Attached Directly Under Header) -->
-    
-
-        <!--
-         Using w-full and h-32 (32 = 8rem) for a rectangular shape.
-         -->
-         <img id="floating-image"
-              src="img/Footer.png"
-              onerror="this.onerror=null; this.src='https://placehold.co/1200x200/F472B6/DB2777?text=Cute+Banner+Image+Placeholder'" 
-              alt="Decorative Banner Image"
-              class="object-cover z-0 rounded-t-xl" style="position: fixed; left: 0; bottom: -35px; width: 100vw; height: 8rem;">
-        </div>
-    </div>
-    </div>
-    <!-- END FOOTER IMAGE SECTION -->
-        </footer>
 
 <script>
 // Get the modal
 var modal = document.getElementById("myModal");
 var modalImg = document.getElementById("modal-img");
-var images = document.querySelectorAll(".column img");
+var images = document.querySelectorAll(".image-container");
 
 // --- ✨ New variables for zoom and pan state ✨ ---
 let zoomLevel = 0; // 0 = no zoom, 1 = first zoom, 2 = second zoom
@@ -482,12 +593,13 @@ let isDragging = false;
 let didDrag = false; // ✨ New flag to track if a drag occurred
 let startX, startY;
 let translateX = 0, translateY = 0;
-
+ 
 // Loop through all images and add the click event
-images.forEach(img => {
-  img.onclick = function() {
+images.forEach(container => {
+  container.onclick = function() {
     modal.style.display = "block";
-    modalImg.src = this.src;
+    modalImg.src = this.querySelector('img').src;
+    startGlitter(); // ✨ Start glitter effect
     // Reset the state every time a new image is opened
     zoomLevel = 0;
     modalImg.classList.remove("zoomed", "dragging");
@@ -496,19 +608,21 @@ images.forEach(img => {
     translateY = 0;
   }
 });
-
+ 
 // Get the <span> element that closes the modal
 var span = document.getElementsByClassName("close")[0];
 
 // When the user clicks on <span> (x), close the modal
 span.onclick = function() {
   modal.style.display = "none";
+  stopGlitter(); // ✨ Stop glitter effect
 }
 
 // When the user clicks the modal background, close it
 window.onclick = function(event) {
   if (event.target == modal) {
     modal.style.display = "none";
+    stopGlitter(); // ✨ Stop glitter effect
   }
 }
 
@@ -613,7 +727,7 @@ document.addEventListener('mousemove', (e) => {
 // --- ✨ Heart Click Effect ✨ ---
 document.addEventListener('click', (e) => {
     // Don't create a heart if a button, link, or gallery item was clicked
-    if (e.target.closest('a, button, .column img, .column video, .modal-content, .close')) {
+    if (e.target.closest('a, button, .image-container, .column video, .modal-content, .close')) {
         return;
     }
 
@@ -630,6 +744,77 @@ document.addEventListener('click', (e) => {
     clickHeart.remove();
     }, 600);
 });
+
+// --- ✨ New Glitter Particle Effect for Modal ✨ ---
+const canvas = document.getElementById('glitter-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+let animationFrameId;
+
+const glitterChars = ['✧', '⟡']; // ✨ Use characters instead of circles
+const glitterColors = ['#FFFFFF', '#FFB8DC', '#FFD700', '#F0F8FF'];
+
+function resizeCanvas() {
+    canvas.width = modal.clientWidth;
+    canvas.height = modal.clientHeight;
+}
+ 
+function createParticles() {
+    particles = [];
+    const particleCount = 100; // Number of glitter particles
+    for (let i = 0; i < particleCount; i++) {
+        particles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            size: Math.random() * 10 + 20, // Use a larger size for text (8px to 18px)
+            opacity: Math.random(),
+            opacityDirection: Math.random() > 0.5 ? .1 : -.2, // 1 for fading in, -1 for fading out
+            speed: Math.random() * 0.02 + 0.01, // Twinkle speed
+            color: glitterColors[Math.floor(Math.random() * glitterColors.length)],
+            char: glitterChars[Math.floor(Math.random() * glitterChars.length)] // ✨ Assign a random character
+            
+        });
+    }
+}
+ 
+function drawParticles() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => {
+        // Update opacity for twinkling effect
+        p.opacity += p.speed * p.opacityDirection;
+        if (p.opacity > 1 || p.opacity < 0) {
+            p.opacityDirection *= -1; // Reverse direction
+            p.opacity = Math.max(0, Math.min(1, p.opacity)); // Clamp between 0 and 1
+        }
+ 
+        // ✨ Draw the character instead of a circle
+        ctx.globalAlpha = p.opacity;
+        ctx.fillStyle = p.color;
+        ctx.font = `${p.size}px Fredoka`; // Use a cute font already on your site
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(p.char, p.x, p.y);
+    });
+    ctx.globalAlpha = 1; // Reset global alpha
+}
+
+function animateGlitter() {
+    drawParticles();
+    animationFrameId = requestAnimationFrame(animateGlitter);
+}
+
+function startGlitter() {
+    resizeCanvas();
+    createParticles();
+    animateGlitter();
+}
+
+function stopGlitter() {
+    cancelAnimationFrame(animationFrameId);
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
+}
+
+window.addEventListener('resize', resizeCanvas); // Adjust canvas if window is resized
 </script>
 </body>
 </html>
