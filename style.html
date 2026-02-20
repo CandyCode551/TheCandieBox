@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<style>
+        /* Custom font import and variables for a Kawaii theme */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Fredoka:wght=300..700&display=swap');
+        
+        :root {
+            --color-primary-bg: #f9eef4; /* Soft grey background */
+            --color-accent-pink: #ff69b4; /* Hot Pink (Kawaii pink) */
+            --color-title-pink: #faa1c9; /* New color for the main title */
+            --color-title-white: #ffffff; /* white text */
+            --color-text-dark: #374151;  /* Dark gray for readability */
+        }
+
+        /* --- Page Loader Overlay (full white screen with centered GIF, then fade out) --- */
+        /* Uses a pseudo-element so no extra HTML is required. It will auto-fade after a short delay. */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0; /* top:0; right:0; bottom:0; left:0; */
+            background-color: #ffffff;
+            background-image: url("https://media.tenor.com/mYHeYVUPiXMAAAAM/kitty.gif");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 160px; /* size of the GIF */
+            z-index: 99999;
+            opacity: 1;
+            pointer-events: all; /* block interaction while visible */
+            transition: opacity 450ms ease-in-out, visibility 450ms ease-in-out;
+            /* Show loader for ~900ms, then fade during 450ms; adjust timings as needed */
+            animation: loaderHoldFade 1.35s ease-in-out forwards;
+        }
+
+        @keyframes loaderHoldFade {
+            0%   { opacity: 1; visibility: visible; }
+            70%  { opacity: 1; visibility: visible; }
+            100% { opacity: 0; visibility: hidden; pointer-events: none; }
+        }
+
+        /* If user prefers reduced motion, skip the animated delay and hide immediately after a tiny fade */
+        @media (prefers-reduced-motion: reduce) {
+            body::before {
+            animation: loaderHoldFadeReduced 500ms linear forwards;
+            }
+            @keyframes loaderHoldFadeReduced {
+            0%   { opacity: 1; visibility: visible; }
+            100% { opacity: 0; visibility: hidden; pointer-events: none; }
+            }
+        }
+
+        /* Ensure the overlay sits above your fixed header/banner, etc. */
+        header, #floating-image, .fixed { z-index: 10; } /* lower than the overlay */
+
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--color-primary-bg);
+            color: var(--color-text-dark);
+            scroll-behavior: smooth;
+            cursor: default; /* Ensure cursor is visible */
+        }
+
+        /* Use Fredoka for headlines for a playful look */
+        .font-fredoka {
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        .text-pink-accent {
+            color: var(--color-accent-pink);
+        }
+
+        .text-title-white {
+            color: var(--color-title-white);
+        }
+
+        .text-accent {
+            color: var(--color-accent-pink);
+        }
+
+        .text-title-pink {
+            color: var(--color-title-pink);
+        }
+
+        .bg-title-pink {
+            background-color: var(--color-title-pink);
+        }
+
+        .bg-pink-accent {
+            background-color: var(--color-accent-pink);
+        }
+        
+        /* Custom Button Style */
+        .btn-commission {
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 0 0 #e84c94; /* Darker pink for 'pop' effect */
+        }
+        .btn-commission:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 0 #e84c94;
+        }
+        .btn-commission:active {
+            transform: translateY(2px);
+            box-shadow: 0 0 0 0 #e84c94;
+        }
+
+        /* Custom form field styling */
+        .form-input {
+            @apply w-full p-3 rounded-lg border-2 border-pink-200 focus:border-pink-accent focus:ring-1 focus:ring-pink-accent transition duration-150;
+        }
+
+        /* Hide steps initially except the first one */
+        .form-step {
+            display: none;
+        }
+        .form-step.active {
+            display: block;
+        }
+
+        /* --- Heart Trail CSS for subtle flowy movement --- */
+        .trail-element {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0;
+            transform-origin: center;
+            line-height: 1;
+        }
+
+        .heart-trail {
+            color: var(--color-accent-pink);
+            font-size: 18px;
+            animation: heartFloat 3.5s cubic-bezier(0.25, 1, 0.5, 1) forwards; 
+            text-shadow: 0 0 5px rgba(255, 105, 180, 0.5); 
+        }
+
+        @keyframes heartFloat {
+            0% { transform: translate(0, 0) scale(0.5) rotate(var(--rot-start)); opacity: 0.9; }
+            100% { transform: translate(var(--dx), var(--dy)) scale(1.3) rotate(var(--rot-end)); opacity: 0; }
+        }
+
+        /* --- Click Heart Effect --- */
+        .click-heart {
+            color: var(--color-accent-pink);
+            font-size: 50px; 
+            animation: clickPop 0.6s ease-out forwards;
+            text-shadow: 0 0 15px var(--color-accent-pink);
+        }
+
+        @keyframes clickPop {
+            0% { transform: scale(0.1); opacity: 1; }
+            50% { transform: scale(1.6); opacity: 1; }
+            100% { transform: scale(1.1); opacity: 0; }
+        }
+        
+        /* --- Heart Spinner CSS --- */
+        .heart-spinner {
+            display: inline-block;
+            animation: pulse 1s infinite alternate;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(1.15); opacity: 1; }
+        }
+        .center-logo {
+    text-align: center; /* Ensures the image is centered within its flex container */
+    width: 30%; 
+}
+
+.logo-img {
+    max-height: 80px; /* Adjust size to fit neatly in your header */
+    width: auto;
+    /* Optional: Ensure the image is block-level for margin auto centering if needed */
+    display: block; 
+    margin: 0 auto;
+}
+// slideshow styles //
+.mySlides {display: none}
+img {vertical-align: middle;}
+
+/* Style for the images inside the slideshow */
+.mySlides img {
+  width: 100%;
+  height: 550px; /* Adjust this height to fit your design */
+  object-fit: cover; /* This will scale the image to cover the container, cropping if necessary */
+}
+
+/* Slideshow container */
+.slideshow-container {
+  max-width: 100%;
+  position: relative;
+  margin: auto;
+}
+
+/* Color overlay for the slideshow */
+.slideshow-container::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #4e2e3e;
+    opacity: 0.5; /* Adjust this value (0 to 1) to make it darker or lighter */
+}
+
+/* Next & previous buttons */
+.prev, .next {
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  width: auto;
+  padding: 16px;
+  margin-top: -22px;
+  color: #374151;
+  font-weight: bold;
+  font-size: 18px;
+  transition: 0.6s ease;
+  border-radius: 0 3px 3px 0;
+  user-select: none;
+}
+
+/* Position the "next button" to the right */
+.next {
+  right: 0;
+  border-radius: 3px 0 0 3px;
+}
+
+/* On hover, add a black background color with a little bit see-through */
+.prev:hover, .next:hover {
+  color: #ff69b4;
+}
+
+/* Caption text */
+.text {
+  color: #000000;
+  font-size: 15px;
+  padding: 8px 12px;
+  position: absolute;
+  bottom: 8px;
+  width: 100%;
+  text-align: center;
+}
+
+/* Number text (1/3 etc) */
+.numbertext {
+  color: #000000;
+  font-size: 12px;
+  padding: 8px 12px;
+  position: absolute;
+  top: 0;
+}
+
+/* The dots/bullets/indicators */
+.dot {
+  cursor: pointer;
+  height: 15px;
+  width: 15px;
+  margin: 0 2px;
+  background-color: #bbb;
+  border-radius: 50%;
+  display: inline-block;
+  transition: background-color 0.6s ease;
+}
+
+.active, .dot:hover {
+  background-color: #717171;
+}
+
+/* Fading animation */
+.fade {
+  animation-name: fade;
+  animation-duration: 1.5s;
+}
+
+@keyframes fade {
+  from {opacity: .4} 
+  to {opacity: 1}
+}
+
+/* ✨ Styles for the heart Framed container */
+.image-container{
+    width: 500px; /* Increased width */
+    height: 405px; /* Increased height */
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+    box-sizing: border-box;
+}
+
+/* mask the image with an SVG heart (wide shape) */
+.image-container img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 80' preserveAspectRatio='xMidYMid slice'><path d='M50 15 C30 -10, 0 10, 10 35 C20 60, 50 75, 50 75 C50 75, 80 60, 90 35 C100 10, 70 -10, 50 15 Z' fill='white'/></svg>");
+    -webkit-mask-size: 100% 100%;
+    -webkit-mask-repeat: no-repeat;
+    mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 80' preserveAspectRatio='xMidYMid slice'><path d='M50 15 C30 -10, 0 10, 10 35 C20 60, 50 75, 50 75 C50 75, 80 60, 90 35 C100 10, 70 -10, 50 15 Z' fill='white'/></svg>");
+    mask-size: 100% 100%;
+    mask-repeat: no-repeat;
+    border: none;
+}
+
+/* decorative outline that follows the heart shape */
+.image-container::after{
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 80' preserveAspectRatio='xMidYMid meet'><path d='M50 15 C30 -10, 0 10, 10 35 C20 60, 50 75, 50 75 C50 75, 80 60, 90 35 C100 10, 70 -10, 50 15 Z' fill='none' stroke='%23ffb8dc' stroke-width='4' stroke-linejoin='round' stroke-linecap='round'/></svg>");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+}
+
+/* On smaller screens, decrease text size */
+@media only screen and (max-width: 300px) {
+  .prev, .next,.text {font-size: 11px}
+}
+// end slideshow styles //
+
+/* Back to Top Button Styles */
+#back-to-top-btn {
+    display: none; /* Hidden by default */
+    position: fixed; /* Fixed position */
+    bottom: 20px; /* Place the button at the bottom of the page */
+    right: 30px; /* Place the button 30px from the right */
+    z-index: 99; /* Make sure it does not overlap other elements */
+    border: none; /* Remove borders */
+    outline: none; /* Remove outline */
+    background-color: var(--color-accent-pink); /* Set a background color */
+    color: white; /* Text color */
+    cursor: pointer; /* Add a mouse pointer on hover */
+    padding: 15px; /* Some padding */
+    border-radius: 50%; /* Rounded corners */
+    font-size: 24px; /* Increase font size */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2); /* Add a subtle shadow */
+    transition: background-color 0.3s, opacity 0.3s, transform 0.3s; /* Smooth transitions */
+    opacity: 0; /* Start fully transparent */
+    transform: translateY(20px); /* Start slightly below its final position */
+}
+
+#back-to-top-btn:hover {
+    background-color: #e84c94; /* Darker pink on hover */
+    transform: translateY(0) scale(1.05); /* Slight lift and scale on hover */
+}
+
+/* ✨ New style for the footer image shadow */
+.footer-shadow {
+    filter: drop-shadow(0 -4px 5px rgba(146, 52, 94, 0.15));
+}
+    </style>
+
