@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Candie Box | Anime Art & Animation</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom font import and variables for a Kawaii theme */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Fredoka:wght=300..700&display=swap');
+        
+        :root {
+            --color-primary-bg: #fefcfb; /* Soft white/cream background */
+            --color-accent-pink: #ff69b4; /* Hot Pink (Kawaii pink) */
+            --color-title-pink: #faa1c9; /* New color for the main title */
+            --color-accent-pastelpink: #ffb8dc; /* Hot Pink (Kawaii pink) */
+            --color-text-dark: #374151;  /* Dark gray for readability */
+        }
+
+        /* --- Heart Trail CSS for subtle flowy movement --- */
+        .trail-element {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0;
+            transform-origin: center;
+            line-height: 1;
+        }
+
+        .heart-trail {
+            color: var(--color-accent-pink);
+            font-size: 18px;
+            animation: heartFloat 3.5s cubic-bezier(0.25, 1, 0.5, 1) forwards; 
+            text-shadow: 0 0 5px rgba(255, 105, 180, 0.5); 
+        }
+
+        @keyframes heartFloat {
+            0% { transform: translate(0, 0) scale(0.5) rotate(var(--rot-start)); opacity: 0.9; }
+            100% { transform: translate(var(--dx), var(--dy)) scale(1.3) rotate(var(--rot-end)); opacity: 0; }
+        }
+
+        /* --- Click Heart Effect --- */
+        .click-heart {
+            color: var(--color-accent-pink);
+            font-size: 50px; 
+            animation: clickPop 0.6s ease-out forwards;
+            text-shadow: 0 0 15px var(--color-accent-pink);
+        }
+
+        @keyframes clickPop {
+            0% { transform: scale(0.1); opacity: 1; }
+            50% { transform: scale(1.6); opacity: 1; }
+            100% { transform: scale(1.1); opacity: 0; }
+        }
+        
+        /* --- Gallery and Lightbox Styles --- */
+        .header {
+          text-align: center;
+          padding: 32px;
+        }
+
+        .row {
+          display: -ms-flexbox; /* IE10 */
+          display: flex;
+          -ms-flex-wrap: wrap; /* IE10 */
+          flex-wrap: wrap;
+          padding: 0 4px;
+        }
+
+        /* Create four equal columns that sits next to each other */
+        .column {
+          -ms-flex: 25%; /* IE10 */
+          flex: 25%;
+          max-width: 25%;
+          padding: 0 4px;
+        }
+
+        .column img {
+          margin-top: 8px;
+          vertical-align: middle;
+          width: 100%;
+          transition: transform 0.2s ease-in-out; /* Add a smooth transition for the hover effect */
+        }
+
+        /* Add the hover effect to make images bigger */
+        .column img:hover {
+          transform: scale(1.05); /* Makes the image 5% larger */
+          cursor: pointer; /* Changes the cursor to a pointer to indicate it's interactive */
+        }
+
+        /* --- ✨ New styles for image title overlay on hover ✨ --- */
+        .image-container {
+            position: relative;
+            margin-top: 8px; /* This was on the img before */
+            overflow: hidden; /* Ensures the overlay corners are rounded if you add rounding */
+            transition: transform 0.2s ease-in-out; /* Moves the hover effect here */
+        }
+
+        .image-container:hover {
+            transform: scale(1.05); /* Makes the container (and image) 5% larger */
+            cursor: pointer; /* Changes the cursor to a pointer */
+        }
+
+        .image-overlay {
+            position: absolute;
+            bottom: 0; /* Position at the bottom */
+            left: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.6); /* Semi-transparent black background */
+            color: #fff;
+            text-align: center;
+            padding: 8px 0; /* Add some padding */
+            opacity: 0; /* Hidden by default */
+            transition: opacity 0.3s ease;
+        }
+
+        .image-container:hover .image-overlay {
+            opacity: 1; /* Show on hover */
+        }
+
+        /* Responsive layout - makes a two column-layout instead of four columns */
+        @media screen and (max-width: 800px) {
+          .column {
+            -ms-flex: 50%;
+            flex: 50%;
+            max-width: 50%;
+          }
+        }
+
+        /* Responsive layout - makes the two columns stack on top of each other instead of next to each other */
+        @media screen and (max-width: 600px) {
+          .column {
+            -ms-flex: 100%;
+            flex: 100%;
+            max-width: 100%;
+          }
+        }
+
+        /* The Modal (background) */
+        .modal {
+          display: none; /* Hidden by default */
+          position: fixed; /* Stay in place */
+          z-index: 1000; /* Sit on top of everything */
+          padding-top: 60px; /* Location of the box */
+          left: 0;
+          top: 0;
+          width: 100%; /* Full width */
+          height: 100%; /* Full height */
+          overflow: auto; /* Enable scroll if needed */
+          background-color: rgba(255, 255, 255, 0.9); /* Whitened-out background */
+        }
+
+        /* Modal Content (the image) */
+        .modal-content {
+          margin: auto;
+          display: block;
+          position: relative; /* Ensure it's layered correctly above the canvas */
+          max-width: 80%;
+          max-height: 80vh; /* Limit height to 80% of the viewport height */
+          animation-name: zoom-in;
+          animation-duration: 0.4s;
+          transition: transform 0.3s ease-in-out; /* Smooth transition for zoom */
+          position: relative; /* Required for absolute positioning of the lens */
+          cursor: zoom-in; /* Indicate it's zoomable */
+        }
+
+        /* The Close Button */
+        .close {
+          position: absolute;
+          top: 15px;
+          z-index: 1; /* Ensure it's on top of the canvas */
+          right: 35px;
+          color: #333; /* Dark color for visibility on white background */
+          font-size: 40px;
+          font-weight: bold;
+          transition: 0.3s;
+        }
+
+        .close:hover,
+        .close:focus {
+          color: #ff69b4; /* Use your theme's pink for hover */
+          text-decoration: none;
+          cursor: pointer;
+        }
+
+        /* --- ✨ New styles for glitter canvas ✨ --- */
+        #glitter-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0; /* Behind the image but in front of the modal background */
+            pointer-events: none; /* Allows clicks to pass through */
+        }
+
+        /* --- Page Loader Overlay (full white screen with centered GIF, then fade out) --- */
+        /* Uses a pseudo-element so no extra HTML is required. It will auto-fade after a short delay. */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0; /* top:0; right:0; bottom:0; left:0; */
+            background-color: #ffffff;
+            /* loading gif */
+            background-image: url("https://www.lucylooandroo.com/cdn/shop/t/6/assets/loading.gif?v=135655685998696985211639013649");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 160px; /* size of the GIF */
+            z-index: 99999;
+            opacity: 1;
+            pointer-events: all; /* block interaction while visible */
+            transition: opacity 450ms ease-in-out, visibility 450ms ease-in-out;
+            /* Show loader for ~900ms, then fade during 450ms; adjust timings as needed */
+            animation: loaderHoldFade 1.35s ease-in-out forwards;
+        }
+
+        @keyframes loaderHoldFade {
+            0%   { opacity: 1; visibility: visible; }
+            70%  { opacity: 1; visibility: visible; }
+            100% { opacity: 0; visibility: hidden; pointer-events: none; }
+        }
+
+        /* If user prefers reduced motion, skip the animated delay and hide immediately after a tiny fade */
+        @media (prefers-reduced-motion: reduce) {
+            body::before {
+            animation: loaderHoldFadeReduced 10ms linear forwards;
+            }
+            @keyframes loaderHoldFadeReduced {
+            0%   { opacity: 1; visibility: visible; }
+            100% { opacity: 0; visibility: hidden; pointer-events: none; }
+            }
+        }
+
+        /* Ensure the overlay sits above your fixed header/banner, etc. */
+        header, #floating-image, .fixed { z-index: 10; } /* lower than the overlay */
+
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--color-primary-bg);
+            color: var(--color-text-dark);
+            scroll-behavior: smooth;
+            cursor: default; /* Ensure cursor is visible */
+        }
+
+        /* Use Fredoka for headlines for a playful look */
+        .font-fredoka {
+            font-family: 'Fredoka', sans-serif;
+        }
+        .bg-title-pink {
+            background-color: var(--color-title-pink);
+        }
+
+        .text-pink-accent {
+            color: var(--color-accent-pink);
+        }
+
+        .bg-pink-accent {
+            background-color: var(--color-accent-pink);
+        }
+        
+        /* Custom Button Style */
+        .btn-commission {
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 0 0 #e84c94; /* Darker pink for 'pop' effect */
+        }
+        .btn-commission:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 0 #e84c94;
+        }
+        .btn-commission:active {
+            transform: translateY(2px);
+            box-shadow: 0 0 0 0 #e84c94;
+        }
+
+        /* Custom form field styling */
+        .form-input {
+            @apply w-full p-3 rounded-lg border-2 border-pink-200 focus:border-pink-accent focus:ring-1 focus:ring-pink-accent transition duration-150;
+        }
+
+        /* Hide steps initially except the first one */
+        .form-step {
+            display: none;
+        }
+        .form-step.active {
+            display: block;
+        }
+
+        /* --- Heart Trail CSS for subtle flowy movement --- */
+        .trail-element {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0;
+            transform-origin: center;
+            line-height: 1;
+        }
+
+        .heart-trail {
+            color: var(--color-accent-pink);
+            font-size: 18px;
+            animation: heartFloat 3.5s cubic-bezier(0.25, 1, 0.5, 1) forwards; 
+            text-shadow: 0 0 5px rgba(255, 105, 180, 0.5); 
+        }
+
+        @keyframes heartFloat {
+            0% { transform: translate(0, 0) scale(0.5) rotate(var(--rot-start)); opacity: 0.9; }
+            100% { transform: translate(var(--dx), var(--dy)) scale(1.3) rotate(var(--rot-end)); opacity: 0; }
+        }
+
+        /* --- Click Heart Effect --- */
+        .click-heart {
+            color: var(--color-accent-pink);
+            font-size: 50px; 
+            animation: clickPop 0.6s ease-out forwards;
+            text-shadow: 0 0 15px var(--color-accent-pink);
+        }
+
+        @keyframes clickPop {
+            0% { transform: scale(0.1); opacity: 1; }
+            50% { transform: scale(1.6); opacity: 1; }
+            100% { transform: scale(1.1); opacity: 0; }
+        }
+        
+        /* --- Heart Spinner CSS --- */
+        .heart-spinner {
+            display: inline-block;
+            animation: pulse 1s infinite alternate;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(1.15); opacity: 1; }
+        }
+        .center-logo {
+    text-align: center; /* Ensures the image is centered within its flex container */
+    width: 30%; 
+}
+
+.logo-img {
+    max-height: 80px; /* Adjust size to fit neatly in your header */
+    width: auto;
+    /* Optional: Ensure the image is block-level for margin auto centering if needed */
+    display: block; 
+    margin: 0 auto;
+}
+
+        /* ✨ Style for the zoomed-in image */
+        .modal-content.zoomed {
+          transform: scale(1.75); /* The zoom level */
+          cursor: grab; /* Show the grab hand */
+          max-width: none; /* Allow the image to exceed its container */
+        }
+
+        /* ✨ Style for when the user is actively dragging */
+        .modal-content.dragging {
+          cursor: grabbing; /* Show the grabbing hand */
+        }
+
+        /* Add Animation */
+        @keyframes zoom-in {
+          from {transform: scale(0.1)} 
+          to {transform: scale(1)}
+        }
+
+        /* ✨ New style for the back button */
+        .back-button {
+            position: fixed;
+            top: 10rem; /* 40px */
+            left: 1.5rem; /* 24px */
+            z-index: 50;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #ffffff; /* A soft pink */
+            border: 2px solid var(--color-accent-pastelpink);
+            font-size: 24px;
+            color: var(--color-text-dark);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        .back-button:hover {
+            transform: scale(1.1);
+            background-color: var(--color-accent-pastelpink);
+            color: var(--color-primary-bg);
+        }
+
+        /* ✨ New style for the heart overlay */
+        #heart-overlay {
+            position: fixed;
+            z-index: 5; /* Places it above the content but below the header/modal */
+            pointer-events: none; /* Allows clicks to pass through to the gallery */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        #heart-overlay img {
+            position: absolute;
+            /* Position the image relative to the viewport */
+            top: 69%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            /* Set a fixed size that does not scale with the window */
+            width: 1500px; 
+            filter: drop-shadow(0 -4px 5px rgba(146, 52, 94, 0.15));
+            height: auto; /* Maintain aspect ratio */
+            z-index: -1; /* Puts the image behind the text */
+            max-width: none; /* Prevent the browser from overriding the width */
+        }
+    </style>
+</head>
+<!-- 🎨 HEAD & STYLES END 🎨 -->
+
+<!-- 🎀 FLOATING RIBBON START 🎀 -->
+ 
+    <div class="fixed top-9 left-1/2 -translate-x-1/2 z-50 hidden md:block">
+        <!-- The <a> tag creates the link -->
+        <a href="./Homepage.html" title="Home"> 
+        
+            <div class="rounded-full">
+                 <!-- 
+                 *** YOUR PUBLIC GOOGLE DRIVE IMAGE URL IS NOW HERE ***
+                 -->
+                 <img src="https://static.wixstatic.com/media/628285_fd030053b925402b995229b905418ab0~mv2.png/v1/fill/w_190,h_170,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Ribbon.png"
+                      onerror="this.onerror=null; this.src='https://placehold.co/80x80/FFF0F5/DB2777?text=💖'" 
+                      alt="Ribbon Decoration"
+                      class="rounded-full w-20 h-20 object-cover">
+            </div>
+            
+        </a>
+    </div>
+<!-- 🎀 FLOATING RIBBON END 🎀 -->
+
+<!-- 🎀 FLOATING LACE HEADER START 🎀 -->
+    <!-- We calculate the exact position: Header starts at top-4, has padding/height ~16 units, so banner starts at top-20. -->
+    <div class="fixed top-[-3%] z-10 hidden md:block w-full">
+        <div class="w-full mx-auto">
+            <div class="relative w-full overflow-hidden " >
+                 <!-- 
+                 Using w-full and h-32 (32 = 8rem) for a rectangular shape.
+                 -->
+                 <img id="floating-image"
+                      src="img/webheadwhite.png"
+                      onerror="this.onerror=null; this.src='https://placehold.co/1200x200/F472B6/DB2777?text=Cute+Banner+Image+Placeholder'" 
+                      alt="Decorative Banner Image"
+                      class="w-full h-32 object-cover footer-shadow">
+            </div>
+        </div>
+    </div>
+<!-- 🎀 FLOATING LACE HEADER END 🎀 -->
+<body class="antialiased">
+
+    <!-- Heart Overlay -->
+    <div id="heart-overlay">
+        <img src="img/Heart Window.png" alt="Heart window frame overlay" />
+        <!-- Gallery Text Section -->
+        <div class="text-center" style="position: absolute; top: 15%; left: 50%; transform: translateX(-50%); width: 100%; z-index: 10;">
+            <p class="text-lg text-gray-600" style="text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;">♡newest to oldest works♡</p>
+        </div>
+    </div>
+
+    <!-- Back Button -->
+    <a href="./Homepage.html" title="Back to Home">
+        <button class="back-button">←</button>
+    </a>
+    <!-- End Back Button -->
+
+    <!-- 🍬 HEADER & NAVIGATION START 🍬 -->
+    <header class="bg-white sticky z-10" style="box-shadow: -2px -2px 0 #e0e0e0, 2px -2px 0 #e0e0e0, -2px 2px 0 #e0e0e0, 2px 2px 0 #e0e0e0;">
+        <div class="center-logo">
+</div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex justify-between items-center ">
+    <h1 class="text-3xl font-fredoka font-bold text-pink-accent tracking-wide">
+        <a href="./Homepage.html#commissions" title="Home"> 
+                The Candie Box <span class="text-xl">ʚ ♡ ɞ</span>
+            </h1>
+        </a>
+            <nav class="hidden sm:block">
+    <span class="text-lg font-medium text-pink-accent mx-3 cursor-default">Gallery</span>
+    <a href="https://vgen.co/candie_cake" class="text-lg font-medium text-gray-600 hover:text-pink-accent mx-3 transition duration-150">Commission</a>
+    <a href="#contact" class="text-lg font-medium text-gray-600 hover:text-pink-accent mx-3 transition duration-150">Contact</a>
+</nav>
+    </div>
+    </header>
+    <!-- 🍬 HEADER & NAVIGATION END 🍬 -->
+
+    <!-- 💖 SOCIAL MEDIA BAR START 💖 -->
+    <div id="top-social-bar" class="w-full bg-title-pink text-white fixed top-0 left-0 z-30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-6 flex items-center justify-end space-x-2">
+            <h1 class="fixed:center text-3xl font-fredoka font-bold text-white tracking-wide">
+        <a href="./Homepage.html#commissions" title="Home"> 
+                Gallery <span class="text-xl"></span>
+            </h1>
+        </a>
+            <a href="https://vgen.co/candie_cake" target="_blank" 
+    rel="noopener" 
+   class="text-sm font-medium hover:underline" 
+   aria-label="Vgen">
+   <img src="img/ico/vgen.png" alt="Vgen" class="w-7 h-7 inline-block">
+</a>
+            <a href="https://twitter.com/candie_cake" target="_blank" 
+   rel="noopener" 
+   class="text-sm font-medium hover:underline" 
+   aria-label="Twitter">
+   <img src="img/ico/twitter.png" alt="Twitter" class="w-6 h-6 inline-block">
+</a>
+            <a href="https://instagram.com/candie__cake" 
+   target="_blank" 
+   rel="noopener" 
+   class="text-sm font-medium hover:underline" 
+   aria-label="Instagram">
+   <img src="img/ico/instagram.png" alt="Instagram" class="w-6 h-6 inline-block">
+</a>
+        </div>
+    </div>
+
+    <script>
+    (function() {
+        const bar = document.getElementById('top-social-bar');
+        const header = document.querySelector('header');
+
+        function adjustLayout() {
+            if (!bar) return;
+            const h = bar.offsetHeight;
+            // push the page content down so the bar doesn't overlap the header/content
+            document.body.style.paddingTop = h + 'px';
+            // nudge the sticky header down so it sits under the bar
+            if (header) header.style.top = h + 'px';
+        }
+
+        // initial adjust and keep in sync on resize (and font/load changes)
+        window.addEventListener('load', adjustLayout);
+        window.addEventListener('resize', adjustLayout);
+        // mutation observer in case fonts/images change layout height after load
+        new MutationObserver(adjustLayout).observe(document.documentElement, { childList: true, subtree: true });
+    })();
+    </script>
+    <!-- 💖 SOCIAL MEDIA BAR END 💖 -->
+    <main>
+      <!-- Top section space -->
+        <section class="mt-9">
+   ...
+</section>
+<!-- Top Bottom section space -->
+
+        <!-- Image Grid -->
+        <div class="row"> 
+          <div class="column">
+           <!-- Empty Bar Left -->
+          </div>
+          <div class="column">
+            <div class="image-container">
+              <img src="img/Gallery/elizapngtuber.png" style="width:100%" data-title="Eliza PNGTuber">
+              <div class="image-overlay">Eliza PNGTuber</div>
+            </div>
+          </div>  
+          <div class="column">
+            <div class="image-container">
+              <img src="img/Gallery/elizaemote.png" style="width:100%" data-title="Eliza Emote">
+              <div class="image-overlay">Eliza Emote</div>
+            </div>
+          </div>
+          <div class="column">
+         <!-- Empty Bar Right -->
+          </div>
+        </div>
+
+        <!-- Bottom section space -->
+        <section class="mt-9">
+   ...
+</section>
+<!-- end Bottom section space -->
+
+
+        <!-- The Modal/Lightbox -->
+        <div id="myModal" class="modal">
+          <span class="close">&times;</span>
+          <canvas id="glitter-canvas"></canvas> <!-- ✨ New canvas for glitter -->
+          <img class="modal-content" id="modal-img">
+        </div>
+
+<script>
+// Get the modal
+var modal = document.getElementById("myModal");
+var modalImg = document.getElementById("modal-img");
+var images = document.querySelectorAll(".image-container");
+
+// --- ✨ New variables for zoom and pan state ✨ ---
+let zoomLevel = 0; // 0 = no zoom, 1 = first zoom, 2 = second zoom
+const zoomScales = [1, 1.75, 2.5]; // The scale for each zoom level
+let isDragging = false;
+let didDrag = false; // ✨ New flag to track if a drag occurred
+let startX, startY;
+let translateX = 0, translateY = 0;
+ 
+// Loop through all images and add the click event
+images.forEach(container => {
+  container.onclick = function() {
+    modal.style.display = "block";
+    modalImg.src = this.querySelector('img').src;
+    startGlitter(); // ✨ Start glitter effect
+    // Reset the state every time a new image is opened
+    zoomLevel = 0;
+    modalImg.classList.remove("zoomed", "dragging");
+    modalImg.style.transform = 'scale(1)';
+    translateX = 0;
+    translateY = 0;
+  }
+});
+ 
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+  modal.style.display = "none";
+  stopGlitter(); // ✨ Stop glitter effect
+}
+
+// When the user clicks the modal background, close it
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+    stopGlitter(); // ✨ Stop glitter effect
+  }
+}
+
+// --- ✨ New Zoom and Pan Logic ✨ ---
+
+// 1. Handle clicking the image to toggle zoom
+modalImg.addEventListener('click', (e) => {
+  // Prevent this click from propagating to the window.onclick that closes the modal
+  e.stopPropagation();
+  
+  // If we just finished a drag, don't process this as a click to zoom out.
+  if (didDrag) return;
+
+  // If the image is zoomed, a click should always zoom it out.
+  const isCurrentlyZoomed = modalImg.classList.contains('zoomed');
+
+  if (isCurrentlyZoomed) {
+    // If it's zoomed, reset everything
+    modalImg.classList.remove('zoomed');
+    modalImg.style.transform = 'scale(1)';
+    translateX = 0;
+    translateY = 0;
+  } else {
+    // If it's not zoomed, zoom in. This part handles the initial zoom-in.
+    modalImg.classList.add('zoomed');
+    modalImg.style.transform = `scale(${zoomScales[1]})`; // Use the first zoom level
+  }
+});
+
+// 2. Handle starting the drag
+modalImg.addEventListener('mousedown', (e) => {
+  // Only allow dragging when the image is zoomed
+  if (!modalImg.classList.contains('zoomed')) return;
+  e.preventDefault();
+  isDragging = true;
+  didDrag = false; // Reset drag flag on new mousedown
+  modalImg.classList.add('dragging');
+  startX = e.clientX - translateX;
+  startY = e.clientY - translateY;
+});
+
+// 3. Handle the drag movement
+window.addEventListener('mousemove', (e) => {
+  if (!isDragging) return;
+  didDrag = true; // If the mouse moves while down, it's a drag
+  translateX = e.clientX - startX;
+  translateY = e.clientY - startY;
+  // Ensure we use the correct zoom scale while dragging
+  const currentScale = modalImg.classList.contains('zoomed') ? zoomScales[1] : zoomScales[0];
+  modalImg.style.transform = `scale(${currentScale}) translate(${translateX}px, ${translateY}px)`;
+});
+
+// 4. Handle ending the drag
+window.addEventListener('mouseup', () => {
+  // Use a short timeout to ensure the 'click' event can check the 'didDrag' flag first
+  setTimeout(() => {
+    isDragging = false;
+    didDrag = false;
+  }, 0);
+  modalImg.classList.remove('dragging');
+});
+
+// --- ✨ Flowy Heart Trail Cursor Logic ✨ ---
+let trailCounter = 0;
+const HEART_SPAWN_FREQUENCY = 12;
+
+function createTrailElement(x, y, className, content, duration) {
+    const element = document.createElement('span');
+    element.textContent = content;
+    element.className = 'trail-element ' + className;
+    
+    const dx = (Math.random() - 0.5) * 40;
+    const dy = -(Math.random() * 80 + 100);
+    const rotStart = (Math.random() * 90) - 45;
+    const rotEnd = rotStart + (Math.random() > 0.5 ? 90 : -90);
+
+    element.style.left = `${x}px`;
+    element.style.top = `${y}px`;
+    element.style.animationDuration = `${duration}s`;
+    element.style.setProperty('--dx', `${dx}px`);
+    element.style.setProperty('--dy', `${dy}px`);
+    element.style.setProperty('--rot-start', `${rotStart}deg`);
+    element.style.setProperty('--rot-end', `${rotEnd}deg`);
+
+    document.body.appendChild(element);
+
+    setTimeout(() => {
+    element.remove();
+    }, duration * 1000);
+}
+
+document.addEventListener('mousemove', (e) => {
+    trailCounter++;
+    const x = e.clientX;
+    const y = e.clientY;
+
+    if (trailCounter % HEART_SPAWN_FREQUENCY === 0) { 
+    createTrailElement(x, y, 'heart-trail', '♡', 3.5); 
+    }
+});
+
+// --- ✨ Heart Click Effect ✨ ---
+document.addEventListener('click', (e) => {
+    // Don't create a heart if a button, link, or gallery item was clicked
+    if (e.target.closest('a, button, .image-container, .column video, .modal-content, .close')) {
+        return;
+    }
+
+    const clickHeart = document.createElement('span');
+    clickHeart.textContent = '♡'; 
+    clickHeart.className = 'trail-element click-heart';
+
+    clickHeart.style.left = `${e.clientX - 25}px`;
+    clickHeart.style.top = `${e.clientY - 25}px`; 
+
+    document.body.appendChild(clickHeart);
+
+    setTimeout(() => {
+    clickHeart.remove();
+    }, 600);
+});
+
+// --- ✨ New Glitter Particle Effect for Modal ✨ ---
+const canvas = document.getElementById('glitter-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+let animationFrameId;
+
+const glitterChars = ['✧', '⟡']; // ✨ Use characters instead of circles
+const glitterColors = ['#FFFFFF', '#FFB8DC', '#FFD700', '#F0F8FF'];
+
+function resizeCanvas() {
+    canvas.width = modal.clientWidth;
+    canvas.height = modal.clientHeight;
+}
+ 
+function createParticles() {
+    particles = [];
+    const particleCount = 100; // Number of glitter particles
+    for (let i = 0; i < particleCount; i++) {
+        particles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            size: Math.random() * 10 + 20, // Use a larger size for text (8px to 18px)
+            opacity: Math.random(),
+            opacityDirection: Math.random() > 0.5 ? .1 : -.2, // 1 for fading in, -1 for fading out
+            speed: Math.random() * 0.02 + 0.01, // Twinkle speed
+            color: glitterColors[Math.floor(Math.random() * glitterColors.length)],
+            char: glitterChars[Math.floor(Math.random() * glitterChars.length)] // ✨ Assign a random character
+            
+        });
+    }
+}
+ 
+function drawParticles() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => {
+        // Update opacity for twinkling effect
+        p.opacity += p.speed * p.opacityDirection;
+        if (p.opacity > 1 || p.opacity < 0) {
+            p.opacityDirection *= -1; // Reverse direction
+            p.opacity = Math.max(0, Math.min(1, p.opacity)); // Clamp between 0 and 1
+        }
+ 
+        // ✨ Draw the character instead of a circle
+        ctx.globalAlpha = p.opacity;
+        ctx.fillStyle = p.color;
+        ctx.font = `${p.size}px Fredoka`; // Use a cute font already on your site
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(p.char, p.x, p.y);
+    });
+    ctx.globalAlpha = 1; // Reset global alpha
+}
+
+function animateGlitter() {
+    drawParticles();
+    animationFrameId = requestAnimationFrame(animateGlitter);
+}
+
+function startGlitter() {
+    resizeCanvas();
+    createParticles();
+    animateGlitter();
+}
+
+function stopGlitter() {
+    cancelAnimationFrame(animationFrameId);
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
+}
+
+window.addEventListener('resize', resizeCanvas); // Adjust canvas if window is resized
+</script>
+</body>
+</html>
