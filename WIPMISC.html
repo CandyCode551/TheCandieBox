@@ -41,9 +41,13 @@ function scrollFunction() {
   if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
     document.getElementById("header").style.opacity = "0.2";
     document.getElementById("header").style.transform = "translateY(-50px)";
+    document.getElementById("floating-footer-image").style.opacity = "0.2";
+    document.getElementById("floating-footer-image").style.transform = "translateY(100px)";
   } else {
     document.getElementById("header").style.opacity = "1";
     document.getElementById("header").style.transform = "translateY(0)";
+    document.getElementById("floating-footer-image").style.opacity = "1";
+    document.getElementById("floating-footer-image").style.transform = "translateY(0)";
   }
 }
 </script>
@@ -58,26 +62,11 @@ function scrollFunction() {
               src="img/Footer.png"
               onerror="this.onerror=null; this.src='https://placehold.co/1200x200/F472B6/DB2777?text=Cute+Banner+Image+Placeholder'" 
               alt="Decorative Banner Image" 
-              class="object-cover z-0 rounded-t-xl footer-shadow" style="position: fixed; left: 0; bottom: -35px; width: 100vw; height: 8rem;">
+              class="object-cover z-0 rounded-t-xl footer-shadow" style="position: fixed; left: 0; bottom: -35px; width: 100vw; height: 8rem; transition: 0.4s;">
         </div>
     </div>
     </div>
     <!-- 🖼️ FIXED FOOTER IMAGE END 🖼️ -->
-     <!-- 🖼️ FOOTER FADE START 🖼️ -->
-     <script>
-    
-    window.onscroll = function() {scrollFunction()};
-
-    function scrollFunction() {
-    if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
-        document.getElementById("floating-footer-image").style.opacity = "0.2";
-        document.getElementById("floating-footer-image").style.transform = "translateY(-50px)";
-    } else {
-        document.getElementById("floating-footer-image").style.opacity = "1";
-        document.getElementById("floating-footer-image").style.transform = "translateY(0)";
-    }
-    }
-    </script>
-    <!-- 🖼️ FOOTER FADE END 🖼️ -->
+     
 </body>
 </html>
