@@ -50,11 +50,11 @@
 <body class="antialiased">
 
     <!-- 🍬 HEADER & NAVIGATION START 🍬 -->
-    <header class="bg-white shadow-md sticky top-0 z-10">
+    <header class="bg-white shadow-md sticky top-0 z-10 transition-all duration-300">
         <div class="center-logo">
 </div>
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex justify-between items-center">
-    <h1 class="text-3xl font-fredoka font-bold text-pink-accent tracking-wide">
+        <div id="header-container" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex justify-between items-center transition-all duration-300">
+    <h1 id="header-title" class="text-3xl font-fredoka font-bold text-pink-accent tracking-wide transition-all duration-300">
         <a href="./index.html#commissions" title="Home"> 
                 The Candie Box <span class="text-xl">ʚ ♡ ɞ</span>
             </h1>
@@ -292,6 +292,7 @@
             </div>
         </div>
     </section>
+    
     <!-- 👩‍🎨 ABOUT ME SECTION END 👩‍🎨 -->
     
     <!-- 📖 MY STORY SECTION START 📖 -->
@@ -310,6 +311,35 @@
 
                 <!-- Right Column: Square Image -->
                 <div class="flex-shrink-0 md:order-2">
+                    <img src="img/kiddraw/mermaid.png" 
+                         alt="A personal photo or artwork"
+                         class="w-64 rounded-2xl shadow-lg border-4 border-white">
+                </div>
+            </div>
+        </div>
+    </section>
+    <section id="My Story" class="py-20 sm:py-4 bg-white rounded-xl">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <!-- ✨ New Two-Column Layout for "My Story" -->
+            <div class="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12">
+                
+                <!-- Left Column: Text Content -->
+                <div class="text-center md:text-left md:order-1">
+                    <h3 class="text-4xl font-fredoka font-extrabold text-title-pink">
+                        ♡ My Story ♡</h3>
+                    <p class="mt-4 text-lg text-gray-600 max-w-xl">I’ve been drawing since I was a kid, but it wasn’t until middle school that I began creating pieces for others. I fell in love with transforming their ideas into something tangible and adding my own creative spark along the way ♡</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section id="My Story" class="py-20 sm:py-4 bg-white rounded-xl">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <!-- ✨ New Two-Column Layout for "My Story" -->
+            <div class="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12">
+                <!-- Right Column: Square Image -->
+                <div class="flex-shrink-0 md:order-0">
                     <img src="img/kiddraw/mermaid.png" 
                          alt="A personal photo or artwork"
                          class="w-64 rounded-2xl shadow-lg border-4 border-white">
@@ -400,7 +430,7 @@
          <!-- 
          Using w-full and h-32 (32 = 8rem) for a rectangular shape.
          -->
-         <img id="floating-image"
+         <img id="floating-footer-image"
               src="img/Footer.png"
               onerror="this.onerror=null; this.src='https://placehold.co/1200x200/F472B6/DB2777?text=Cute+Banner+Image+Placeholder'" 
               alt="Decorative Banner Image" 
@@ -624,6 +654,29 @@
 
     // Show or hide the button based on scroll position
     window.onscroll = function() {
+        // Footer Parallax Effect
+        const footerImg = document.getElementById('floating-footer-image');
+        if (footerImg) {
+            const scrolled = window.scrollY || document.documentElement.scrollTop;
+            footerImg.style.transform = `translateY(${scrolled * 0.15}px)`;
+        }
+
+        // Header Shrink Effect
+        const headerContainer = document.getElementById('header-container');
+        const headerTitle = document.getElementById('header-title');
+        
+        if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
+            headerContainer.classList.remove('py-3.5');
+            headerContainer.classList.add('py-1');
+            headerTitle.classList.remove('text-3xl');
+            headerTitle.classList.add('text-2xl');
+        } else {
+            headerContainer.classList.add('py-3.5');
+            headerContainer.classList.remove('py-1');
+            headerTitle.classList.add('text-3xl');
+            headerTitle.classList.remove('text-2xl');
+        }
+
         if (document.body.scrollTop > scrollThreshold || document.documentElement.scrollTop > scrollThreshold) {
             backToTopButton.style.display = "block";
             setTimeout(() => { // Use a timeout to allow display:block to take effect before animating opacity

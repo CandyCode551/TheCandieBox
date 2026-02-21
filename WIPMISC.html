@@ -39,9 +39,11 @@ window.onscroll = function() {scrollFunction()};
 
 function scrollFunction() {
   if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
-    document.getElementById("header").style.fontSize = "30px";
+    document.getElementById("header").style.opacity = "0.2";
+    document.getElementById("header").style.transform = "translateY(-50px)";
   } else {
-    document.getElementById("header").style.fontSize = "90px";
+    document.getElementById("header").style.opacity = "1";
+    document.getElementById("header").style.transform = "translateY(0)";
   }
 }
 </script>
@@ -61,5 +63,21 @@ function scrollFunction() {
     </div>
     </div>
     <!-- 🖼️ FIXED FOOTER IMAGE END 🖼️ -->
+     <!-- 🖼️ FOOTER FADE START 🖼️ -->
+     <script>
+    
+    window.onscroll = function() {scrollFunction()};
+
+    function scrollFunction() {
+    if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
+        document.getElementById("floating-footer-image").style.opacity = "0.2";
+        document.getElementById("floating-footer-image").style.transform = "translateY(-50px)";
+    } else {
+        document.getElementById("floating-footer-image").style.opacity = "1";
+        document.getElementById("floating-footer-image").style.transform = "translateY(0)";
+    }
+    }
+    </script>
+    <!-- 🖼️ FOOTER FADE END 🖼️ -->
 </body>
 </html>
