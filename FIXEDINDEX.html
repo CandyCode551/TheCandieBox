@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <link rel="icon" type="image/png" href="img/ico/logo.png">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 body { 
@@ -27,7 +28,7 @@ body {
 <html lang="en">
 <!-- 🎨 HEAD & STYLES START bg-blue-500 🎨 -->
 <head>
-    <link rel="icon" type="image/png" href="img/ico/logo.png">
+    
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -56,14 +57,13 @@ body {
 <!-- 🎀 FLOATING RIBBON END 🎀 -->
  <!-- 🎀 FLOATING LACE HEADER START 🎀 -->
     <div class="fixed top-20 left-0 right-0 z-10 hidden md:block w-full">
-  <div class="w-full max-w-9xl mx-auto">
+  <div class="w-full mx-auto">
     <div class="relative w-full header-lace-wrapper">
       <img
         id="header"
         src="img/WebHeader.png"
         alt="Decorative Banner Image"
-        class="w-full object-contain footer-shadow"
-        style="height:auto;"
+        class="w-full h-auto footer-shadow"
       >
     </div>
   </div>
@@ -365,9 +365,16 @@ body {
             <div class="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12">
                 <!-- Right Column: Square Image -->
                 <div class="flex-shrink-0 md:order-0">
-                    <img src="img/kiddraw/mermaid.png" 
-                         alt="A personal photo or artwork"
-                         class="w-64 rounded-2xl shadow-lg border-4 border-white">
+                    <video
+    autoplay
+    loop
+    muted
+    playsinline
+    class="w-80 h-full object-cover"
+  >
+    <source src="img/gallery/babyvid.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
                 </div>
             </div>
         </div>
@@ -441,6 +448,13 @@ body {
         </div>
     </section>
     <!-- 💌 CONTACT & SOCIALS SECTION END 💌 -->
+     <!-- 🦶 FOOTER START 🦶 -->
+    <footer class="bg-title-pink text-white rounded-t-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center text-sm">
+        <p>&copy; <span id="year"></span> The Candie Box™. All Rights Reserved. | Cute Anime Commissions & Design</p>
+    </div>
+    </footer>
+    <!-- 🦶 FOOTER END 🦶 -->
     </main>
 
     <!-- 📜 PAGE SCRIPTS START 📜 -->
@@ -712,16 +726,36 @@ body {
 window.onscroll = function() {scrollFunction()};
 
 function scrollFunction() {
-  if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
-    document.getElementById("header").style.opacity = "0.9";
-    document.getElementById("header").style.transform = "translateY(-40px)";
-    document.getElementById("floating-footer-image").style.opacity = "0.2";
-    document.getElementById("floating-footer-image").style.transform = "translateY(100px)";
+  const headerEl = document.getElementById("header");
+  const footerEl = document.getElementById("floating-footer-image");
+
+  const scrollY   = window.scrollY || document.documentElement.scrollTop;
+  const viewportH = window.innerHeight;
+  const docH      = document.documentElement.scrollHeight;
+
+  const fromTop    = scrollY > 50;                    // past the top
+  const nearBottom = scrollY + viewportH > docH - 50; // within 50px of bottom
+
+  if (fromTop && !nearBottom) {
+    // middle of page: fade/move away
+    if (headerEl) {
+      headerEl.style.opacity = "0.9";
+      headerEl.style.transform = "translateY(-40px)";
+    }
+    if (footerEl) {
+      footerEl.style.opacity = "0.2";
+      footerEl.style.transform = "translateY(100px)";
+    }
   } else {
-    document.getElementById("header").style.opacity = "1";
-    document.getElementById("header").style.transform = "translateY(0)";
-    document.getElementById("floating-footer-image").style.opacity = "1";
-    document.getElementById("floating-footer-image").style.transform = "translateY(0)";
+    // at top OR near bottom: bring them back
+    if (headerEl) {
+      headerEl.style.opacity = "1";
+      headerEl.style.transform = "translateY(0)";
+    }
+    if (footerEl) {
+      footerEl.style.opacity = "1";
+      footerEl.style.transform = "translateY(0)";
+    }
   }
 }
 </script>

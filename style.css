@@ -353,3 +353,87 @@ img {vertical-align: middle;}
 #header {
   background: transparent;      /* make sure the image element itself has no bg */
 }
+/* Layout basics */
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+/* Lace header wrapper transparency */
+.header-lace-wrapper,
+#header-lace {
+  background: transparent;
+}
+
+/* Footer & lace smooth animation */
+#header-lace,
+#floating-footer-image {
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+/* Slideshow helpers */
+.slideshow-container {
+  position: relative;
+  margin: 0 auto;
+}
+
+.slideshow-controls {
+  position: absolute;
+  bottom: -15px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  z-index: 999;
+}
+
+.slideshow-dots {
+  text-align: center;
+  position: absolute;
+  bottom: 20px;
+  width: 100%;
+  z-index: 10;
+}
+
+/* Contact cards */
+.contact-card {
+  padding: 1rem;
+  background: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s, box-shadow 0.3s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.contact-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 16px 35px rgba(0, 0, 0, 0.12);
+}
+
+/* Heart trail elements (you likely already have some of this) */
+.trail-element {
+  position: fixed;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+/* Back to top button */
+#back-to-top-btn {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  padding: 0.6rem 0.8rem;
+  border-radius: 9999px;
+  border: none;
+  background-color: #ec4899;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 50;
+}
+
