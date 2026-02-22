@@ -424,21 +424,20 @@
         <p>&copy; <span id="year"></span> The Candie Box™. All Rights Reserved. | Cute Anime Commissions & Design</p>
     </div>
     <!-- 🖼️ FIXED FOOTER IMAGE START 🖼️ -->
-    <div class="fixed bottom-0 left-0 right-0 hidden md:block">
-    <div class="w-full max-w-9xl mx-auto px-8">
-        <div class="relative w-full overflow-hidden rounded-t-xl">
-         <!-- 
-         Using w-full and h-32 (32 = 8rem) for a rectangular shape.
-         -->
-         <img id="floating-footer-image"
-              src="img/Footer.png"
-              onerror="this.onerror=null; this.src='https://placehold.co/1200x200/F472B6/DB2777?text=Cute+Banner+Image+Placeholder'" 
-              alt="Decorative Banner Image" 
-              class="object-cover z-0 rounded-t-xl footer-shadow" style="position: fixed; left: 0; bottom: -35px; width: 100vw; height: 8rem; transition: 0.4s;">
-        </div>
+<div class="fixed bottom-0 left-0 right-0">
+  <div class="w-full max-w-9xl mx-auto px-8">
+    <div class="relative w-full overflow-hidden rounded-t-xl">
+      <img id="floating-footer-image"
+           src="img/Footer.png"
+           onerror="this.onerror=null; this.src='https://placehold.co/1200x200/F472B6/DB2777?text=Cute+Banner+Image+Placeholder'" 
+           alt="Decorative Banner Image" 
+           class="object-cover z-0 rounded-t-xl footer-shadow"
+           style="position: fixed; left: 0; bottom: -35px; width: 100vw; height: 8rem; transition: 0.4s;">
     </div>
-    </div>
-    <!-- 🖼️ FIXED FOOTER IMAGE END 🖼️ -->
+  </div>
+</div>
+<!-- 🖼️ FIXED FOOTER IMAGE END 🖼️ -->
+
     </footer>
     <!-- 🦶 FOOTER END 🦶 -->
 
@@ -649,50 +648,54 @@
     }
 
     // --- Back to Top Button Logic ---
-    const backToTopButton = document.getElementById("back-to-top-btn");
-    const scrollThreshold = 200; // Pixels to scroll before showing the button
+const backToTopButton = document.getElementById("back-to-top-btn");
+const scrollThreshold = 200; // Pixels to scroll before showing the button
 
-    // Show or hide the button based on scroll position
-    window.onscroll = function() {
-        // Header Shrink Effect
-        const headerContainer = document.getElementById('header-container');
-        const headerTitle = document.getElementById('header-title');
-        const footerImg = document.getElementById('floating-footer-image');
-        
-        if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
-            headerContainer.classList.remove('py-3.5');
-            headerContainer.classList.add('py-1');
-            headerTitle.classList.remove('text-3xl');
-            headerTitle.classList.add('text-2xl');
-            if (footerImg) {
-                footerImg.style.opacity = "0.2";
-                footerImg.style.transform = "translateY(100px)";
-            }
-        } else {
-            headerContainer.classList.add('py-3.5');
-            headerContainer.classList.remove('py-1');
-            headerTitle.classList.add('text-3xl');
-            headerTitle.classList.remove('text-2xl');
-            if (footerImg) {
-                footerImg.style.opacity = "1";
-                footerImg.style.transform = "translateY(0)";
-            }
-        }
+window.addEventListener('scroll', function () {
+    // Header Shrink Effect
+    const headerContainer = document.getElementById('header-container');
+    const headerTitle = document.getElementById('header-title');
+    const footerImg = document.getElementById('floating-footer-image');
 
-        if (document.body.scrollTop > scrollThreshold || document.documentElement.scrollTop > scrollThreshold) {
-            backToTopButton.style.display = "block";
-            setTimeout(() => { // Use a timeout to allow display:block to take effect before animating opacity
-                backToTopButton.style.opacity = "1";
-                backToTopButton.style.transform = "translateY(0)";
-            }, 10);
-        } else {
-            backToTopButton.style.opacity = "0";
-            backToTopButton.style.transform = "translateY(20px)";
-            setTimeout(() => { // Hide after animation
-                backToTopButton.style.display = "none";
-            }, 300); // Match CSS transition duration
+    if (window.scrollY > 10) {
+        headerContainer.classList.remove('py-3.5');
+        headerContainer.classList.add('py-1');
+        headerTitle.classList.remove('text-3xl');
+        headerTitle.classList.add('text-2xl');
+
+        if (footerImg) {
+            footerImg.style.opacity = "0.2";
+            footerImg.style.transform = "translateY(100px)";
         }
-    };
+    } else {
+        headerContainer.classList.add('py-3.5');
+        headerContainer.classList.remove('py-1');
+        headerTitle.classList.add('text-3xl');
+        headerTitle.classList.remove('text-2xl');
+
+        if (footerImg) {
+            footerImg.style.opacity = "1";
+            footerImg.style.transform = "translateY(0)";
+        }
+    }
+
+    // Back‑to‑top button logic (keep your existing code here)
+    if (window.scrollY > scrollThreshold) {
+        backToTopButton.style.display = "block";
+        setTimeout(() => {
+            backToTopButton.style.opacity = "1";
+            backToTopButton.style.transform = "translateY(0)";
+        }, 10);
+    } else {
+        backToTopButton.style.opacity = "0";
+        backToTopButton.style.transform = "translateY(20px)";
+        setTimeout(() => {
+            backToTopButton.style.display = "none";
+        }, 300);
+    }
+});
+
+
 
     // When the user clicks on the button, scroll to the top of the document
     backToTopButton.addEventListener("click", function() {

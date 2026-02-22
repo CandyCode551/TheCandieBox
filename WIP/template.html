@@ -574,6 +574,20 @@
         if(steps.length > 0) {
             updateSteps();
         }
+
+    // Scroll effect for footer image
+    window.onscroll = function() {
+        const footerImg = document.getElementById('floating-footer-image');
+        if (footerImg) {
+            if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
+                footerImg.style.opacity = "0.2";
+                footerImg.style.transform = "translateY(100px)";
+            } else {
+                footerImg.style.opacity = "1";
+                footerImg.style.transform = "translateY(0)";
+            }
+        }
+    };
     </script>
 </body>
 </html>
