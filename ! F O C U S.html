@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FocusFlow | Sweet Productivity</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load React, ReactDOM, and Babel for in-browser JSX compilation -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Load Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .shadow-custom { box-shadow: 0 10px 30px -10px rgba(244, 114, 186, 0.5); }
+        .dragging { opacity: 0.5; background-color: #FEE7F2; }
+        .drag-over { border-top: 4px solid #F472B6; }
+    </style>
+</head>
+<body class="bg-[#FEE7F2]">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo, useRef } = React;
+        
+        const Icon = ({ name, size = 20, className = "" }) => {
+            useEffect(() => {
+                if (window.lucide) {
+                    window.lucide.createIcons();
+                }
+            }, [name]);
+            return <i data-lucide={name} style={{ width: size, height: size }} className={className}></i>;
+        };
+
+        const App = () => {
+            const [tasks, setTasks] = useState([
+                { id: 1, name: 'Finish project report', priority: 'High', target: 4, completed: 1, status: 'Pending' },
+                { id: 2, name: 'Email client updates', priority: 'Medium', target: 2, completed: 2, status: 'Done' },
+                { id: 3, name: 'Review documentation', priority: 'Low', target: 3, completed: 0, status: 'Pending' },
+            ]);
+            
+            const [activeTaskId, setActiveTaskId] = useState(null);
+            const [timerMode, setTimerMode] = useState('focus'); 
+            const [timeLeft, setTimeLeft] = useState(25 * 60);
+            const [isActive, setIsActive] = useState(false);
+            const [view, setView] = useState('tracker'); 
+            
+            const [newTaskName, setNewTaskName] = useState('');
+            const [newTaskPriority, setNewTaskPriority] = useState('Medium');
+            
+            const dragItem = useRef();
+            const dragOverItem = useRef();
+
+            const colors = {
+                bg: '#FEE7F2',
+                card: '#FFF0F5',
+                accent: '#F472B6',
+                text: '#DB2777'
+            };
+
+            useEffect(() => {
+                let interval = null;
+                if (isActive && timeLeft > 0) {
+                    interval = setInterval(() => { setTimeLeft((prev) => prev - 1); }, 1000);
+                } else if (timeLeft === 0) {
+                    setIsActive(false);
+                    const times = { focus: 25 * 60, shortBreak: 5 * 60, longBreak: 15 * 60 };
+                    if (timerMode === 'focus' && activeTaskId) {
+                        setTasks(prev => prev.map(t => t.id === activeTaskId ? { ...t, completed: t.completed + 1 } : t));
+                    }
+                    const nextMode = timerMode === 'focus' ? 'shortBreak' : 'focus';
+                    setTimerMode(nextMode);
+                    setTimeLeft(times[nextMode]);
+                }
+                return () => clearInterval(interval);
+            }, [isActive, timeLeft, timerMode, activeTaskId]);
+
+            const resetTimer = (mode) => {
+                const times = { focus: 25 * 60, shortBreak: 5 * 60, longBreak: 15 * 60 };
+                setTimerMode(mode);
+                setTimeLeft(times[mode]);
+                setIsActive(false);
+            };
+
+            const formatTime = (seconds) => {
+                const mins = Math.floor(seconds / 60);
+                const secs = seconds % 60;
+                return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            };
+
+            const addTask = () => {
+                if (!newTaskName.trim()) return;
+                setTasks([...tasks, { id: Date.now(), name: newTaskName, priority: newTaskPriority, target: 1, completed: 0, status: 'Pending' }]);
+                setNewTaskName('');
+            };
+
+            const deleteTask = (id) => {
+                setTasks(tasks.filter(task => task.id !== id));
+                if (activeTaskId === id) setActiveTaskId(null);
+            };
+
+            const toggleTaskStatus = (id) => {
+                setTasks(tasks.map(t => {
+                    if (t.id === id) {
+                        const newStatus = t.status === 'Done' ? 'Pending' : 'Done';
+                        if (newStatus === 'Done' && activeTaskId === id) setActiveTaskId(null);
+                        return { ...t, status: newStatus };
+                    }
+                    return t;
+                }));
+            };
+
+            // Drag and Drop Logic
+            const dragStart = (e, position) => {
+                dragItem.current = position;
+                e.currentTarget.classList.add('dragging');
+            };
+
+            const dragEnter = (e, position) => {
+                dragOverItem.current = position;
+                e.currentTarget.classList.add('drag-over');
+            };
+
+            const dragLeave = (e) => {
+                e.currentTarget.classList.remove('drag-over');
+            };
+
+            const drop = (e) => {
+                e.currentTarget.classList.remove('dragging');
+                const copyListItems = [...tasks];
+                const dragItemContent = copyListItems[dragItem.current];
+                copyListItems.splice(dragItem.current, 1);
+                copyListItems.splice(dragOverItem.current, 0, dragItemContent);
+                dragItem.current = null;
+                dragOverItem.current = null;
+                setTasks(copyListItems);
+                document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+            };
+
+            // Filtered Lists
+            const pendingTasks = tasks.filter(t => t.status !== 'Done');
+            const completedTasks = tasks.filter(t => t.status === 'Done');
+
+            const stats = useMemo(() => {
+                const total = tasks.length;
+                const done = completedTasks.length;
+                const totalPoms = tasks.reduce((acc, t) => acc + t.completed, 0);
+                return { total, done, totalPoms };
+            }, [tasks, completedTasks]);
+
+            return (
+                <div className="min-h-screen p-4 md:p-8 text-slate-700">
+                    <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-8">
+                        {/* Sidebar */}
+                        <aside className="w-full md:w-72 space-y-6">
+                            <div className="bg-white/80 backdrop-blur-md p-6 rounded-[2rem] shadow-xl border border-white/50">
+                                <h1 style={{ color: colors.text }} className="text-2xl font-black flex items-center gap-2 mb-8">
+                                    <span className="text-3xl">☁️</span> FocusFlow
+                                </h1>
+                                <nav className="space-y-3">
+                                    <button onClick={() => setView('tracker')} className={`w-full flex items-center gap-3 px-5 py-4 rounded-2xl transition-all ${view === 'tracker' ? 'bg-[#F472B6] text-white shadow-lg' : 'text-rose-400 hover:bg-rose-50'}`}>
+                                        <Icon name="list-todo" /> <span className="font-bold">Task Tracker</span>
+                                    </button>
+                                    <button onClick={() => setView('dashboard')} className={`w-full flex items-center gap-3 px-5 py-4 rounded-2xl transition-all ${view === 'dashboard' ? 'bg-[#F472B6] text-white shadow-lg' : 'text-rose-400 hover:bg-rose-50'}`}>
+                                        <Icon name="bar-chart-3" /> <span className="font-bold">Dashboard</span>
+                                    </button>
+                                </nav>
+                            </div>
+                            
+                            <div className="bg-white p-3 rounded-[2rem] shadow-xl border-4 border-white overflow-hidden">
+                                <div className="aspect-video w-full rounded-2xl overflow-hidden shadow-inner bg-slate-100">
+                                    <iframe 
+  width="100%" 
+  height="100%" 
+  src="https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=1"
+  title="Lofi Music"
+  frameborder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+  allowfullscreen
+></iframe>
+
+                                </div>
+                                <div className="mt-3 px-2 text-center">
+                                    <p style={{ color: colors.text }} className="font-bold text-xs">Now Playing: Lofi Beats 🎵</p>
+                                    <p className="text-[10px] text-rose-300 uppercase tracking-widest font-bold mt-1">Focus Mode: ON</p>
+                                </div>
+                            </div>
+
+                            <div className="bg-white/50 p-4 rounded-[1.5rem] text-center">
+                                <p className="text-[10px] text-rose-300 uppercase tracking-widest font-bold">Drag tasks to reorder</p>
+                            </div>
+                        </aside>
+
+                        {/* Main */}
+                        <main className="flex-1 space-y-6">
+                            {view === 'tracker' ? (
+                                <>
+                                    <div className="bg-white p-10 rounded-[3rem] shadow-2xl flex flex-col items-center text-center relative overflow-hidden">
+                                        <div className="flex gap-2 mb-10 bg-rose-50/50 p-1.5 rounded-full border border-rose-100">
+                                            {['focus', 'shortBreak', 'longBreak'].map((m) => (
+                                                <button key={m} onClick={() => resetTimer(m)} className={`px-6 py-2 rounded-full text-sm font-bold transition-all ${timerMode === m ? 'bg-white shadow-md text-[#DB2777]' : 'text-rose-300 hover:text-rose-500'}`}>
+                                                    {m.replace('Break', '')}
+                                                </button>
+                                            ))}
+                                        </div>
+                                        <h2 style={{ color: colors.text }} className="text-9xl font-black tracking-tighter tabular-nums mb-10">{formatTime(timeLeft)}</h2>
+                                        <div className="flex items-center gap-5">
+                                            <button onClick={() => setIsActive(!isActive)} className="w-48 py-5 rounded-[2rem] flex items-center justify-center gap-3 text-xl font-black transition-all shadow-custom bg-[#F472B6] text-white hover:bg-[#DB2777]">
+                                                {isActive ? 'PAUSE' : 'START'}
+                                            </button>
+                                            <button onClick={() => resetTimer(timerMode)} className="p-5 bg-rose-50 text-rose-300 rounded-[1.5rem] hover:text-[#F472B6] transition-all"><Icon name="rotate-ccw" size={24} /></button>
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-white rounded-[2.5rem] shadow-xl overflow-hidden">
+                                        <div className="p-8 border-b border-rose-50">
+                                            <h3 style={{ color: colors.text }} className="font-black text-xl">✨ Active Intentions</h3>
+                                        </div>
+                                        <div className="p-8 bg-[#FFF0F5]/30 flex flex-wrap gap-4">
+                                            <input type="text" placeholder="What's next?" value={newTaskName} onChange={(e) => setNewTaskName(e.target.value)} className="flex-1 min-w-[200px] px-6 py-4 rounded-2xl border-2 border-rose-100 focus:outline-none focus:border-[#F472B6]" />
+                                            <select 
+                                                value={newTaskPriority} 
+                                                onChange={(e) => setNewTaskPriority(e.target.value)}
+                                                className="px-4 py-4 rounded-2xl border-2 border-rose-100 bg-white font-bold text-rose-400"
+                                            >
+                                                <option>High</option>
+                                                <option>Medium</option>
+                                                <option>Low</option>
+                                            </select>
+                                            <button onClick={addTask} className="bg-slate-800 text-white px-8 py-4 rounded-2xl hover:bg-slate-900 transition-all font-bold">Add</button>
+                                        </div>
+                                        <div className="p-4 space-y-2">
+                                            {pendingTasks.map((task, index) => (
+                                                <div 
+                                                    key={task.id} 
+                                                    draggable
+                                                    onDragStart={(e) => dragStart(e, tasks.indexOf(task))}
+                                                    onDragEnter={(e) => dragEnter(e, tasks.indexOf(task))}
+                                                    onDragEnd={drop}
+                                                    onDragLeave={dragLeave}
+                                                    onDragOver={(e) => e.preventDefault()}
+                                                    className="group flex items-center justify-between p-4 bg-white hover:bg-rose-50/50 rounded-2xl transition-all border border-transparent hover:border-rose-100 cursor-grab active:cursor-grabbing"
+                                                >
+                                                    <div className="flex items-center gap-4">
+                                                        <div className="text-rose-100 group-hover:text-rose-300 mr-1">
+                                                            <Icon name="grip-vertical" size={16} />
+                                                        </div>
+                                                        <button 
+                                                            onClick={() => toggleTaskStatus(task.id)} 
+                                                            className="text-rose-200 hover:text-emerald-400 transition-colors"
+                                                        >
+                                                            <Icon name="circle" />
+                                                        </button>
+                                                        <div 
+                                                            className="cursor-pointer"
+                                                            onClick={() => setActiveTaskId(task.id)}
+                                                        >
+                                                            <span className={`font-bold block ${activeTaskId === task.id ? 'text-[#DB2777]' : ''}`}>
+                                                                {task.name}
+                                                            </span>
+                                                            <span className="text-[10px] uppercase font-black tracking-widest text-slate-400">{task.priority} Priority</span>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex items-center gap-6">
+                                                        <div className="flex gap-1.5">
+                                                            {[...Array(task.target || 1)].map((_, i) => (
+                                                                <div key={i} className={`w-3 h-3 rounded-full ${i < task.completed ? 'bg-[#F472B6]' : 'bg-rose-100'}`} />
+                                                            ))}
+                                                        </div>
+                                                        <button 
+                                                            onClick={() => deleteTask(task.id)}
+                                                            className="opacity-0 group-hover:opacity-100 p-2 text-rose-200 hover:text-red-400 hover:bg-red-50 rounded-xl transition-all"
+                                                        >
+                                                            <Icon name="trash-2" size={18} />
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                            {pendingTasks.length === 0 && (
+                                                <div className="text-center py-10 text-rose-300 font-medium italic">
+                                                    No active intentions. Add one above or check the Dashboard! ✨
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </>
+                            ) : (
+                                <div className="space-y-6">
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                        <div className="bg-white p-8 rounded-[2.5rem] shadow-xl text-center border border-white/50">
+                                            <p className="text-rose-300 text-xs font-black uppercase tracking-widest mb-2">Poms Completed</p>
+                                            <p style={{ color: colors.text }} className="text-5xl font-black">{stats.totalPoms}</p>
+                                        </div>
+                                        <div className="bg-white p-8 rounded-[2.5rem] shadow-xl text-center border border-white/50">
+                                            <p className="text-rose-300 text-xs font-black uppercase tracking-widest mb-2">Tasks Done</p>
+                                            <p style={{ color: colors.text }} className="text-5xl font-black">{stats.done}</p>
+                                        </div>
+                                        <div className="bg-white p-8 rounded-[2.5rem] shadow-xl text-center border border-white/50">
+                                            <p className="text-rose-300 text-xs font-black uppercase tracking-widest mb-2">Completion Rate</p>
+                                            <p style={{ color: colors.text }} className="text-5xl font-black">
+                                                {stats.total > 0 ? Math.round((stats.done / stats.total) * 100) : 0}%
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-white rounded-[2.5rem] shadow-xl overflow-hidden">
+                                        <div className="p-8 border-b border-rose-50">
+                                            <h3 style={{ color: colors.text }} className="font-black text-xl">🏆 Completed Today</h3>
+                                        </div>
+                                        <div className="p-4 space-y-2">
+                                            {completedTasks.map((task) => (
+                                                <div key={task.id} className="flex items-center justify-between p-4 bg-emerald-50/30 rounded-2xl border border-emerald-100/50">
+                                                    <div className="flex items-center gap-4">
+                                                        <button 
+                                                            onClick={() => toggleTaskStatus(task.id)} 
+                                                            className="text-emerald-400"
+                                                        >
+                                                            <Icon name="check-circle-2" />
+                                                        </button>
+                                                        <div>
+                                                            <span className="font-bold block line-through text-slate-400">
+                                                                {task.name}
+                                                            </span>
+                                                            <span className="text-[10px] uppercase font-black tracking-widest text-emerald-300">Finished</span>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex items-center gap-6">
+                                                        <div className="flex gap-1.5">
+                                                            {[...Array(task.completed)].map((_, i) => (
+                                                                <div key={i} className="w-3 h-3 rounded-full bg-emerald-300" />
+                                                            ))}
+                                                        </div>
+                                                        <button 
+                                                            onClick={() => deleteTask(task.id)}
+                                                            className="p-2 text-rose-200 hover:text-red-400 hover:bg-red-50 rounded-xl transition-all"
+                                                        >
+                                                            <Icon name="trash-2" size={18} />
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                            {completedTasks.length === 0 && (
+                                                <div className="text-center py-10 text-slate-300 font-medium italic">
+                                                    No completed tasks yet. Keep going! 💪
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </main>
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
