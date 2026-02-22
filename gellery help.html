@@ -24,10 +24,19 @@
       --color-text-dark: #374151;
     }
 
+    html, body {
+      height: 100%;
+    }
+
     body {
       margin: 0;
       font-family: 'Inter', sans-serif;
-      background-color: var(--color-primary-bg);
+      /* 🎀 new background image */
+      background-image: url("img/stripe bkgrd.png");
+      background-size: cover;         /* fill whole window */
+      background-position: center;    /* center the pattern */
+      background-repeat: repeat;      /* or no-repeat if you want just one */
+      background-attachment: fixed;   /* subtle parallax, optional */
       color: var(--color-text-dark);
       scroll-behavior: smooth;
       cursor: default;
@@ -156,8 +165,8 @@
     }
 
     .column {
-      flex: 25%;
-      max-width: 25%;
+      flex: 40%;
+      max-width: 40%;
       padding: 0 4px;
     }
 
@@ -308,9 +317,9 @@
 
 <body class="antialiased">
 
-  <!-- ❤️ Heart Window Overlay -->
+  <!-- ❤️ Window Overlay -->
   <div id="heart-overlay">
-    <img src="img/Square Window.png" alt="Heart window frame overlay">
+    <img src="img/Square Window.png" alt="window frame overlay">
   </div>
 
   <!-- 🎀 FLOATING RIBBON -->
@@ -367,10 +376,6 @@
   <div id="top-social-bar" class="w-full bg-title-pink text-white fixed top-0 left-0 z-30">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-6 flex items-center justify-between relative">
       <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-        <p class="text-sm font-bold text-gray-600 whitespace-nowrap"
-           style="text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;">
-          ♡ newest to oldest works ♡
-        </p>
       </div>
       <div class="flex items-center space-x-2 ml-auto">
         <a href="https://vgen.co/candie_cake" target="_blank" rel="noopener"
@@ -390,7 +395,6 @@
   </div>
 
   <script>
-    // push content under top bar
     (function () {
       const bar = document.getElementById('top-social-bar');
       const header = document.querySelector('header');
@@ -408,50 +412,101 @@
     })();
   </script>
 
-  <!-- 🌸 MAIN CONTENT -->
+  
+<!-- 👩‍🎨 WHITE SQUARE START 👩‍🎨 -->
+<section id="about-me" class="py-20 sm:py-24">
+  <div class="max-w-6xl mx-auto bg-white p-8 rounded-3xl shadow-lg">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+
+
+        <div class="text-center md:text-left">
+          <!-- 🌸 MAIN CONTENT -->
   <main class="mt-12">
-
-    <!-- top spacing section if you want text here later -->
     <section class="mt-9"></section>
-
-    <!-- 📷 IMAGE GRID -->
+<!-- 📷 IMAGE GRID -->
     <div class="row">
       <div class="column"><!-- empty left padding column --></div>
 
       <div id="gallery" class="row"></div>
 
-<script>
-  // List every file in img/Gallery
-  const galleryImages = [
-    "elizapngtuber.png",
-    "elizaemote.png",
-    "OLD.jpg",
-    // add new filenames here
-  ];
+      <script>
+        const galleryImages = [
+          "elizapngtuber.png",
+          "elizaemote.png",
+          "OLD.jpg",
+        ];
 
-  const gallery = document.getElementById("gallery");
+        const gallery = document.getElementById("gallery");
 
-  galleryImages.forEach(name => {
-    const wrap = document.createElement("div");
-    wrap.className = "column";
+        galleryImages.forEach(name => {
+          const wrap = document.createElement("div");
+          wrap.className = "column";
 
-    wrap.innerHTML = `
-      <div class="image-container">
-        <img src="img/Gallery/${name}" alt="${name}">
-        <div class="image-overlay">${name}</div>
-      </div>
-    `;
+          wrap.innerHTML = `
+            <div class="image-container">
+              <img src="img/Gallery/${name}" alt="${name}">
+              <div class="image-overlay">${name}</div>
+            </div>
+          `;
 
-    gallery.appendChild(wrap);
-  });
-</script>
-
+          gallery.appendChild(wrap);
+        });
+      </script>
 
       <div class="column"><!-- empty right padding column --></div>
     </div>
 
-    <!-- bottom spacing -->
     <section class="mt-9"></section>
+    <!-- 📷 IMAGE GRID END-->
+    <!-- 🎬 VIDEO GALLERY SECTION START 🎬 -->
+    <section id="video-gallery" class="mt-12">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div id="video-grid" class="row">
+          <!-- JS will insert video columns here -->
+        </div>
+      </div>
+    </section>
+    <!-- 🎬 VIDEO GALLERY SECTION END 🎬 -->
+
+    <script>
+      const videoFiles = [
+        "babyvid.mp4",
+      ];
+
+      const videoGrid = document.getElementById("video-grid");
+
+      videoFiles.forEach(name => {
+        const wrap = document.createElement("div");
+        wrap.className = "column";
+
+        wrap.innerHTML = `
+          <div class="image-container">
+            <video
+              autoplay
+              loop
+              muted
+              playsinline
+              class="w-full h-full object-cover"
+            >
+              <source src="img/gallery/${name}" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        `;
+
+        videoGrid.appendChild(wrap);
+      });
+    </script>
+         
+      </div>
+    </div>
+  </div>
+</div>
+
+    </section>
+
+<!-- 👩‍🎨 WHITE SQUAARE END👩‍🎨 -->
+    
   </main>
 
   <!-- 🔍 MODAL / LIGHTBOX -->
@@ -463,8 +518,6 @@
 
   <!-- 📜 SCRIPTS -->
   <script>
-    // ========== MODAL + ZOOM + GLITTER ==========
-
     const modal = document.getElementById("myModal");
     const modalImg = document.getElementById("modal-img");
     const images = document.querySelectorAll(".image-container");
@@ -483,7 +536,7 @@
     images.forEach(container => {
       container.onclick = function () {
         modal.style.display = "block";
-        modalImg.src = this.querySelector('img').src;
+        modalImg.src = this.querySelector('img')?.src || this.querySelector('video source')?.src || "";
         startGlitter();
 
         modalImg.classList.remove("zoomed", "dragging");
@@ -548,8 +601,6 @@
       modalImg.classList.remove('dragging');
     });
 
-    // ========== HEART TRAIL ==========
-
     let trailCounter = 0;
     const HEART_SPAWN_FREQUENCY = 12;
 
@@ -595,8 +646,6 @@
       document.body.appendChild(clickHeart);
       setTimeout(() => clickHeart.remove(), 600);
     });
-
-    // ========== GLITTER CANVAS ==========
 
     const glitterChars = ['✧', '⟡'];
     const glitterColors = ['#FFFFFF', '#FFB8DC', '#FFE2F5', '#F0F8FF'];
@@ -661,3 +710,4 @@
   </script>
 </body>
 </html>
+

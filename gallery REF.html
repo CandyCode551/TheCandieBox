@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- 🌸 Meta & Icons -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Candie Box | Gallery</title>
+  <link rel="icon" type="image/png" href="img/ico/logo.png">
+
+  <!-- 🎨 Tailwind + Custom Styles -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    /* ========================
+       🌸 THEME & FONTS
+       ======================== */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Fredoka:wght@300..700&display=swap');
+
+    :root {
+      --color-primary-bg: #fefcfb;
+      --color-accent-pink: #ff69b4;
+      --color-title-pink: #faa1c9;
+      --color-accent-pastelpink: #ffb8dc;
+      --color-text-dark: #374151;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background-color: var(--color-primary-bg);
+      color: var(--color-text-dark);
+      scroll-behavior: smooth;
+      cursor: default;
+    }
+
+    .font-fredoka { font-family: 'Fredoka', sans-serif; }
+    .bg-title-pink { background-color: var(--color-title-pink); }
+    .text-pink-accent { color: var(--color-accent-pink); }
+    .bg-pink-accent { background-color: var(--color-accent-pink); }
+
+    /* ========================
+       💖 PAGE LOADER
+       ======================== */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-color: #ffffff;
+      background-image: url("https://www.lucylooandroo.com/cdn/shop/t/6/assets/loading.gif?v=135655685998696985211639013649");
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 160px;
+      z-index: 99999;
+      opacity: 1;
+      pointer-events: all;
+      transition: opacity 450ms ease-in-out, visibility 450ms ease-in-out;
+      animation: loaderHoldFade 1.35s ease-in-out forwards;
+    }
+
+    @keyframes loaderHoldFade {
+      0%   { opacity: 1; visibility: visible; }
+      70%  { opacity: 1; visibility: visible; }
+      100% { opacity: 0; visibility: hidden; pointer-events: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      body::before {
+        animation: loaderHoldFadeReduced 10ms linear forwards;
+      }
+      @keyframes loaderHoldFadeReduced {
+        0%   { opacity: 1; visibility: visible; }
+        100% { opacity: 0; visibility: hidden; pointer-events: none; }
+      }
+    }
+
+    /* ========================
+       🎀 HEART TRAIL + CLICK
+       ======================== */
+    .trail-element {
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0;
+      transform-origin: center;
+      line-height: 1;
+    }
+
+    .heart-trail {
+      color: var(--color-accent-pink);
+      font-size: 18px;
+      animation: heartFloat 3.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+      text-shadow: 0 0 5px rgba(255, 105, 180, 0.5);
+    }
+
+    @keyframes heartFloat {
+      0%   { transform: translate(0,0) scale(0.5) rotate(var(--rot-start)); opacity: 0.9; }
+      100% { transform: translate(var(--dx),var(--dy)) scale(1.3) rotate(var(--rot-end)); opacity: 0; }
+    }
+
+    .click-heart {
+      color: var(--color-accent-pink);
+      font-size: 50px;
+      animation: clickPop 0.6s ease-out forwards;
+      text-shadow: 0 0 15px var(--color-accent-pink);
+    }
+
+    @keyframes clickPop {
+      0%   { transform: scale(0.1); opacity: 1; }
+      50%  { transform: scale(1.6); opacity: 1; }
+      100% { transform: scale(1.1); opacity: 0; }
+    }
+
+    .heart-spinner {
+      display: inline-block;
+      animation: pulse 1s infinite alternate;
+    }
+    @keyframes pulse {
+      0%   { transform: scale(1); opacity: 0.8; }
+      100% { transform: scale(1.15); opacity: 1; }
+    }
+
+    /* ========================
+       🎀 LACE + RIBBON + OVERLAY
+       ======================== */
+    .center-logo { text-align: center; width: 30%; }
+    .logo-img { max-height: 80px; width: auto; display:block; margin:0 auto; }
+
+    #heart-overlay {
+      position: fixed;
+      z-index: 5;
+      pointer-events: none;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+    #heart-overlay img {
+      position: absolute;
+      top: 69%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 1500px;
+      height: auto;
+      max-width: none;
+      filter: drop-shadow(0 -4px 5px rgba(146, 52, 94, 0.15));
+      z-index: -1;
+    }
+
+    /* ========================
+       📷 GALLERY GRID
+       ======================== */
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      padding: 0 4px;
+    }
+
+    .column {
+      flex: 25%;
+      max-width: 25%;
+      padding: 0 4px;
+    }
+
+    @media screen and (max-width: 800px) {
+      .column { flex: 50%; max-width: 50%; }
+    }
+
+    @media screen and (max-width: 600px) {
+      .column { flex: 100%; max-width: 100%; }
+    }
+
+    .image-container {
+      position: relative;
+      margin-top: 8px;
+      overflow: hidden;
+      transition: transform 0.2s ease-in-out;
+    }
+
+    .image-container img {
+      width: 100%;
+      vertical-align: middle;
+      display: block;
+    }
+
+    .image-container:hover {
+      transform: scale(1.05);
+      cursor: pointer;
+    }
+
+    .image-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(0,0,0,0.6);
+      color: #fff;
+      text-align: center;
+      padding: 8px 0;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      font-size: 0.875rem;
+    }
+
+    .image-container:hover .image-overlay {
+      opacity: 1;
+    }
+
+    /* ========================
+       🔍 MODAL / LIGHTBOX + GLITTER
+       ======================== */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      padding-top: 60px;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(255,255,255,0.9);
+    }
+
+    .modal-content {
+      margin: auto;
+      display: block;
+      max-width: 80%;
+      max-height: 80vh;
+      animation: zoom-in 0.4s;
+      transition: transform 0.3s ease-in-out;
+      position: relative;
+      cursor: zoom-in;
+    }
+
+    .modal-content.zoomed {
+      cursor: grab;
+      max-width: none;
+    }
+
+    .modal-content.dragging {
+      cursor: grabbing;
+    }
+
+    @keyframes zoom-in {
+      from { transform: scale(0.1); }
+      to   { transform: scale(1); }
+    }
+
+    .close {
+      position: absolute;
+      top: 15px;
+      right: 35px;
+      color: #333;
+      font-size: 40px;
+      font-weight: bold;
+      transition: 0.3s;
+      z-index: 1;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: #ff69b4;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    #glitter-canvas {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* ========================
+       🔙 BACK BUTTON
+       ======================== */
+    .back-button {
+      position: fixed;
+      top: 10rem;
+      left: 1.5rem;
+      z-index: 50;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background-color: #ffffff;
+      border: 2px solid var(--color-accent-pastelpink);
+      font-size: 24px;
+      color: var(--color-text-dark);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+    }
+
+    .back-button:hover {
+      transform: scale(1.1);
+      background-color: var(--color-accent-pastelpink);
+      color: var(--color-primary-bg);
+    }
+
+    /* Ensure fixed things under loader */
+    header, #floating-image, .fixed { z-index: 10; }
+  </style>
+</head>
+
+<body class="antialiased">
+
+  <!-- ❤️ Heart Window Overlay -->
+  <div id="heart-overlay">
+    <img src="img/Square Window.png" alt="Heart window frame overlay">
+  </div>
+
+  <!-- 🎀 FLOATING RIBBON -->
+  <div class="fixed top-9 left-1/2 -translate-x-1/2 z-50 hidden md:block">
+    <a href="./index.html" title="Home">
+      <div class="rounded-full">
+        <img
+          src="https://static.wixstatic.com/media/628285_fd030053b925402b995229b905418ab0~mv2.png/v1/fill/w_190,h_170,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Ribbon.png"
+          onerror="this.onerror=null; this.src='https://placehold.co/80x80/FFF0F5/DB2777?text=💖'"
+          alt="Ribbon Decoration"
+          class="rounded-full w-20 h-20 object-cover">
+      </div>
+    </a>
+  </div>
+
+  <!-- 🎀 FLOATING LACE HEADER -->
+  <div class="fixed top-[-3%] z-10 hidden md:block w-full">
+    <div class="w-full mx-auto">
+      <div class="relative w-full overflow-hidden">
+        <img
+          id="floating-image"
+          src="img/webheadwhite.png"
+          onerror="this.onerror=null; this.src='https://placehold.co/1200x200/F472B6/DB2777?text=Cute+Banner+Image+Placeholder'"
+          alt="Decorative Banner Image"
+          class="w-full h-32 object-cover footer-shadow">
+      </div>
+    </div>
+  </div>
+
+  <!-- 🔙 Back Button -->
+  <a href="./index.html" title="Back to Home">
+    <button class="back-button">←</button>
+  </a>
+
+  <!-- 🍬 HEADER & NAVIGATION -->
+  <header class="bg-white sticky z-10"
+          style="box-shadow: -2px -2px 0 #e0e0e0, 2px -2px 0 #e0e0e0, -2px 2px 0 #e0e0e0, 2px 2px 0 #e0e0e0;">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex justify-between items-center">
+      <h1 class="text-3xl font-fredoka font-bold text-pink-accent tracking-wide">
+        <a href="./Gallery.html" title="Gallery">Gallery</a>
+      </h1>
+      <nav class="hidden sm:block">
+        <a href="./index.html"
+           class="text-lg font-medium text-gray-600 hover:text-pink-accent mx-3 transition duration-150">Home</a>
+        <a href="https://vgen.co/candie_cake"
+           class="text-lg font-medium text-gray-600 hover:text-pink-accent mx-3 transition duration-150">Commission</a>
+        <a href="#contact"
+           class="text-lg font-medium text-gray-600 hover:text-pink-accent mx-3 transition duration-150">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- 💖 SOCIAL BAR -->
+  <div id="top-social-bar" class="w-full bg-title-pink text-white fixed top-0 left-0 z-30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-6 flex items-center justify-between relative">
+      <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+        <p class="text-sm font-bold text-gray-600 whitespace-nowrap"
+           style="text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;">
+          ♡ newest to oldest works ♡
+        </p>
+      </div>
+      <div class="flex items-center space-x-2 ml-auto">
+        <a href="https://vgen.co/candie_cake" target="_blank" rel="noopener"
+           class="text-sm font-medium hover:underline" aria-label="Vgen">
+          <img src="img/ico/vgen.png" alt="Vgen" class="w-7 h-7 inline-block">
+        </a>
+        <a href="https://twitter.com/candie_cake" target="_blank" rel="noopener"
+           class="text-sm font-medium hover:underline" aria-label="Twitter">
+          <img src="img/ico/twitter.png" alt="Twitter" class="w-6 h-6 inline-block">
+        </a>
+        <a href="https://instagram.com/candie__cake" target="_blank" rel="noopener"
+           class="text-sm font-medium hover:underline" aria-label="Instagram">
+          <img src="img/ico/instagram.png" alt="Instagram" class="w-6 h-6 inline-block">
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // push content under top bar
+    (function () {
+      const bar = document.getElementById('top-social-bar');
+      const header = document.querySelector('header');
+
+      function adjustLayout() {
+        if (!bar) return;
+        const h = bar.offsetHeight;
+        document.body.style.paddingTop = h + 'px';
+        if (header) header.style.top = h + 'px';
+      }
+
+      window.addEventListener('load', adjustLayout);
+      window.addEventListener('resize', adjustLayout);
+      new MutationObserver(adjustLayout).observe(document.documentElement, { childList: true, subtree: true });
+    })();
+  </script>
+
+  <!-- 🌸 MAIN CONTENT -->
+  <main class="mt-12">
+
+    <!-- top spacing section if you want text here later -->
+    <section class="mt-9"></section>
+
+    <!-- 📷 IMAGE GRID -->
+    <div class="row">
+      <div class="column"><!-- empty left padding column --></div>
+
+      <div class="column">
+        <div class="image-container">
+          <img src="img/Gallery/elizapngtuber.png" data-title="Eliza PNGTuber" alt="Eliza PNGTuber">
+          <div class="image-overlay">Eliza PNGTuber</div>
+        </div>
+      </div>
+
+      <div class="column">
+        <div class="image-container">
+          <img src="img/Gallery/elizaemote.png" data-title="Eliza Emote" alt="Eliza Emote">
+          <div class="image-overlay">Eliza Emote</div>
+        </div>
+      </div>
+
+      <div class="column"><!-- empty right padding column --></div>
+    </div>
+
+    <!-- bottom spacing -->
+    <section class="mt-9"></section>
+  </main>
+
+  <!-- 🔍 MODAL / LIGHTBOX -->
+  <div id="myModal" class="modal">
+    <span class="close">&times;</span>
+    <canvas id="glitter-canvas"></canvas>
+    <img class="modal-content" id="modal-img" alt="">
+  </div>
+
+  <!-- 📜 SCRIPTS -->
+  <script>
+    // ========== MODAL + ZOOM + GLITTER ==========
+
+    const modal = document.getElementById("myModal");
+    const modalImg = document.getElementById("modal-img");
+    const images = document.querySelectorAll(".image-container");
+    const canvas = document.getElementById('glitter-canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    let animationFrameId;
+
+    let isDragging = false;
+    let didDrag = false;
+    let startX, startY;
+    let translateX = 0, translateY = 0;
+
+    const zoomScale = 1.75;
+
+    images.forEach(container => {
+      container.onclick = function () {
+        modal.style.display = "block";
+        modalImg.src = this.querySelector('img').src;
+        startGlitter();
+
+        modalImg.classList.remove("zoomed", "dragging");
+        modalImg.style.transform = 'scale(1)';
+        translateX = 0;
+        translateY = 0;
+      }
+    });
+
+    const span = document.getElementsByClassName("close")[0];
+    span.onclick = function () {
+      modal.style.display = "none";
+      stopGlitter();
+    }
+
+    window.addEventListener('click', (event) => {
+      if (event.target === modal) {
+        modal.style.display = "none";
+        stopGlitter();
+      }
+    });
+
+    modalImg.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (didDrag) return;
+
+      const isZoomed = modalImg.classList.contains('zoomed');
+      if (isZoomed) {
+        modalImg.classList.remove('zoomed');
+        modalImg.style.transform = 'scale(1)';
+        translateX = 0;
+        translateY = 0;
+      } else {
+        modalImg.classList.add('zoomed');
+        modalImg.style.transform = `scale(${zoomScale})`;
+      }
+    });
+
+    modalImg.addEventListener('mousedown', (e) => {
+      if (!modalImg.classList.contains('zoomed')) return;
+      e.preventDefault();
+      isDragging = true;
+      didDrag = false;
+      modalImg.classList.add('dragging');
+      startX = e.clientX - translateX;
+      startY = e.clientY - translateY;
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      didDrag = true;
+      translateX = e.clientX - startX;
+      translateY = e.clientY - startY;
+      modalImg.style.transform = `scale(${zoomScale}) translate(${translateX}px, ${translateY}px)`;
+    });
+
+    window.addEventListener('mouseup', () => {
+      setTimeout(() => {
+        isDragging = false;
+        didDrag = false;
+      }, 0);
+      modalImg.classList.remove('dragging');
+    });
+
+    // ========== HEART TRAIL ==========
+
+    let trailCounter = 0;
+    const HEART_SPAWN_FREQUENCY = 12;
+
+    function createTrailElement(x, y, className, content, duration) {
+      const element = document.createElement('span');
+      element.textContent = content;
+      element.className = 'trail-element ' + className;
+
+      const dx = (Math.random() - 0.5) * 40;
+      const dy = -(Math.random() * 80 + 100);
+      const rotStart = (Math.random() * 90) - 45;
+      const rotEnd = rotStart + (Math.random() > 0.5 ? 90 : -90);
+
+      element.style.left = `${x}px`;
+      element.style.top = `${y}px`;
+      element.style.animationDuration = `${duration}s`;
+      element.style.setProperty('--dx', `${dx}px`);
+      element.style.setProperty('--dy', `${dy}px`);
+      element.style.setProperty('--rot-start', `${rotStart}deg`);
+      element.style.setProperty('--rot-end', `${rotEnd}deg`);
+
+      document.body.appendChild(element);
+      setTimeout(() => element.remove(), duration * 1000);
+    }
+
+    document.addEventListener('mousemove', (e) => {
+      trailCounter++;
+      const x = e.clientX;
+      const y = e.clientY;
+      if (trailCounter % HEART_SPAWN_FREQUENCY === 0) {
+        createTrailElement(x, y, 'heart-trail', '♡', 3.5);
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      if (e.target.closest('a, button, .image-container, .modal-content, .close')) return;
+
+      const clickHeart = document.createElement('span');
+      clickHeart.textContent = '♡';
+      clickHeart.className = 'trail-element click-heart';
+      clickHeart.style.left = `${e.clientX - 25}px`;
+      clickHeart.style.top = `${e.clientY - 25}px`;
+      document.body.appendChild(clickHeart);
+      setTimeout(() => clickHeart.remove(), 600);
+    });
+
+    // ========== GLITTER CANVAS ==========
+
+    const glitterChars = ['✧', '⟡'];
+    const glitterColors = ['#FFFFFF', '#FFB8DC', '#FFE2F5', '#F0F8FF'];
+
+    function resizeCanvas() {
+      canvas.width = modal.clientWidth;
+      canvas.height = modal.clientHeight;
+    }
+
+    function createParticles() {
+      particles = [];
+      const particleCount = 100;
+      for (let i = 0; i < particleCount; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          size: Math.random() * 10 + 20,
+          opacity: Math.random(),
+          opacityDirection: Math.random() > 0.5 ? 0.1 : -0.2,
+          speed: Math.random() * 0.02 + 0.01,
+          color: glitterColors[Math.floor(Math.random() * glitterColors.length)],
+          char: glitterChars[Math.floor(Math.random() * glitterChars.length)]
+        });
+      }
+    }
+
+    function drawParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.opacity += p.speed * p.opacityDirection;
+        if (p.opacity > 1 || p.opacity < 0) {
+          p.opacityDirection *= -1;
+          p.opacity = Math.max(0, Math.min(1, p.opacity));
+        }
+        ctx.globalAlpha = p.opacity;
+        ctx.fillStyle = p.color;
+        ctx.font = `${p.size}px Fredoka`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(p.char, p.x, p.y);
+      });
+      ctx.globalAlpha = 1;
+    }
+
+    function animateGlitter() {
+      drawParticles();
+      animationFrameId = requestAnimationFrame(animateGlitter);
+    }
+
+    function startGlitter() {
+      resizeCanvas();
+      createParticles();
+      animateGlitter();
+    }
+
+    function stopGlitter() {
+      cancelAnimationFrame(animationFrameId);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+  </script>
+</body>
+</html>
