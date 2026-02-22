@@ -89,17 +89,16 @@ body {
 /* Custom Button Style */
 .btn-commission {
     transition: all 0.3s ease;
-    box-shadow: 0 4px 0 0 #e84c94; /* Darker pink for 'pop' effect */
+    box-shadow: 0 4px 0 0 #fdf2f8; /* Darker pink for 'pop' effect */
 }
 .btn-commission:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 0 0 #e84c94;
+    box-shadow: 0 6px 0 0 #fabbd8;
 }
 .btn-commission:active {
     transform: translateY(2px);
-    box-shadow: 0 0 0 0 #e84c94;
+    box-shadow: 0 0 0 0 #fabbd8;
 }
-
 /* Custom form field styling */
 .form-input {
     @apply w-full p-3 rounded-lg border-2 border-pink-200 focus:border-pink-accent focus:ring-1 focus:ring-pink-accent transition duration-150;
@@ -436,4 +435,36 @@ body {
   transition: opacity 0.3s ease, transform 0.3s ease;
   z-index: 50;
 }
+.scroll-box {
+  height: 160px;              /* 🔧 change this number to make it taller/shorter */
+  padding: 8px;
+  overflow: auto;
+  background-color: #ffffff;
+  border-width: 7px;
+  border-style: solid;
+  border-image: url("https://file.garden/ZmMRACOgiFXI9dml/fb1.png") 7 fill round; /* use your own border image */
+}
+
+/* WebKit (Chrome/Edge/Safari) */
+.scroll-box::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scroll-box::-webkit-scrollbar-track {
+  background: #ffe4f3;
+  border-radius: 4px;
+}
+
+.scroll-box::-webkit-scrollbar-thumb {
+  background: #ff69b4;
+  border-radius: 4px;
+}
+
+/* Firefox */
+.scroll-box {
+  scrollbar-width: thin;
+  scrollbar-color: #ff69b4 #ffe4f3;
+}
+
+
 
