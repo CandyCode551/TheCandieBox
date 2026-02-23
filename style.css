@@ -4,6 +4,7 @@
 :root {
     --color-primary-bg: #f9eef4; /* Soft grey background */
     --color-accent-pink: #ff69b4; /* Hot Pink (Kawaii pink) */
+    --color-pink-mid: #fabbd8; /* middle pink*/
     --color-title-pink: #faa1c9; /* New color for the main title */
     --color-title-white: #ffffff; /* white text */
     --color-text-dark: #374151;  /* Dark gray for readability */
@@ -48,6 +49,15 @@ body::before {
 /* Ensure the overlay sits above your fixed header/banner, etc. */
 header, #floating-image, .fixed { z-index: 10; } /* lower than the overlay */
 
+font-face {
+  font-family: 'MyCuteFont';
+  src: url('fonts/Cheeky Rabbit.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+.font-cute {
+  font-family: 'MyCuteFont', sans-serif;
+}
 
 body {
     font-family: 'Inter', sans-serif;
@@ -64,6 +74,10 @@ body {
 
 .text-pink-accent {
     color: var(--color-accent-pink);
+}
+
+.color-pink-mid {
+    color: var(--color-pink-mid);
 }
 
 .text-title-white {
@@ -436,7 +450,8 @@ body {
   z-index: 50;
 }
 .scroll-box {
-  height: 160px;              /* 🔧 change this number to make it taller/shorter */
+  height: 350px;              /* 🔧 change this number to make it taller/shorter */
+  width: 300px;
   padding: 8px;
   overflow: auto;
   background-color: #ffffff;
