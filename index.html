@@ -45,8 +45,9 @@
   <!-- 🎀 FLOATING LACE HEADER END 🎀 -->
 
   <!-- 💖 TOP SOCIAL BAR START 💖 -->
-  <div id="top-social-bar" class="w-full bg-title-pink text-white fixed top-0 left-0 z-30">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-6 flex items-center justify-end space-x-2">
+  <div id="top-social-bar"
+     class="w-full bg-[#f3b9d2] text-white fixed top-0 left-0 z-30">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-6 flex items-center justify-end space-x-2">
       <a href="https://vgen.co/candie_cake" target="_blank" rel="noopener"
          class="text-sm font-medium hover:underline" aria-label="Vgen">
         <img src="img/ico/vgen.png" alt="Vgen" class="w-7 h-7 inline-block">
@@ -68,7 +69,7 @@
     <div id="header-container"
          class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex justify-between items-center transition-all duration-300">
       <h1 id="header-title"
-          class="text-3xl font-fredoka font-bold text-pink-accent tracking-wide transition-all duration-300">
+          class="text-3xl font-fredoka font-bold text-title-pink tracking-wide transition-all duration-300">
         <a href="./index.html#commissions" title="Home">
           The Candie Box <span class="text-xl">ʚ ♡ ɞ</span>
         </a>
@@ -132,7 +133,7 @@
       </div>
 
       <!-- Welcome Text Overlay -->
-      <div class="absolute inset-0 flex items-center justify-center z-10">
+      <div class="absolute inset-0 flex items-center justify-center z-0">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div class="text-center text-white">
             <h2 class="text-6xl sm:text-7xl lg:text-5xl font-fredoka font-extrabold tracking-tight">
@@ -141,17 +142,30 @@
             <p class="mt-6 text-xl text-gray-200 max-w-2xl mx-auto">
               Bringing your characters and ideas to life in a sugary sweet, adorable style! Check my queue and secure your slot today.
             </p>
-            <div class="mt-10 flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-6">
-              <a href="https://vgen.co/candie_cake"
-                 
-                 class="btn-commission inline-block px-10 py-4 text-xl font-bold bg-pink-accent text-title-pink rounded-full "
-                 style="background-color:#fdf2f8; color:#faadd0;">
-                 
-                ✨ Commission Me ✨
-              </a>
+<div class="relative inline-block">
+  <a
+    href="https://vgen.co/candie_cake"
+    id="magic-btn"
+    class="magic-btn group inline-flex items-center justify-center px-10 py-4
+           text-xl font-fredoka font-bold text-white rounded-full
+           bg-gradient-to-r from-[#ff9fd4] via-[#ffb8ea] to-[#ff9fd4]
+           shadow-lg relative overflow-hidden"
+  >
+    ✨ Commission Me ✨
+  </a>
+
+  <!-- GIF overlay (always on) -->
+  <img
+    src="img/Gif/sparkle-star.gif"
+    alt=""
+    aria-hidden="true"
+    class="pointer-events-none absolute inset-0 w-full h-full object-cover mix-blend-screen opacity-60"
+  >
+</div>
+
 
               <a href="https://trello.com/b/GAQsZ4OY/commission-queue"
-                 class="inline-block px-10 py-4 text-xl font-bold border-2 border-pink-accent text-white rounded-full transition duration-300 bg-white/50">
+                 class="inline-block px-10 py-4 text-xl font-bold border-2 border-pink-accent text-white rounded-full transition duration-300 bg-white/50 transition-transform duration-300 hover:-translate-y-1">
                 Wait List
               </a>
             </div>
@@ -195,6 +209,32 @@
 
     document.getElementById('age').textContent = getAge(birthDate);
   </script>
+  <a
+  href="https://vgen.co/candie_cake"
+  class="inline-flex items-center justify-center
+         w-[400px] h-[100px] max-w-full
+         text-xl font-bold text-title-pink
+         bg-[url('img/Button.png')] bg-contain bg-no-repeat bg-center
+         transition-transform duration-300 hover:-translate-y-1"
+>
+  ✨ COMMISSION ME ✨
+</a>
+<a
+  href="https://vgen.co/candie_cake"
+  class="inline-block"
+>
+  <button
+    id="magic-btn"
+    class="magic-btn group inline-flex items-center justify-center px-10 py-5
+           text-xl font-fredoka font-bold text-white rounded-full
+           bg-gradient-to-r from-[#ff9fd4] via-[#ffb8ea] to-[#ff9fd4]
+           shadow-lg relative overflow-hidden"
+    type="button"
+  >
+    ✨ Commission Me ✨
+  </button>
+</a>
+
       <!-- Divider / spacing -->
       <div class="mt-10 border-t border-pink-200"></div>
 
@@ -217,7 +257,7 @@
     My Sona ♡
   </p>
 </a>
-<a href="./TOS.html"
+<a href="https://vgen.co/candie_cake"
    class="block text-left btn-commission p-4 rounded-2xl bg-pink-50 shadow-inner"
    style="background-color:#fdf2f8; color:#faadd0;">
   <h4 class="font-fredoka text-xl text-title-pink mb-2">TOS</h4>
@@ -327,6 +367,39 @@ growing together and hopefully be a tiny, cozy part of your creative journey.
     </div>
   </div>
 </div>
+<!-- SCROLLING IMAGES START -->
+<div class="blinkies-wrapper">
+  <div class="blinkies-inner">
+    <div class="blinkies-track">
+      <!-- 1st set -->
+      <img src="img/ImgScroll/1.png" class="blinkies-main" alt="">
+      <img src="img/ImgScroll/2.png" class="blinkies-main" alt="">
+      <img src="img/ImgScroll/3.png" class="blinkies-main" alt="">
+      <img src="img/ImgScroll/4.png" class="blinkies-main" alt="">
+      <img src="https://file.garden/ZmMRACOgiFXI9dml/sh%20blinkie.png" class="blinkies-small" alt="">
+      <img src="https://file.garden/ZmMRACOgiFXI9dml/bb%20blinkie.png" class="blinkies-small" alt="">
+      <img src="https://file.garden/ZmMRACOgiFXI9dml/ff%20blinkie.png" class="blinkies-small" alt="">
+      <img src="https://file.garden/ZmMRACOgiFXI9dml/h%20blinkie.png" class="blinkies-small" alt="">
+      <img src="https://file.garden/ZmMRACOgiFXI9dml/trigun%20blinkiee.png" class="blinkies-small" alt="">
+
+      <!-- 2nd set – exact duplicate of 1st -->
+      <img src="img/ImgScroll/1.png" class="blinkies-main" alt="" aria-hidden="true">
+      <img src="img/ImgScroll/2.png" class="blinkies-main" alt="">
+      <img src="img/ImgScroll/3.png" class="blinkies-main" alt="">
+      <img src="https://file.garden/ZmMRACOgiFXI9dml/dcb%20blinkie.png" class="blinkies-small" alt="" aria-hidden="true">
+      <img src="https://file.garden/ZmMRACOgiFXI9dml/sh%20blinkie.png" class="blinkies-small" alt="" aria-hidden="true">
+      <img src="https://file.garden/ZmMRACOgiFXI9dml/bb%20blinkie.png" class="blinkies-small" alt="" aria-hidden="true">
+      <img src="https://file.garden/ZmMRACOgiFXI9dml/ff%20blinkie.png" class="blinkies-small" alt="" aria-hidden="true">
+      <img src="https://file.garden/ZmMRACOgiFXI9dml/h%20blinkie.png" class="blinkies-small" alt="" aria-hidden="true">
+      <img src="https://file.garden/ZmMRACOgiFXI9dml/trigun%20blinkiee.png" class="blinkies-small" alt="" aria-hidden="true">
+    </div>
+  </div>
+</div>
+<!-- SCROLLING IMAGES END -->
+
+
+
+<!-- SCROLLING IMAGES END -->
 <!-- cute divider-->
       <div class="mt-10 border-t border-pink-200"></div>
       <div class="flex-shrink-0 md:order-0">
@@ -336,7 +409,11 @@ growing together and hopefully be a tiny, cozy part of your creative journey.
       class="w-[100px] max-w-full"
     >
   </div>
+</div>
 
+
+
+  
     </section>
 
 <!-- 👩‍🎨 ABOUT ME SECTION END 👩‍🎨 -->
@@ -346,7 +423,7 @@ growing together and hopefully be a tiny, cozy part of your creative journey.
     
 
     <!-- 💌 CONTACT & SOCIALS SECTION START 💌 -->
-    <section id="contact" class="py-20 sm:py-50 color-pink-mid/10 rounded-xl">
+    <section id="contact" class="py-20 sm:py-24 color-pink-mid/10 rounded-xl">
       <div class="max-w-7xl mx-auto px-4 sm:px-20 lg:px-8 text-center">
         <h3 class="text-4xl font-fredoka font-extrabold text-gray-600 mb-8">
           Lets Chat!
@@ -396,6 +473,13 @@ growing together and hopefully be a tiny, cozy part of your creative journey.
       </div>
     </section>
     <!-- 💌 CONTACT & SOCIALS SECTION END 💌 -->
+
+
+     <!-- EMPT SECTION START (PY= TALLER OR SHORTER)-->
+    <section id="my-story" class="color-pink-mid/10 rounded-xl py-10">
+  <div class=" ">
+    <!-- empty on purpose -->
+  </div>
   </main>
 
   <!-- 🦶 FOOTER START 🦶 -->
@@ -422,8 +506,27 @@ growing together and hopefully be a tiny, cozy part of your creative journey.
   <!-- 🖼️ FIXED FOOTER IMAGE END 🖼️ -->
   <!-- 🦶 FOOTER END 🦶 -->
 
-  <!-- ⌚ BACK TO TOP BUTTON -->
-  <button id="back-to-top-btn" title="Go to top">&uarr;</button>
+
+
+<!-- ⌚ BACK TO TOP BUTTON WITH GIF -->
+<button
+  id="back-to-top-btn"
+  title="Go to top"
+  style= "outline: 1px solid #faa1c9;"
+  class="fixed bottom-6 right-6
+         flex items-center justify-center
+         w-10 h-10
+         !bg-white
+         rounded-full
+         !border !border-[#f0bcd6]
+         shadow-md
+         transition-transform duration-200 hover:-translate-y-1"
+>
+  <img src="img/Backtotop.png" alt="Back to top" class="">
+</button>
+
+
+
 
   <!-- 📜 SCRIPTS START 📜 -->
   <script>
@@ -546,7 +649,7 @@ growing together and hopefully be a tiny, cozy part of your creative journey.
       const y = e.clientY;
 
       if (trailCounter % HEART_SPAWN_FREQUENCY === 0) {
-        createTrailElement(x, y, 'heart-trail', '♡', 3.5);
+        createTrailElement(x, y, 'heart-trail', '✧', 3.5);
       }
     });
 
@@ -650,6 +753,39 @@ growing together and hopefully be a tiny, cozy part of your creative journey.
       console.warn('Age span not found');
     }
   });
+  // ✨ Button Sheen
+  (function () {
+    const btn = document.getElementById('magic-btn');
+    if (!btn) return;
+
+    function handleMove(e) {
+      const rect = btn.getBoundingClientRect();
+      const rawX = e.clientX - rect.left;
+
+      // offset sheen 20px to the left of the cursor
+      const sheenX = rawX - 20;
+
+      // clamp inside button so it doesn't wander too far
+      const clampedX = Math.max(0, Math.min(rect.width, sheenX));
+
+      // -0.5 to 0.5 for tilt
+      const t = (rawX / rect.width) - 0.5;
+
+      btn.style.setProperty('--x', clampedX);
+
+      const rotateY = t * 16;
+      btn.style.transform =
+        `translateY(-4px) scale(1.04) rotateY(${rotateY}deg)`;
+    }
+
+    function handleLeave() {
+      btn.style.transform = '';
+      btn.style.removeProperty('--x');
+    }
+
+    btn.addEventListener('mousemove', handleMove);
+    btn.addEventListener('mouseleave', handleLeave);
+  })();
 </script>
   <!-- 📜 SCRIPTS END 📜 -->
 

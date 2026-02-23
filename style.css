@@ -338,7 +338,6 @@ img {vertical-align: middle;}
     z-index: 99; /* Make sure it does not overlap other elements */
     border: none; /* Remove borders */
     outline: none; /* Remove outline */
-    background-color: var(--color-accent-pink); /* Set a background color */
     color: white; /* Text color */
     cursor: pointer; /* Add a mouse pointer on hover */
     padding: 15px; /* Some padding */
@@ -351,7 +350,6 @@ img {vertical-align: middle;}
 }
 
 #back-to-top-btn:hover {
-    background-color: #e84c94; /* Darker pink on hover */
     transform: translateY(0) scale(1.05); /* Slight lift and scale on hover */
 }
 
@@ -481,5 +479,146 @@ body {
   scrollbar-color: #ff69b4 #ffe4f3;
 }
 
+.blinkies-wrapper {
+  width: 99%;
+  height: 60px;
+  margin-top: 5px;
+  overflow: hidden;
+}
+
+.blinkies-inner {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.blinkies-track {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  animation: blinkies 50s linear infinite; /* adjust time for speed */
+}
+
+.blinkies-track img {
+  height: 60px;
+  width: auto;
+}
+
+@keyframes blinkies {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+.blinkies-container {
+  width: 99%;
+  height: 60px;
+  margin-top: 5px;
+  overflow: hidden;
+}
+
+/* 1.png fills the strip height, scales with window */
+.blinkies-main {
+  height: 60px;
+  width: auto;
+}
+
+/* other images same height so they sit in one row */
+.blinkies-small {
+  height: 60px;
+  width: auto;
+}
+
+
+BUTTON STUFF START
+
+.magic-btn {
+  transform-style: preserve-3d;
+  transition:
+    transform 0.15s ease-out,
+    box-shadow 0.15s ease-out,
+    filter 0.15s ease-out;
+  box-shadow:
+    0 12px 0 #f08abf,
+    0 18px 25px rgba(0,0,0,0.25);
+}
+
+/* pop out on simple hover */
+.magic-btn:hover {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow:
+    0 8px 0 #f08abf,
+    0 14px 22px rgba(0,0,0,0.25);
+}
+
+/* shiny spot that moves with mouse */
+.magic-btn::after {
+  content: "";
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  border-radius: 999px;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(circle at center,
+    rgba(255,255,255,0.9),
+    rgba(255,255,255,0) 60%);
+  transform: translate3d(-50%, -50%, 0);
+  top: calc(var(--y, 0) * 1px);
+  left: calc(var(--x, 0) * 1px);
+  transition: opacity 0.2s ease-out;
+}
+
+/* show sheen while hovered */
+.magic-btn:hover::after {
+  opacity: 0.7;
+}
+
+.magic-btn {
+  transform-style: preserve-3d;
+  transition:
+    transform 0.15s ease-out,
+    box-shadow 0.15s ease-out,
+    filter 0.15s ease-out;
+  box-shadow:
+    0 12px 0 #f08abf,
+    0 18px 25px rgba(0,0,0,0.25);
+}
+
+.magic-btn:hover {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow:
+    0 8px 0 #f08abf,
+    0 14px 22px rgba(0,0,0,0.25);
+}
+
+/* sheen: horizontal only */
+.magic-btn::after {
+  content: "";
+  position: absolute;
+  width: 190px;
+  height: 230px;
+  border-radius: 999px;
+  pointer-events: none;
+  opacity: 0;
+  /* softer, more faded diagonal band */
+  background: linear-gradient(
+    135deg,
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,0.55) 40%,
+    rgba(255,255,255,0.25) 55%,
+    rgba(255,255,255,0) 90%
+  );
+  filter: blur(8px);                 /* blur edges */
+  transform: translate3d(-50%, -50%, 0) rotate(15deg);
+  top: calc(50% - 10px);
+  left: calc(var(--x, 50) * 1px);
+  transition: opacity 0.2s ease-out;
+}
+
+.magic-btn:hover::after {
+  opacity: 0.55;                     /* lower overall opacity */
+}
 
 
