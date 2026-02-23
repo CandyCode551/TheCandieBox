@@ -17,7 +17,7 @@ body::before {
     position: fixed;
     inset: 0; /* top:0; right:0; bottom:0; left:0; */
     background-color: #ffffff;
-    background-image: url("https://media.tenor.com/mYHeYVUPiXMAAAAM/kitty.gif");
+    background-image: url("img/Gif/load.gif");
     background-repeat: no-repeat;
     background-position: center;
     background-size: 160px; /* size of the GIF */
@@ -303,12 +303,6 @@ img {vertical-align: middle;}
     height: 100%;
     object-fit: cover;
     display: block;
-    -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 80' preserveAspectRatio='xMidYMid slice'><path d='M50 15 C30 -10, 0 10, 10 35 C20 60, 50 75, 50 75 C50 75, 80 60, 90 35 C100 10, 70 -10, 50 15 Z' fill='white'/></svg>");
-    -webkit-mask-size: 100% 100%;
-    -webkit-mask-repeat: no-repeat;
-    mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 80' preserveAspectRatio='xMidYMid slice'><path d='M50 15 C30 -10, 0 10, 10 35 C20 60, 50 75, 50 75 C50 75, 80 60, 90 35 C100 10, 70 -10, 50 15 Z' fill='white'/></svg>");
-    mask-size: 100% 100%;
-    mask-repeat: no-repeat;
     border: none;
 }
 
@@ -318,7 +312,6 @@ img {vertical-align: middle;}
     position: absolute;
     inset: 0;
     pointer-events: none;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 80' preserveAspectRatio='xMidYMid meet'><path d='M50 15 C30 -10, 0 10, 10 35 C20 60, 50 75, 50 75 C50 75, 80 60, 90 35 C100 10, 70 -10, 50 15 Z' fill='none' stroke='%23ffb8dc' stroke-width='4' stroke-linejoin='round' stroke-linecap='round'/></svg>");
     background-size: 100% 100%;
     background-repeat: no-repeat;
 }
@@ -374,6 +367,7 @@ body {
 .header-lace-wrapper,
 #header-lace {
   background: transparent;
+  pointer-events: none;
 }
 
 /* Footer & lace smooth animation */

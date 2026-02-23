@@ -4,157 +4,13 @@
   <!-- 🌸 Meta & Icons -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>The Candie Box | Gallery</title>
-  <link rel="icon" type="image/png" href="img/ico/logo.png">
+  <title>The Candie Box | Anime Art & Animation</title>
+  <link rel="icon" type="image/png" href="img/Gif/Candie_Box/WAEGSsg.png">
 
-  <!-- 🎨 Tailwind + Custom Styles -->
+  <!-- 🎨 Styles -->
   <script src="https://cdn.tailwindcss.com"></script>
-
+  <link rel="stylesheet" href="style.css">
   <style>
-    /* ========================
-       🌸 THEME & FONTS
-       ======================== */
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Fredoka:wght@300..700&display=swap');
-
-    :root {
-      --color-primary-bg: #fefcfb;
-      --color-accent-pink: #ff69b4;
-      --color-title-pink: #faa1c9;
-      --color-accent-pastelpink: #ffb8dc;
-      --color-text-dark: #374151;
-    }
-
-    html, body {
-      height: 100%;
-    }
-
-    body {
-      margin: 0;
-      font-family: 'Inter', sans-serif;
-      /* 🎀 new background image */
-      background-image: url("img/stripe bkgrd.png");
-      background-size: cover;         /* fill whole window */
-      background-position: center;    /* center the pattern */
-      background-repeat: repeat;      /* or no-repeat if you want just one */
-      background-attachment: fixed;   /* subtle parallax, optional */
-      color: var(--color-text-dark);
-      scroll-behavior: smooth;
-      cursor: default;
-    }
-
-    .font-fredoka { font-family: 'Fredoka', sans-serif; }
-    .bg-title-pink { background-color: var(--color-title-pink); }
-    .text-pink-accent { color: var(--color-accent-pink); }
-    .bg-pink-accent { background-color: var(--color-accent-pink); }
-
-    /* ========================
-       💖 PAGE LOADER
-       ======================== */
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      background-color: #ffffff;
-      background-image: url("https://www.lucylooandroo.com/cdn/shop/t/6/assets/loading.gif?v=135655685998696985211639013649");
-      background-repeat: no-repeat;
-      background-position: center;
-      background-size: 160px;
-      z-index: 99999;
-      opacity: 1;
-      pointer-events: all;
-      transition: opacity 450ms ease-in-out, visibility 450ms ease-in-out;
-      animation: loaderHoldFade 1.35s ease-in-out forwards;
-    }
-
-    @keyframes loaderHoldFade {
-      0%   { opacity: 1; visibility: visible; }
-      70%  { opacity: 1; visibility: visible; }
-      100% { opacity: 0; visibility: hidden; pointer-events: none; }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      body::before {
-        animation: loaderHoldFadeReduced 10ms linear forwards;
-      }
-      @keyframes loaderHoldFadeReduced {
-        0%   { opacity: 1; visibility: visible; }
-        100% { opacity: 0; visibility: hidden; pointer-events: none; }
-      }
-    }
-
-    /* ========================
-       🎀 HEART TRAIL + CLICK
-       ======================== */
-    .trail-element {
-      position: fixed;
-      pointer-events: none;
-      z-index: 9999;
-      opacity: 0;
-      transform-origin: center;
-      line-height: 1;
-    }
-
-    .heart-trail {
-      color: var(--color-accent-pink);
-      font-size: 18px;
-      animation: heartFloat 3.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-      text-shadow: 0 0 5px rgba(255, 105, 180, 0.5);
-    }
-
-    @keyframes heartFloat {
-      0%   { transform: translate(0,0) scale(0.5) rotate(var(--rot-start)); opacity: 0.9; }
-      100% { transform: translate(var(--dx),var(--dy)) scale(1.3) rotate(var(--rot-end)); opacity: 0; }
-    }
-
-    .click-heart {
-      color: var(--color-accent-pink);
-      font-size: 50px;
-      animation: clickPop 0.6s ease-out forwards;
-      text-shadow: 0 0 15px var(--color-accent-pink);
-    }
-
-    @keyframes clickPop {
-      0%   { transform: scale(0.1); opacity: 1; }
-      50%  { transform: scale(1.6); opacity: 1; }
-      100% { transform: scale(1.1); opacity: 0; }
-    }
-
-    .heart-spinner {
-      display: inline-block;
-      animation: pulse 1s infinite alternate;
-    }
-    @keyframes pulse {
-      0%   { transform: scale(1); opacity: 0.8; }
-      100% { transform: scale(1.15); opacity: 1; }
-    }
-
-    /* ========================
-       🎀 LACE + RIBBON + OVERLAY
-       ======================== */
-    .center-logo { text-align: center; width: 30%; }
-    .logo-img { max-height: 80px; width: auto; display:block; margin:0 auto; }
-
-    #heart-overlay {
-      position: fixed;
-      z-index: 5;
-      pointer-events: none;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-    }
-    #heart-overlay img {
-      position: absolute;
-      top: 69%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 1500px;
-      height: auto;
-      max-width: none;
-      filter: drop-shadow(0 -4px 5px rgba(146, 52, 94, 0.15));
-      z-index: -1;
-    }
-
     /* ========================
        📷 GALLERY GRID
        ======================== */
@@ -286,13 +142,14 @@
        ======================== */
     .back-button {
       position: fixed;
-      top: 10rem;
+      top: 14rem;
       left: 1.5rem;
       z-index: 50;
       width: 50px;
       height: 50px;
       border-radius: 50%;
-      background-color: #ffffff;
+      background-color: #ffff;
+      outline: 1px solid #faa1c9;
       border: 2px solid var(--color-accent-pastelpink);
       font-size: 24px;
       color: var(--color-text-dark);
@@ -312,17 +169,12 @@
 
     /* Ensure fixed things under loader */
     header, #floating-image, .fixed { z-index: 10; }
-  </style>
+    </style>
 </head>
 
 <body class="antialiased">
 
-  <!-- ❤️ Window Overlay -->
-  <div id="heart-overlay">
-    <img src="img/Square Window.png" alt="window frame overlay">
-  </div>
-
-  <!-- 🎀 FLOATING RIBBON -->
+  <!-- 🎀 FLOATING RIBBON START 🎀 -->
   <div class="fixed top-9 left-1/2 -translate-x-1/2 z-50 hidden md:block">
     <a href="./index.html" title="Home">
       <div class="rounded-full">
@@ -330,100 +182,107 @@
           src="https://static.wixstatic.com/media/628285_fd030053b925402b995229b905418ab0~mv2.png/v1/fill/w_190,h_170,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Ribbon.png"
           onerror="this.onerror=null; this.src='https://placehold.co/80x80/FFF0F5/DB2777?text=💖'"
           alt="Ribbon Decoration"
-          class="rounded-full w-20 h-20 object-cover">
+          class="rounded-full w-20 h-20 object-cover"
+        >
       </div>
     </a>
   </div>
+  <!-- 🎀 FLOATING RIBBON END 🎀 -->
 
-  <!-- 🎀 FLOATING LACE HEADER -->
-  <div class="fixed top-[-3%] z-10 hidden md:block w-full">
+  <!-- 🎀 FLOATING LACE HEADER START 🎀 -->
+  <div class="fixed top-20 left-0 right-0 z-10 hidden md:block w-full">
     <div class="w-full mx-auto">
-      <div class="relative w-full overflow-hidden">
+      <div class="relative w-full header-lace-wrapper">
         <img
-          id="floating-image"
-          src="img/webheadwhite.png"
-          onerror="this.onerror=null; this.src='https://placehold.co/1200x200/F472B6/DB2777?text=Cute+Banner+Image+Placeholder'"
+          id="header-lace"
+          src="img/WebHeader.png"
           alt="Decorative Banner Image"
-          class="w-full h-32 object-cover footer-shadow">
+          class="w-full h-auto footer-shadow"
+        >
       </div>
     </div>
   </div>
+  <!-- 🎀 FLOATING LACE HEADER END 🎀 -->
 
-  <!-- 🔙 Back Button -->
+  <!-- 💖 TOP SOCIAL BAR START 💖 -->
+  <div id="top-social-bar"
+     class="w-full bg-[#f3b9d2] text-white fixed top-0 left-0 z-30">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-6 flex items-center justify-end space-x-2">
+      <a href="https://vgen.co/candie_cake" target="_blank" rel="noopener"
+         class="text-sm font-medium hover:underline" aria-label="Vgen">
+        <img src="img/ico/vgen.png" alt="Vgen" class="w-7 h-7 inline-block">
+      </a>
+      <a href="https://twitter.com/candie_cake" target="_blank" rel="noopener"
+         class="text-sm font-medium hover:underline" aria-label="Twitter">
+        <img src="img/ico/twitter.png" alt="Twitter" class="w-6 h-6 inline-block">
+      </a>
+      <a href="https://instagram.com/candie__cake" target="_blank" rel="noopener"
+         class="text-sm font-medium hover:underline" aria-label="Instagram">
+        <img src="img/ico/instagram.png" alt="Instagram" class="w-6 h-6 inline-block">
+      </a>
+    </div>
+  </div>
+  <!-- 💖 TOP SOCIAL BAR END 💖 -->
+ <!-- 🔙 Back Button -->
   <a href="./index.html" title="Back to Home">
-    <button class="back-button">←</button>
-  </a>
-
-  <!-- 🍬 HEADER & NAVIGATION -->
-  <header class="bg-white sticky z-10"
-          style="box-shadow: -2px -2px 0 #e0e0e0, 2px -2px 0 #e0e0e0, -2px 2px 0 #e0e0e0, 2px 2px 0 #e0e0e0;">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex justify-between items-center">
-      <h1 class="text-3xl font-fredoka font-bold text-pink-accent tracking-wide">
-        <a href="./Gallery.html" title="Gallery">Gallery</a>
+  <button id="backbtn" class="back-button">←</button>
+</a>
+  <!-- 🍬 HEADER & NAVIGATION START 🍬 -->
+  <header class="bg-white shadow-md sticky top-0 z-20 transition-all duration-300">
+    <div id="header-container"
+         class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex justify-between items-center transition-all duration-300">
+      <h1 id="header-title"
+          class="text-3xl font-fredoka font-bold text-title-pink tracking-wide transition-all duration-300">
+        <a href="./index.html#commissions" title="Home">
+          The Candie Box <span class="text-xl">ʚ ♡ ɞ</span>
+        </a>
       </h1>
+
       <nav class="hidden sm:block">
-        <a href="./index.html"
-           class="text-lg font-medium text-gray-600 hover:text-pink-accent mx-3 transition duration-150">Home</a>
+        <a href="./Gallery.html"
+           class="text-lg font-medium text-gray-600 hover:text-pink-accent mx-3 transition duration-150">
+          Gallery
+        </a>
         <a href="https://vgen.co/candie_cake"
-           class="text-lg font-medium text-gray-600 hover:text-pink-accent mx-3 transition duration-150">Commission</a>
+           class="text-lg font-medium text-gray-600 hover:text-pink-accent mx-3 transition duration-150">
+          Commission
+        </a>
         <a href="#contact"
-           class="text-lg font-medium text-gray-600 hover:text-pink-accent mx-3 transition duration-150">Contact</a>
+           class="text-lg font-medium text-gray-600 hover:text-pink-accent mx-3 transition duration-150">
+          Contact
+        </a>
       </nav>
     </div>
+    
   </header>
-
-  <!-- 💖 SOCIAL BAR -->
-  <div id="top-social-bar" class="w-full bg-title-pink text-white fixed top-0 left-0 z-30">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-6 flex items-center justify-between relative">
-      <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-      </div>
-      <div class="flex items-center space-x-2 ml-auto">
-        <a href="https://vgen.co/candie_cake" target="_blank" rel="noopener"
-           class="text-sm font-medium hover:underline" aria-label="Vgen">
-          <img src="img/ico/vgen.png" alt="Vgen" class="w-7 h-7 inline-block">
-        </a>
-        <a href="https://twitter.com/candie_cake" target="_blank" rel="noopener"
-           class="text-sm font-medium hover:underline" aria-label="Twitter">
-          <img src="img/ico/twitter.png" alt="Twitter" class="w-6 h-6 inline-block">
-        </a>
-        <a href="https://instagram.com/candie__cake" target="_blank" rel="noopener"
-           class="text-sm font-medium hover:underline" aria-label="Instagram">
-          <img src="img/ico/instagram.png" alt="Instagram" class="w-6 h-6 inline-block">
-        </a>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    (function () {
-      const bar = document.getElementById('top-social-bar');
-      const header = document.querySelector('header');
-
-      function adjustLayout() {
-        if (!bar) return;
-        const h = bar.offsetHeight;
-        document.body.style.paddingTop = h + 'px';
-        if (header) header.style.top = h + 'px';
-      }
-
-      window.addEventListener('load', adjustLayout);
-      window.addEventListener('resize', adjustLayout);
-      new MutationObserver(adjustLayout).observe(document.documentElement, { childList: true, subtree: true });
-    })();
-  </script>
-
+  <!-- 🍬 HEADER & NAVIGATION END 🍬 -->
+<main>
   
-<!-- 👩‍🎨 WHITE SQUARE START 👩‍🎨 -->
-<section id="gallery-section" class="py-20 sm:py-24">
-  <div class="max-w-6xl mx-auto bg-white p-8 rounded-3xl shadow-lg">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-
-
+<button
+  id="back-to-top-btn"
+  title="Go to top"
+  style= "outline: 1px solid #faa1c9;"
+  class="fixed bottom-6 right-6
+         flex items-center justify-center
+         w-10 h-10
+         !bg-white
+         rounded-full
+         !border !border-[#f0bcd6]
+         shadow-md
+         transition-transform duration-200 hover:-translate-y-1"
+>
+  <img src="img/Backtotop.png" alt="Back to top" class="">
+</button>
+  <!-- 👩‍🎨 WHITE SQUARE START 👩‍🎨 -->
+  <section id="gallery-section" class="py-20 sm:py-24">
+    <div class="max-w-6xl mx-auto bg-white p-8 rounded-3xl shadow-lg">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center md:text-left">
           <!-- 🌸 MAIN CONTENT -->
-  <main class="mt-12">
-    <section class="mt-9"></section>
-<!-- 📷 IMAGE GRID -->
+          <div class="mt-12">
+            <section class="mt-9"></section>
+
+            <!-- 📷 IMAGE GRID -->
     <div class="row">
       <div class="column"><!-- empty left padding column --></div>
 
@@ -461,7 +320,8 @@
 
     <section class="mt-9"></section>
     <!-- 📷 IMAGE GRID END-->
-    <!-- 🎬 VIDEO GALLERY SECTION START 🎬 -->
+
+            <!-- 🎬 VIDEO GALLERY SECTION START 🎬 -->
     <section id="video-gallery" class="mt-12">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div id="video-grid" class="row">
@@ -471,7 +331,331 @@
     </section>
     <!-- 🎬 VIDEO GALLERY SECTION END 🎬 -->
 
-    <script>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- 👩‍🎨 WHITE SQUARE END 👩‍🎨 -->
+</main>
+
+  
+  <!-- 🦶 FOOTER START 🦶 -->
+  <footer class="bg-title-pink text-white rounded-t-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center text-sm">
+      <p>&copy; <span id="year"></span> The Candie Box™. All Rights Reserved. | Cute Anime Commissions & Design</p>
+    </div>
+  </footer>
+
+  <!-- 🖼️ FIXED FOOTER IMAGE START 🖼️ -->
+  <div class="fixed bottom-0 left-0 right-0 hidden md:block">
+    <div class="w-full max-w-9xl mx-auto px-8">
+      <div class="relative w-full overflow-hidden rounded-t-xl">
+        <img
+          id="floating-footer-image"
+          src="img/Footer.png"
+          onerror="this.onerror=null; this.src='https://placehold.co/1200x200/F472B6/DB2777?text=Cute+Banner+Image+Placeholder'"
+          alt="Decorative Banner Image"
+          class="object-cover z-0 rounded-t-xl footer-shadow"
+          style="position: fixed; left: 0; bottom: -35px; width: 100vw; height: 8rem; transition: 0.4s;">
+      </div>
+    </div>
+  </div>
+  <!-- 🖼️ FIXED FOOTER IMAGE END 🖼️ -->
+  <!-- 🦶 FOOTER END 🦶 -->
+
+
+
+<!-- ⌚ BACK TO TOP BUTTON WITH GIF -->
+<button
+  id="back-to-top-btn"
+  title="Go to top"
+  style= "outline: 1px solid #faa1c9;"
+  class="fixed bottom-6 right-6
+         flex items-center justify-center
+         w-10 h-10
+         !bg-white
+         rounded-full
+         !border !border-[#f0bcd6]
+         shadow-md
+         transition-transform duration-200 hover:-translate-y-1"
+>
+  <img src="img/Backtotop.png" alt="Back to top" class="">
+</button>
+
+
+
+
+  <!-- 📜 SCRIPTS START 📜 -->
+  <script>
+    // 🗓️ Current year in footer
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // 💖 Adjust layout for top social bar
+    (function () {
+      const bar = document.getElementById('top-social-bar');
+      const header = document.querySelector('header');
+
+      function adjustLayout() {
+        if (!bar) return;
+        const h = bar.offsetHeight;
+        document.body.style.paddingTop = h + 'px';
+        if (header) header.style.top = h + 'px';
+      }
+
+      window.addEventListener('load', adjustLayout);
+      window.addEventListener('resize', adjustLayout);
+      new MutationObserver(adjustLayout).observe(document.documentElement, {
+        childList: true,
+        subtree: true
+      });
+    })();
+
+    // ✨ Slideshow logic (unchanged)
+    let slideIndex = 0;
+    let slideInterval;
+
+    function showSlides() {
+      let i;
+      const slides = document.getElementsByClassName("mySlides");
+      const dots = document.getElementsByClassName("dot");
+
+      for (i = 0; i < slides.length; i++) {
+        slides[i].style.display = "none";
+      }
+
+      slideIndex++;
+      if (slideIndex > slides.length) { slideIndex = 1; }
+
+      for (i = 0; i < dots.length; i++) {
+        dots[i].className = dots[i].className.replace(" active", "");
+      }
+
+      if (slides[slideIndex - 1]) {
+        slides[slideIndex - 1].style.display = "block";
+        dots[slideIndex - 1].className += " active";
+      }
+    }
+
+    function plusSlides(n) {
+      clearInterval(slideInterval);
+      showSlidesManual(slideIndex += n);
+      slideInterval = setInterval(showSlides, 4000);
+    }
+
+    function currentSlide(n) {
+      clearInterval(slideInterval);
+      showSlidesManual(slideIndex = n);
+      slideInterval = setInterval(showSlides, 4000);
+    }
+
+    function showSlidesManual(n) {
+      let i;
+      const slides = document.getElementsByClassName("mySlides");
+      const dots = document.getElementsByClassName("dot");
+      if (n > slides.length) { slideIndex = 1; }
+      if (n < 1) { slideIndex = slides.length; }
+
+      for (i = 0; i < slides.length; i++) {
+        slides[i].style.display = "none";
+      }
+      for (i = 0; i < dots.length; i++) {
+        dots[i].className = dots[i].className.replace(" active", "");
+      }
+
+      if (slides[slideIndex - 1]) {
+        slides[slideIndex - 1].style.display = "block";
+        dots[slideIndex - 1].className += " active";
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      showSlides();
+      slideInterval = setInterval(showSlides, 4000);
+    });
+
+    // 💕 Heart trail + click effect (unchanged)
+    let trailCounter = 0;
+    const HEART_SPAWN_FREQUENCY = 12;
+
+    function createTrailElement(x, y, className, content, duration) {
+      const element = document.createElement('span');
+      element.textContent = content;
+      element.className = 'trail-element ' + className;
+
+      const dx = (Math.random() - 0.5) * 40;
+      const dy = -(Math.random() * 80 + 100);
+      const rotStart = (Math.random() * 90) - 45;
+      const rotEnd = rotStart + (Math.random() > 0.5 ? 90 : -90);
+
+      element.style.left = `${x}px`;
+      element.style.top = `${y}px`;
+      element.style.animationDuration = `${duration}s`;
+      element.style.setProperty('--dx', `${dx}px`);
+      element.style.setProperty('--dy', `${dy}px`);
+      element.style.setProperty('--rot-start', `${rotStart}deg`);
+      element.style.setProperty('--rot-end', `${rotEnd}deg`);
+
+      document.body.appendChild(element);
+
+      setTimeout(() => element.remove(), duration * 1000);
+    }
+
+    document.addEventListener('mousemove', (e) => {
+      trailCounter++;
+      const x = e.clientX;
+      const y = e.clientY;
+
+      if (trailCounter % HEART_SPAWN_FREQUENCY === 0) {
+        createTrailElement(x, y, 'heart-trail', '✧', 3.5);
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      const clickHeart = document.createElement('span');
+      clickHeart.textContent = '♡';
+      clickHeart.className = 'trail-element click-heart';
+      clickHeart.style.left = `${e.clientX - 25}px`;
+      clickHeart.style.top = `${e.clientY - 25}px`;
+      document.body.appendChild(clickHeart);
+      setTimeout(() => clickHeart.remove(), 600);
+    });
+
+    // 🔝 Back to top + header/footer animations
+    const backToTopButton = document.getElementById("back-to-top-btn");
+    const scrollThreshold = 200;
+
+    window.addEventListener('scroll', () => {
+      const headerContainer = document.getElementById('header-container');
+      const headerTitle = document.getElementById('header-title');
+      const footerImg = document.getElementById('floating-footer-image');
+      const laceImg = document.getElementById('header-lace');
+      const backbtn = document.getElementById('backbtn');
+
+      const scrollY = window.scrollY || document.documentElement.scrollTop;
+      const viewportH = window.innerHeight;
+      const docH = document.documentElement.scrollHeight;
+
+      const fromTop = scrollY > 50;
+      const nearBottom = scrollY + viewportH > docH - 50;
+
+      // shrink header + animate lace/footer
+      if (fromTop && !nearBottom) {
+        headerContainer.classList.remove('py-3.5');
+        headerContainer.classList.add('py-1');
+        headerTitle.classList.remove('text-3xl');
+        headerTitle.classList.add('text-2xl');
+
+        if (laceImg) {
+          laceImg.style.opacity = "0.9";
+          laceImg.style.transform = "translateY(-80px)";
+        }
+        if (footerImg) {
+          footerImg.style.opacity = "0.2";
+          footerImg.style.transform = "translateY(100px)";
+        }
+        if (backbtn) {
+          backbtn.style.opacity = "1";
+          backbtn.style.transform = "translateY(-80px)";
+        }
+      } else {
+        headerContainer.classList.add('py-3.5');
+        headerContainer.classList.remove('py-1');
+        headerTitle.classList.add('text-3xl');
+        headerTitle.classList.remove('text-2xl');
+
+        if (laceImg) {
+          laceImg.style.opacity = "1";
+          laceImg.style.transform = "translateY(0)";
+        }
+        if (footerImg) {
+          footerImg.style.opacity = "1";
+          footerImg.style.transform = "translateY(0)";
+        }
+        if (backbtn) {
+          backbtn.style.opacity = "1";
+          backbtn.style.transform = "translateY(0)";
+        }
+      }
+
+      // back‑to‑top button
+      if (scrollY > scrollThreshold) {
+        backToTopButton.style.display = "block";
+        setTimeout(() => {
+          backToTopButton.style.opacity = "1";
+          backToTopButton.style.transform = "translateY(0)";
+        }, 10);
+      } else {
+        backToTopButton.style.opacity = "0";
+        backToTopButton.style.transform = "translateY(20px)";
+        setTimeout(() => {
+          backToTopButton.style.display = "none";
+        }, 300);
+      }
+    });
+
+    backToTopButton.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const birthDate = new Date(2003, 5, 17); // May 17, 2003
+
+    function getAge(dob) {
+      const today = new Date();
+      let age = today.getFullYear() - dob.getFullYear();
+      const m = today.getMonth() - dob.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+        age--;
+      }
+      return age;
+    }
+
+    const ageSpan = document.getElementById('age');
+    if (ageSpan) {
+      ageSpan.textContent = getAge(birthDate);
+    } else {
+      console.warn('Age span not found');
+    }
+  });
+  // ✨ Button Sheen
+  (function () {
+    const btn = document.getElementById('magic-btn');
+    if (!btn) return;
+
+    function handleMove(e) {
+      const rect = btn.getBoundingClientRect();
+      const rawX = e.clientX - rect.left;
+
+      // offset sheen 20px to the left of the cursor
+      const sheenX = rawX - 20;
+
+      // clamp inside button so it doesn't wander too far
+      const clampedX = Math.max(0, Math.min(rect.width, sheenX));
+
+      // -0.5 to 0.5 for tilt
+      const t = (rawX / rect.width) - 0.5;
+
+      btn.style.setProperty('--x', clampedX);
+
+      const rotateY = t * 16;
+      btn.style.transform =
+        `translateY(-4px) scale(1.04) rotateY(${rotateY}deg)`;
+    }
+
+    function handleLeave() {
+      btn.style.transform = '';
+      btn.style.removeProperty('--x');
+    }
+
+    btn.addEventListener('mousemove', handleMove);
+    btn.addEventListener('mouseleave', handleLeave);
+  })();
+</script>
+
+<script>
       const videoFiles = [
         "babyvid.mp4",
       ];
@@ -711,6 +895,7 @@
 
     window.addEventListener('resize', resizeCanvas);
   </script>
+  <!-- 📜 SCRIPTS END 📜 -->
+
 </body>
 </html>
-

@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>The Candie Box | Anime Art & Animation</title>
-  <link rel="icon" type="image/png" href="img/ico/logo.png">
+  <link rel="icon" type="image/png" href="img/Gif/Candie_Box/WAEGSsg.png">
 
   <!-- 🎨 Styles -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -140,8 +140,13 @@
               ♡ Welcome to the Candie Box ♡
             </h2>
             <p class="mt-6 text-xl text-gray-200 max-w-2xl mx-auto">
-              Bringing your characters and ideas to life in a sugary sweet, adorable style! Check my queue and secure your slot today.
+              Bringing your characters and ideas to life in a sugary sweet, adorable style! Check my queue and secure your slot today ~
             </p>
+            <!-- EMPT SECTION START (PY= TALLER OR SHORTER)-->
+    <section id="my-story" class="color-pink-mid/10 rounded-xl py-10">
+  <div class=" ">
+    <!-- empty on purpose -->
+  </div>
 <div class="relative inline-block">
   <a
     href="https://vgen.co/candie_cake"
@@ -151,17 +156,22 @@
            bg-gradient-to-r from-[#ff9fd4] via-[#ffb8ea] to-[#ff9fd4]
            shadow-lg relative overflow-hidden"
   >
-    ✨ Commission Me ✨
+    Commission Me
   </a>
 
-  <!-- GIF overlay (always on) -->
+  <!-- GIF overlay (fixed size, offset left) -->
   <img
     src="img/Gif/sparkle-star.gif"
     alt=""
     aria-hidden="true"
-    class="pointer-events-none absolute inset-0 w-full h-full object-cover mix-blend-screen opacity-60"
+    class="pointer-events-none absolute
+           top-1/2 -translate-y-1/2  /* vertically centered */
+           left-[-30px]             /* move left of the button */
+           w-16 h-16                /* fixed GIF size */
+           mix-blend-screen opacity-80"
   >
 </div>
+
 
 
               <a href="https://trello.com/b/GAQsZ4OY/commission-queue"
@@ -209,52 +219,19 @@
 
     document.getElementById('age').textContent = getAge(birthDate);
   </script>
-  <a
-  href="https://vgen.co/candie_cake"
-  class="inline-flex items-center justify-center
-         w-[400px] h-[100px] max-w-full
-         text-xl font-bold text-title-pink
-         bg-[url('img/Button.png')] bg-contain bg-no-repeat bg-center
-         transition-transform duration-300 hover:-translate-y-1"
->
-  ✨ COMMISSION ME ✨
-</a>
-<a
-  href="https://vgen.co/candie_cake"
-  class="inline-block"
->
-  <button
-    id="magic-btn"
-    class="magic-btn group inline-flex items-center justify-center px-10 py-5
-           text-xl font-fredoka font-bold text-white rounded-full
-           bg-gradient-to-r from-[#ff9fd4] via-[#ffb8ea] to-[#ff9fd4]
-           shadow-lg relative overflow-hidden"
-    type="button"
-  >
-    ✨ Commission Me ✨
-  </button>
-</a>
 
       <!-- Divider / spacing -->
       <div class="mt-10 border-t border-pink-200"></div>
 
       <!-- Bottom row(s): extra elements like in your reference -->
       <div class="mt-8 grid gap-6 md:grid-cols-3">
-  <!-- Block 1 as a button -->
-   <a href="./Gallery.html"
-   class="block text-left btn-commission p-4 rounded-2xl bg-pink-50 shadow-inner"
-   style="background-color:#fdf2f8; color:#faadd0;">
-  <h4 class="font-fredoka text-xl text-title-pink mb-2">Gallery</h4>
-  <p class="text-sm text-gray-600">
-    Newest to Oldest Works ♡
-  </p>
-</a>
+
 <a href="https://vgen.co/candie_cake/characters"
    class="block text-left btn-commission p-4 rounded-2xl bg-pink-50 shadow-inner"
    style="background-color:#fdf2f8; color:#faadd0;">
   <h4 class="font-fredoka text-xl text-title-pink mb-2">Characters</h4>
   <p class="text-sm text-gray-600">
-    My Sona ♡
+    ♡ My Sona ♡
   </p>
 </a>
 <a href="https://vgen.co/candie_cake"
@@ -262,7 +239,16 @@
    style="background-color:#fdf2f8; color:#faadd0;">
   <h4 class="font-fredoka text-xl text-title-pink mb-2">TOS</h4>
   <p class="text-sm text-gray-600">
-    Terms of Service ♡
+    ♡ Terms of Service ♡
+  </p>
+</a>
+<!-- Gallery Button -->
+   <a href="./Gallery.html"
+   class="block text-left btn-commission p-4 rounded-2xl bg-pink-50 shadow-inner"
+   style="background-color:#fdf2f8; color:#faadd0;">
+  <h4 class="font-fredoka text-xl text-title-pink mb-2">Gallery</h4>
+  <p class="text-sm text-gray-600">
+    ♡ Newest to Oldest Works ♡
   </p>
 </a>
 </div>
@@ -313,6 +299,16 @@
           I fell in love with transforming their ideas into something tangible and adding my own creative spark along the way ♡
         </p>
       </div>
+      <a
+  href="https://vgen.co/candie_cake"
+  class="inline-flex items-center justify-center
+         w-[400px] h-[100px] max-w-full
+         text-xl font-bold text-title-pink
+         bg-[url('img/Button.png')] bg-contain bg-no-repeat bg-center
+         transition-transform duration-300 hover:-translate-y-1"
+>
+  ✨ COMMISSION ME ✨
+</a>
       <!-- cute divider-->
       <div class="mt-10 border-t border-pink-200"></div>
       <div class="flex-shrink-0 md:order-0">
@@ -321,6 +317,7 @@
       alt="Divider"
       class="w-[100px] max-w-full"
     >
+    
   </div>
       <!-- Top row: image + text side‑by‑side -->
 <div class="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12">
@@ -428,8 +425,11 @@ growing together and hopefully be a tiny, cozy part of your creative journey.
         <h3 class="text-4xl font-fredoka font-extrabold text-gray-600 mb-8">
           Lets Chat!
         </h3>
-        <p class="text-xl text-gray-600 max-w-2xl mx-auto mb-12">
-          DM me on Twitter or Discord! I love hearing from fellow artists and potential clients
+        <p class="text-xl text-gray-600 max-w-2xl mx-auto mb-1">
+          DM me on Twitter or Discord! 
+        </p>
+        <p class="text-xl text-gray-600 max-w-2xl mx-auto mb-1">           I love hearing from fellow artists and potential clients</p>
+        <p class="text-xl text-gray-600 mb-12">
           ♡
         </p>
         
