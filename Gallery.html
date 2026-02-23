@@ -289,31 +289,35 @@
       <div id="gallery" class="row"></div>
 
       <script>
-        const galleryImages = [
-          "elizapngtuber.png",
-          "elizaemote.png",
-          "candyredraw.png",
-          "viniemotes.png",
-          "True Love [11-9-23].png",
-          "OLD.jpg",
-        ];
+  const galleryImages = [
+    "elizapngtuber.png",
+    "elizaemote.png",
+    "candyredraw.png",
+    "viniemotes.png",
+    "True Love [11-9-23].png",
+    "OLD.jpg",
+  ];
 
-        const gallery = document.getElementById("gallery");
+  const gallery = document.getElementById("gallery");
 
-        galleryImages.forEach(name => {
-          const wrap = document.createElement("div");
-          wrap.className = "column";
+  galleryImages.forEach(name => {
+    const wrap = document.createElement("div");
+    wrap.className = "column";
 
-          wrap.innerHTML = `
-            <div class="image-container">
-              <img src="img/Gallery/${name}" alt="${name}">
-              <div class="image-overlay">${name}</div>
-            </div>
-          `;
+    // remove extension
+    const displayName = name.replace(/\.(png|jpe?g|gif|webp)$/i, "");
 
-          gallery.appendChild(wrap);
-        });
-      </script>
+    wrap.innerHTML = `
+      <div class="image-container">
+        <img src="img/Gallery/${name}" alt="${displayName}">
+        <div class="image-overlay">${displayName}</div>
+      </div>
+    `;
+
+    gallery.appendChild(wrap);
+  });
+</script>
+
 
       <div class="column"><!-- empty right padding column --></div>
     </div>
