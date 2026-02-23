@@ -173,10 +173,25 @@
 
         <div class="text-center md:text-left">
           <h3 class="text-4xl font-fredoka font-extrabold text-title-pink">♡ About Me ♡</h3>
-          <p class="mt-4 text-lg text-gray-600 max-w-xl">Hi, I'm Candy! I'm a 22 year old artist from the US who specializes in making 2D animated art. I have a passion for bringing all of your creative ideas to life to the best of my abilities and love making new friends. Thank you for taking the time to visit my website ~ If you have any questions feel free to contact me ♡</p>
+          <p class="mt-4 text-lg text-gray-600 max-w-xl">Hi, I'm Candy! I'm a <span id="age"></span> year old artist from the US who specializes in making 2D animated art. I have a passion for bringing all of your creative ideas to life to the best of my abilities and love making new friends. Thank you for taking the time to visit my website ~ If you have any questions feel free to contact me ♡</p>
                     </div>
       </div>
+<script>
+    // birth date: May 17, 2003  (months are 0‑based: 0 = Jan, 4 = May)
+    const birthDate = new Date(2003, 4, 17);
 
+    function getAge(dob) {
+      const today = new Date();
+      let age = today.getFullYear() - dob.getFullYear();
+      const m = today.getMonth() - dob.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+        age--; // birthday hasn't happened yet this year
+      }
+      return age;
+    }
+
+    document.getElementById('age').textContent = getAge(birthDate);
+  </script>
       <!-- Divider / spacing -->
       <div class="mt-10 border-t border-pink-200"></div>
 
@@ -615,6 +630,29 @@ Whether you’re commissioning me for the first time or coming back as a regular
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   </script>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const birthDate = new Date(2003, 5, 17); // May 17, 2003
+
+    function getAge(dob) {
+      const today = new Date();
+      let age = today.getFullYear() - dob.getFullYear();
+      const m = today.getMonth() - dob.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+        age--;
+      }
+      return age;
+    }
+
+    const ageSpan = document.getElementById('age');
+    if (ageSpan) {
+      ageSpan.textContent = getAge(birthDate);
+    } else {
+      console.warn('Age span not found');
+    }
+  });
+</script>
   <!-- 📜 SCRIPTS END 📜 -->
 
 </body>
