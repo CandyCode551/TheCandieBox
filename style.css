@@ -8,6 +8,7 @@
     --color-title-pink: #faa1c9; /* New color for the main title */
     --color-title-white: #ffffff; /* white text */
     --color-text-dark: #374151;  /* Dark gray for readability */
+    --color-grey: #fbf9fb;  /* Dark gray for readability */
 }
 
 /* --- Page Loader Overlay (full white screen with centered GIF, then fade out) --- */
@@ -16,7 +17,7 @@ body::before {
     content: "";
     position: fixed;
     inset: 0; /* top:0; right:0; bottom:0; left:0; */
-    background-color: #ffffff;
+    background-color: #fbf9fb;
     background-image: url("img/Gif/load.gif");
     background-repeat: no-repeat;
     background-position: center;
@@ -94,6 +95,10 @@ body {
 
 .bg-title-pink {
     background-color: var(--color-title-pink);
+}
+
+.bg-grey {
+    background-color: var(--color-grey);
 }
 
 .bg-pink-accent {
