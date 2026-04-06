@@ -39,7 +39,7 @@ async function loadGalleryFromGitHub() {
       parsedDate: parseDateFromFilename(file.name)
     }))
     .filter(file => file.parsedDate) // only keep files with [d-m-y]
-    .sort((a, b) => a.parsedDate - b.parsedDate); // oldest -> newest
+    .sort((a, b) => b.parsedDate - a.parsedDate);
 
   imageFiles.forEach(file => {
     const displayName = file.name
