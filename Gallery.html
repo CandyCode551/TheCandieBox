@@ -23,42 +23,29 @@
 }
 
 
-/* Masonry image gallery */
+/* 📌 Pinterest-style masonry gallery */
 #gallery {
-  column-count: 3;
-  column-gap: 8px;
-  padding: 0 4px;
+  position: relative;
+  display: block !important;
+  width: 100%;
+  padding: 0;
+  grid-template-columns: none !important;
 }
-
 
 #gallery .column {
-  display: inline-block;
-  width: 100%;
-  max-width: 100%;
+  position: absolute;
+  margin: 0;
   padding: 0;
-  margin: 0 0 8px;
-  break-inside: avoid;
-}
-
-
-@media screen and (max-width: 800px) {
-  #gallery {
-    column-count: 2;
-  }
-}
-
-
-@media screen and (max-width: 600px) {
-  #gallery {
-    column-count: 1;
-  }
+  top: 0;
+  left: 0;
 }
 
 
     .image-container {
       position: relative;
-      margin-top: 8px;
+      margin: 0;
       overflow: hidden;
+      border-radius: 12px;
       transition: transform 0.2s ease-in-out;
     }
 
@@ -404,6 +391,65 @@ function cleanDisplayName(filename) {
     .replace(/\s+\d{1,2}-\d{1,2}-\d{2,4}$/g, "")
     .trim();
 }
+
+
+/* ========================
+   📌 PINTEREST MASONRY ENGINE
+   ======================== */
+const MASONRY_GAP = 10;
+
+function getColumnCount() {
+  if (window.innerWidth <= 600) return 1;
+  if (window.innerWidth <= 800) return 2;
+  return 3;
+}
+
+let masonryTimer;
+function requestMasonryLayout() {
+  clearTimeout(masonryTimer);
+  masonryTimer = setTimeout(layoutMasonry, 80);
+}
+
+function layoutMasonry() {
+  const items = Array.from(gallery.querySelectorAll('.column'));
+  if (!items.length) return;
+
+  const numCols = getColumnCount();
+  const containerWidth = gallery.clientWidth;
+  if (containerWidth === 0) return; // not visible yet
+
+  const colWidth = (containerWidth - MASONRY_GAP * (numCols - 1)) / numCols;
+  const colHeights = new Array(numCols).fill(0);
+
+  items.forEach(item => {
+    // Set width first so the browser can calculate height
+    item.style.position = 'absolute';
+    item.style.width = colWidth + 'px';
+
+    // Find the shortest column
+    const shortest = colHeights.indexOf(Math.min(...colHeights));
+    const leftPos = shortest * (colWidth + MASONRY_GAP);
+    const topPos = colHeights[shortest];
+
+    item.style.left = leftPos + 'px';
+    item.style.top = topPos + 'px';
+
+    // Update column height (offsetHeight includes the rendered content)
+    colHeights[shortest] += item.offsetHeight + MASONRY_GAP;
+  });
+
+  // Set container height so content below flows correctly
+  gallery.style.height = Math.max(...colHeights) + 'px';
+}
+
+// Re-layout on resize
+let resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(layoutMasonry, 150);
+});
+
+
 async function loadGalleryFromGitHub() {
   try {
     const url = `https://api.github.com/repos/${owner}/${repo}/contents/${folderPath}?ref=${branch}`;
@@ -489,20 +535,27 @@ async function loadGalleryFromGitHub() {
             <div class="image-overlay">${displayName || file.name}</div>
           </div>
         `;
+        // Re-layout when video dimensions are known
+        const vid = wrap.querySelector('video');
+        if (vid) vid.addEventListener('loadeddata', requestMasonryLayout);
       } else {
         wrap.innerHTML = `
           <div class="image-container" data-type="image">
-            <img src="${file.download_url}" alt="${displayName}" loading="lazy">
+            <img src="${file.download_url}" alt="${displayName}">
             <div class="image-overlay">${displayName || file.name}</div>
           </div>
         `;
+        // Re-layout when image dimensions are known
+        const img = wrap.querySelector('img');
+        if (img) img.addEventListener('load', requestMasonryLayout);
       }
 
 
       gallery.appendChild(wrap);
     });
 
-    // Re-bind lightbox click handlers after gallery is built
+    // Initial masonry layout + re-bind lightbox
+    layoutMasonry();
     bindLightbox();
 
   } catch (err) {
