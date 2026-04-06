@@ -111,6 +111,7 @@
       transition: transform 0.3s ease-in-out;
       position: relative;
       cursor: zoom-in;
+      will-change: transform;
     }
 
     .modal-video {
@@ -155,12 +156,26 @@
     }
 
 
-    #glitter-canvas {
+    /* ✨ CSS Sparkles (GPU-accelerated, replaces canvas) */
+    .sparkle-container {
       position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      z-index: 0;
+      inset: 0;
       pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    .sparkle {
+      position: absolute;
+      pointer-events: none;
+      opacity: 0;
+      animation: sparkle-twinkle var(--sparkle-dur, 3s) ease-in-out infinite;
+      animation-delay: var(--sparkle-delay, 0s);
+    }
+
+    @keyframes sparkle-twinkle {
+      0%, 100% { opacity: 0; transform: scale(0.5); }
+      50%      { opacity: var(--sparkle-peak, 0.7); transform: scale(1.15); }
     }
 
 
@@ -630,7 +645,7 @@ loadGalleryFromGitHub();
   <!-- 🔍 MODAL / LIGHTBOX -->
   <div id="myModal" class="modal">
     <span class="close">&times;</span>
-    <canvas id="glitter-canvas"></canvas>
+    <div id="sparkle-container" class="sparkle-container"></div>
     <img class="modal-content" id="modal-img" alt="" style="display:none;">
     <video class="modal-video" id="modal-video" autoplay loop muted playsinline style="display:none;"></video>
   </div>
@@ -955,191 +970,151 @@ loadGalleryFromGitHub();
     const modal = document.getElementById("myModal");
     const modalImg = document.getElementById("modal-img");
     const modalVideo = document.getElementById("modal-video");
-    const canvas = document.getElementById('glitter-canvas');
-    const ctx = canvas.getContext('2d');
-    let particles = [];
-    let animationFrameId;
-
+    const sparkleContainer = document.getElementById("sparkle-container");
 
     let isDragging = false;
     let didDrag = false;
     let startX, startY;
     let translateX = 0, translateY = 0;
-
+    let dragRaf = null;
 
     const zoomScale = 1.75;
 
+    /* ---- helpers ---- */
+    function closeModal() {
+      modal.style.display = "none";
+      modalVideo.pause();
+      modalVideo.removeAttribute("src");
+      stopSparkles();
+    }
 
-    // This function is called after the gallery loads to bind click events
+    /* ---- open lightbox (called after gallery builds) ---- */
     function bindLightbox() {
-      const containers = document.querySelectorAll(".image-container");
-      containers.forEach(container => {
+      document.querySelectorAll(".image-container").forEach(container => {
         container.onclick = function () {
           const type = this.getAttribute("data-type");
           modal.style.display = "block";
-          startGlitter();
+          startSparkles();
 
-          // Reset zoom/drag state
+          // Reset zoom / drag
           modalImg.classList.remove("zoomed", "dragging");
-          modalImg.style.transform = 'scale(1)';
+          modalImg.style.transform = "scale(1)";
           translateX = 0;
           translateY = 0;
 
           if (type === "video") {
-            // Show video in modal
-            const videoSrc = this.querySelector("video source")?.src || this.querySelector("video")?.src || "";
+            const src = this.querySelector("video source")?.src
+                     || this.querySelector("video")?.src || "";
             modalImg.style.display = "none";
             modalVideo.style.display = "block";
-            modalVideo.src = videoSrc;
+            modalVideo.src = src;
             modalVideo.play();
           } else {
-            // Show image in modal
-            const imgSrc = this.querySelector("img")?.src || "";
+            const src = this.querySelector("img")?.src || "";
             modalVideo.style.display = "none";
             modalVideo.pause();
             modalVideo.removeAttribute("src");
             modalImg.style.display = "block";
-            modalImg.src = imgSrc;
+            modalImg.src = src;
           }
         };
       });
     }
 
+    /* ---- close handlers ---- */
+    document.querySelector("#myModal .close").onclick = closeModal;
 
-    const span = document.getElementsByClassName("close")[0];
-    span.onclick = function () {
-      modal.style.display = "none";
-      modalVideo.pause();
-      modalVideo.removeAttribute("src");
-      stopGlitter();
-    }
-
-
-    window.addEventListener('click', (event) => {
-      if (event.target === modal) {
-        modal.style.display = "none";
-        modalVideo.pause();
-        modalVideo.removeAttribute("src");
-        stopGlitter();
-      }
+    window.addEventListener("click", (e) => {
+      if (e.target === modal) closeModal();
     });
 
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && modal.style.display === "block") closeModal();
+    });
 
-    modalImg.addEventListener('click', (e) => {
+    /* ---- click-to-zoom ---- */
+    modalImg.addEventListener("click", (e) => {
       e.stopPropagation();
       if (didDrag) return;
 
-
-      const isZoomed = modalImg.classList.contains('zoomed');
-      if (isZoomed) {
-        modalImg.classList.remove('zoomed');
-        modalImg.style.transform = 'scale(1)';
+      if (modalImg.classList.contains("zoomed")) {
+        modalImg.classList.remove("zoomed");
+        modalImg.style.transform = "scale(1)";
         translateX = 0;
         translateY = 0;
       } else {
-        modalImg.classList.add('zoomed');
+        modalImg.classList.add("zoomed");
         modalImg.style.transform = `scale(${zoomScale})`;
       }
     });
 
+    /* ---- drag (rAF-throttled for smooth 60fps) ---- */
+    function applyDrag() {
+      modalImg.style.transform =
+        `scale(${zoomScale}) translate(${translateX}px, ${translateY}px)`;
+      dragRaf = null;
+    }
 
-    modalImg.addEventListener('mousedown', (e) => {
-      if (!modalImg.classList.contains('zoomed')) return;
+    function onPointerDown(e) {
+      if (!modalImg.classList.contains("zoomed")) return;
       e.preventDefault();
       isDragging = true;
       didDrag = false;
-      modalImg.classList.add('dragging');
-      startX = e.clientX - translateX;
-      startY = e.clientY - translateY;
-    });
-
-
-    window.addEventListener('mousemove', (e) => {
-      if (!isDragging) return;
-      didDrag = true;
-      translateX = e.clientX - startX;
-      translateY = e.clientY - startY;
-      modalImg.style.transform = `scale(${zoomScale}) translate(${translateX}px, ${translateY}px)`;
-    });
-
-
-    window.addEventListener('mouseup', () => {
-      setTimeout(() => {
-        isDragging = false;
-        didDrag = false;
-      }, 0);
-      modalImg.classList.remove('dragging');
-    });
-
-
-    // Glitter particles
-    const glitterChars = ['✧', '⟡'];
-    const glitterColors = ['#FFFFFF', '#FFB8DC', '#FFE2F5', '#F0F8FF'];
-
-
-    function resizeCanvas() {
-      canvas.width = modal.clientWidth;
-      canvas.height = modal.clientHeight;
+      modalImg.classList.add("dragging");
+      const pt = e.touches ? e.touches[0] : e;
+      startX = pt.clientX - translateX;
+      startY = pt.clientY - translateY;
     }
 
+    function onPointerMove(e) {
+      if (!isDragging) return;
+      didDrag = true;
+      const pt = e.touches ? e.touches[0] : e;
+      translateX = pt.clientX - startX;
+      translateY = pt.clientY - startY;
+      if (!dragRaf) dragRaf = requestAnimationFrame(applyDrag);
+    }
 
-    function createParticles() {
-      particles = [];
-      const particleCount = 100;
-      for (let i = 0; i < particleCount; i++) {
-        particles.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          size: Math.random() * 10 + 20,
-          opacity: Math.random(),
-          opacityDirection: Math.random() > 0.5 ? 0.1 : -0.2,
-          speed: Math.random() * 0.02 + 0.01,
-          color: glitterColors[Math.floor(Math.random() * glitterColors.length)],
-          char: glitterChars[Math.floor(Math.random() * glitterChars.length)]
-        });
+    function onPointerUp() {
+      if (!isDragging) return;
+      setTimeout(() => { isDragging = false; didDrag = false; }, 0);
+      modalImg.classList.remove("dragging");
+    }
+
+    // Mouse events
+    modalImg.addEventListener("mousedown", onPointerDown);
+    window.addEventListener("mousemove", onPointerMove);
+    window.addEventListener("mouseup", onPointerUp);
+
+    // Touch events (mobile)
+    modalImg.addEventListener("touchstart", onPointerDown, { passive: false });
+    window.addEventListener("touchmove", onPointerMove, { passive: false });
+    window.addEventListener("touchend", onPointerUp);
+
+    /* ---- sparkles (pure CSS, no animation loop) ---- */
+    const sparkleChars = ["\u2727", "\u27E1", "\u2726"];  // ✧ ⟡ ✦
+    const sparkleColors = ["#FFFFFF", "#FFB8DC", "#FFE2F5", "#F0F8FF"];
+
+    function startSparkles() {
+      sparkleContainer.innerHTML = "";
+      for (let i = 0; i < 45; i++) {
+        const el = document.createElement("span");
+        el.className = "sparkle";
+        el.textContent = sparkleChars[Math.random() * sparkleChars.length | 0];
+        el.style.left   = Math.random() * 100 + "%";
+        el.style.top    = Math.random() * 100 + "%";
+        el.style.fontSize = (Math.random() * 14 + 14) + "px";
+        el.style.color  = sparkleColors[Math.random() * sparkleColors.length | 0];
+        el.style.setProperty("--sparkle-dur",   (Math.random() * 3 + 2).toFixed(1) + "s");
+        el.style.setProperty("--sparkle-delay", (Math.random() * 4).toFixed(1) + "s");
+        el.style.setProperty("--sparkle-peak",  (Math.random() * 0.4 + 0.3).toFixed(2));
+        sparkleContainer.appendChild(el);
       }
     }
 
-
-    function drawParticles() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      particles.forEach(p => {
-        p.opacity += p.speed * p.opacityDirection;
-        if (p.opacity > 1 || p.opacity < 0) {
-          p.opacityDirection *= -1;
-          p.opacity = Math.max(0, Math.min(1, p.opacity));
-        }
-        ctx.globalAlpha = p.opacity;
-        ctx.fillStyle = p.color;
-        ctx.font = `${p.size}px Fredoka`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(p.char, p.x, p.y);
-      });
-      ctx.globalAlpha = 1;
+    function stopSparkles() {
+      sparkleContainer.innerHTML = "";
     }
-
-
-    function animateGlitter() {
-      drawParticles();
-      animationFrameId = requestAnimationFrame(animateGlitter);
-    }
-
-
-    function startGlitter() {
-      resizeCanvas();
-      createParticles();
-      animateGlitter();
-    }
-
-
-    function stopGlitter() {
-      cancelAnimationFrame(animationFrameId);
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
-
-
-    window.addEventListener('resize', resizeCanvas);
   </script>
   <!-- 📜 SCRIPTS END 📜 -->
 
