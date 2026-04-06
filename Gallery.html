@@ -314,29 +314,32 @@ const branch = "main";
 
 const gallery = document.getElementById("gallery");
 
- function parseDateFromFilename(filename) {
+function parseDateFromFilename(filename) {
   const cleanName = filename.replace(/\.[^.]+$/, "");
 
   const patterns = [
-    /\[(\d{1,2})-(\d{1,2})-(\d{2,4})\]/,   // [3-5-21]
-    /\((\d{1,2})-(\d{1,2})-(\d{2,4})\)/,   // (3-5-21)
-    /(\d{1,2})-(\d{1,2})-(\d{2,4})/        // 3-5-21 anywhere
+    /\[(\d{1,2})-(\d{1,2})-(\d{2,4})\]/,   // [5-17-16]
+    /\((\d{1,2})-(\d{1,2})-(\d{2,4})\)/,   // (5-17-16)
+    /(\d{1,2})-(\d{1,2})-(\d{2,4})/        // 5-17-16 anywhere
   ];
 
   for (const pattern of patterns) {
     const match = cleanName.match(pattern);
     if (!match) continue;
 
+    // 👇 month, then day, then year (MM-DD-YY or MM-DD-YYYY)
     let [, month, day, year] = match;
 
     month = parseInt(month, 10);
-    day = parseInt(day, 10);
-    year = parseInt(year, 10);
+    day   = parseInt(day, 10);
+    year  = parseInt(year, 10);
 
+    // Turn 16 → 2016
     if (year < 100) year += 2000;
 
     const date = new Date(year, month - 1, day);
 
+    // validate the date we just built
     if (
       date.getFullYear() === year &&
       date.getMonth() === month - 1 &&
@@ -348,15 +351,25 @@ const gallery = document.getElementById("gallery");
 
   return null;
 }
-
+function cleanDisplayName(filename) {
+  return filename
+    .replace(/\.(png|jpe?g|gif|webp|mp4)$/i, "")
+    .replace(/\s*[\[\(]\d{1,2}-\d{1,2}-\d{2,4}[\]\)]\s*/g, "")
+    .replace(/\s+\d{1,2}-\d{1,2}-\d{2,4}$/g, "")
+    .trim();
+}
 async function loadGalleryFromGitHub() {
   try {
     const url = `https://api.github.com/repos/${owner}/${repo}/contents/${folderPath}?ref=${branch}`;
     const res = await fetch(url);
     const files = await res.json();
 
+    console.log("GitHub URL:", url);
+    console.log("GitHub status:", res.status);
+    console.log("GitHub response:", files);
+
     if (!Array.isArray(files)) {
-      gallery.innerHTML = `<p>GitHub API error: ${files.message || "Unknown error"}</p>`;
+      gallery.innerHTML = `<p style="color:black;">GitHub API error: ${files.message || "Unknown error"}</p>`;
       return;
     }
 
@@ -370,23 +383,33 @@ async function loadGalleryFromGitHub() {
         parsedDate: parseDateFromFilename(file.name)
       }))
       .sort((a, b) => {
-  if (a.parsedDate && b.parsedDate) {
-    return b.parsedDate - a.parsedDate; // newest first
-  }
+        if (a.parsedDate && b.parsedDate) return b.parsedDate - a.parsedDate;
+        if (a.parsedDate && !b.parsedDate) return -1;
+        if (!a.parsedDate && b.parsedDate) return 1;
+        return a.name.localeCompare(b.name, undefined, {
+          numeric: true,
+          sensitivity: "base"
+        });
+      });
 
-  if (a.parsedDate && !b.parsedDate) return -1;
-  if (!a.parsedDate && b.parsedDate) return 1;
+    console.table(
+      imageFiles.map(file => ({
+        name: file.name,
+        parsedDate: file.parsedDate
+          ? file.parsedDate.toISOString().split("T")[0]
+          : "NO DATE"
+      }))
+    );
 
-  return a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: "base" });
-});
+    if (imageFiles.length === 0) {
+      gallery.innerHTML = `<p style="color:black;">No matching image files found.</p>`;
+      return;
+    }
 
     gallery.innerHTML = "";
 
     imageFiles.forEach(file => {
-      const displayName = file.name
-        .replace(/\.(png|jpe?g|gif|webp)$/i, "")
-        .replace(/\[\d{1,2}-\d{1,2}-\d{2,4}\]/, "")
-        .trim();
+      const displayName = cleanDisplayName(file.name);
 
       const wrap = document.createElement("div");
       wrap.className = "column";
@@ -400,16 +423,11 @@ async function loadGalleryFromGitHub() {
 
       gallery.appendChild(wrap);
     });
-
-    if (imageFiles.length === 0) {
-      gallery.innerHTML = `<p>No images found in GitHub folder.</p>`;
-    }
   } catch (err) {
     console.error(err);
-    gallery.innerHTML = `<p>Failed to load gallery.</p>`;
+    gallery.innerHTML = `<p style="color:black;">Failed to load gallery.</p>`;
   }
-}
-
+} 
 loadGalleryFromGitHub();
 </script>
 

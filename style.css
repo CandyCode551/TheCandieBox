@@ -616,4 +616,90 @@ BUTTON STUFF START
   opacity: 0.55;                     /* lower overall opacity */
 }
 
+<style>
+  /* ========================
+     📷 GALLERY GRID
+     ======================== */
 
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0 4px;
+  }
+
+  /* Use CSS grid so items display left-to-right, top-to-bottom */
+  #gallery {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    padding: 0 4px;
+    align-items: start;
+  }
+
+  #gallery .column {
+    width: 100%;
+    margin: 0;
+  }
+
+  @media screen and (max-width: 800px) {
+    #gallery {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media screen and (max-width: 600px) {
+    #gallery {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .image-container {
+    position: relative;
+    margin-top: 8px;
+    overflow: hidden;
+    transition: transform 0.2s ease-in-out;
+  }
+
+  .image-container img,
+  .image-container video {
+    width: 100%;
+    display: block;
+    vertical-align: middle;
+  }
+
+  .image-container:hover {
+    transform: scale(1.05);
+    cursor: pointer;
+  }
+
+  .image-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(0,0,0,0.6);
+    color: #fff;
+    text-align: center;
+    padding: 8px 0;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    font-size: 0.875rem;
+  }
+
+  .image-container:hover .image-overlay {
+    opacity: 1;
+  }
+</style>
+
+<script>
+  function cleanDisplayName(filename) {
+    return filename
+      .replace(/\.(png|jpe?g|gif|webp|mp4)$/i, "")
+      .replace(/\s*[\[\(]\d{1,2}-\d{1,2}-\d{2,4}[\]\)]\s*/g, "")
+      .replace(/\s+\d{1,2}-\d{1,2}-\d{2,4}$/g, "")
+      .trim();
+  }
+
+  // inside your imageFiles.forEach(file => { ... }) block, use:
+  // const displayName = cleanDisplayName(file.name);
+</script>
