@@ -3,7 +3,7 @@
 <script>
 const owner = "CandyCode551";
 const repo = "TheCandieBox";
-const folderPath = "img/Gallery";
+const folderPath = "img/gallery";
 const branch = "main";
 
 const gallery = document.getElementById("gallery");
@@ -17,48 +17,70 @@ function parseDateFromFilename(filename) {
   month = parseInt(month, 10) - 1;
   year = parseInt(year, 10);
 
-  if (year < 100) {
-    year += 2000; // 26 -> 2026
-  }
+  if (year < 100) year += 2000;
 
   return new Date(year, month, day);
 }
 
 async function loadGalleryFromGitHub() {
-  const url = `https://api.github.com/repos/${owner}/${repo}/contents/${folderPath}?ref=${branch}`;
-  const res = await fetch(url);
-  const files = await res.json();
+  try {
+    const url = `https://api.github.com/repos/${owner}/${repo}/contents/${folderPath}?ref=${branch}`;
+    const res = await fetch(url);
+    const files = await res.json();
 
-  const imageFiles = files
-    .filter(file =>
-      file.type === "file" &&
-      /\.(png|jpe?g|gif|webp)$/i.test(file.name)
-    )
-    .map(file => ({
-      ...file,
-      parsedDate: parseDateFromFilename(file.name)
-    }))
-    .filter(file => file.parsedDate) // only keep files with [d-m-y]
-    .sort((a, b) => b.parsedDate - a.parsedDate);
+    console.log("GitHub response:", files);
 
-  imageFiles.forEach(file => {
-    const displayName = file.name
-      .replace(/\.(png|jpe?g|gif|webp)$/i, "")
-      .replace(/\[\d{1,2}-\d{1,2}-\d{2,4}\]/, "")
-      .trim();
+    if (!Array.isArray(files)) {
+      gallery.innerHTML = `<p>GitHub API error: ${files.message || "Unknown error"}</p>`;
+      return;
+    }
 
-    const wrap = document.createElement("div");
-    wrap.className = "column";
+    const imageFiles = files
+      .filter(file =>
+        file.type === "file" &&
+        /\.(png|jpe?g|gif|webp)$/i.test(file.name)
+      )
+      .map(file => ({
+        ...file,
+        parsedDate: parseDateFromFilename(file.name)
+      }))
+      .sort((a, b) => {
+        if (!a.parsedDate && !b.parsedDate) return 0;
+        if (!a.parsedDate) return 1;
+        if (!b.parsedDate) return -1;
+        return b.parsedDate - a.parsedDate;
+      });
 
-    wrap.innerHTML = `
-      <div class="image-container">
-        <img src="${file.download_url}" alt="${displayName}" loading="lazy">
-        <div class="image-overlay">${displayName}</div>
-      </div>
-    `;
+    console.log("Filtered image files:", imageFiles);
 
-    gallery.appendChild(wrap);
-  });
+    gallery.innerHTML = "";
+
+    imageFiles.forEach(file => {
+      const displayName = file.name
+        .replace(/\.(png|jpe?g|gif|webp)$/i, "")
+        .replace(/\[\d{1,2}-\d{1,2}-\d{2,4}\]/, "")
+        .trim();
+
+      const wrap = document.createElement("div");
+      wrap.className = "column";
+
+      wrap.innerHTML = `
+        <div class="image-container">
+          <img src="${file.download_url}" alt="${displayName}" loading="lazy">
+          <div class="image-overlay">${displayName || file.name}</div>
+        </div>
+      `;
+
+      gallery.appendChild(wrap);
+    });
+
+    if (imageFiles.length === 0) {
+      gallery.innerHTML = `<p>No images found in GitHub folder.</p>`;
+    }
+  } catch (err) {
+    console.error(err);
+    gallery.innerHTML = `<p>Failed to load gallery.</p>`;
+  }
 }
 
 loadGalleryFromGitHub();
