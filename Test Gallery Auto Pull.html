@@ -1,0 +1,65 @@
+<div id="gallery" class="row"></div>
+
+<script>
+const owner = "CandyCode551";
+const repo = "TheCandieBox";
+const folderPath = "img/Gallery";
+const branch = "main";
+
+const gallery = document.getElementById("gallery");
+
+function parseDateFromFilename(filename) {
+  const match = filename.match(/\[(\d{1,2})-(\d{1,2})-(\d{2,4})\]/);
+  if (!match) return null;
+
+  let [, day, month, year] = match;
+  day = parseInt(day, 10);
+  month = parseInt(month, 10) - 1;
+  year = parseInt(year, 10);
+
+  if (year < 100) {
+    year += 2000; // 26 -> 2026
+  }
+
+  return new Date(year, month, day);
+}
+
+async function loadGalleryFromGitHub() {
+  const url = `https://api.github.com/repos/${owner}/${repo}/contents/${folderPath}?ref=${branch}`;
+  const res = await fetch(url);
+  const files = await res.json();
+
+  const imageFiles = files
+    .filter(file =>
+      file.type === "file" &&
+      /\.(png|jpe?g|gif|webp)$/i.test(file.name)
+    )
+    .map(file => ({
+      ...file,
+      parsedDate: parseDateFromFilename(file.name)
+    }))
+    .filter(file => file.parsedDate) // only keep files with [d-m-y]
+    .sort((a, b) => a.parsedDate - b.parsedDate); // oldest -> newest
+
+  imageFiles.forEach(file => {
+    const displayName = file.name
+      .replace(/\.(png|jpe?g|gif|webp)$/i, "")
+      .replace(/\[\d{1,2}-\d{1,2}-\d{2,4}\]/, "")
+      .trim();
+
+    const wrap = document.createElement("div");
+    wrap.className = "column";
+
+    wrap.innerHTML = `
+      <div class="image-container">
+        <img src="${file.download_url}" alt="${displayName}" loading="lazy">
+        <div class="image-overlay">${displayName}</div>
+      </div>
+    `;
+
+    gallery.appendChild(wrap);
+  });
+}
+
+loadGalleryFromGitHub();
+</script>
