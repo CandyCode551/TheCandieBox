@@ -14,25 +14,39 @@
     /* ========================
        📷 GALLERY GRID
        ======================== */
-    .row {
+    /* Keep .row for other stuff like videos if needed */
+.row {
   display: flex;
   flex-wrap: wrap;
   padding: 0 4px;
 }
 
-.column {
-  flex: 33.3333%;
-  max-width: 33.3333%;
+/* Masonry image gallery */
+#gallery {
+  column-count: 3;
+  column-gap: 8px;
   padding: 0 4px;
 }
 
-/* On smaller screens, stack better */
+#gallery .column {
+  display: inline-block;
+  width: 100%;
+  max-width: 100%;
+  padding: 0;
+  margin: 0 0 8px;
+  break-inside: avoid;
+}
+
 @media screen and (max-width: 800px) {
-  .column { flex: 50%; max-width: 50%; }
+  #gallery {
+    column-count: 2;
+  }
 }
 
 @media screen and (max-width: 600px) {
-  .column { flex: 100%; max-width: 100%; }
+  #gallery {
+    column-count: 1;
+  }
 }
 
     .image-container {
@@ -287,7 +301,7 @@
     <div class="row">
   <div class="column"><!-- empty left padding column --></div>
 
-  <div id="gallery" class="row"></div>
+  <div id="gallery"></div>
 
   <div class="column"><!-- empty right padding column --></div>
 </div>
