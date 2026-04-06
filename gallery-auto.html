@@ -7,6 +7,7 @@
   <title>The Candie Box | Gallery</title>
   <link rel="icon" type="image/png" href="img/Gif/Candie_Box/WAEGSsg.png">
 
+
   <!-- 🎨 Styles -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="style.css">
@@ -21,12 +22,14 @@
   padding: 0 4px;
 }
 
+
 /* Masonry image gallery */
 #gallery {
   column-count: 3;
   column-gap: 8px;
   padding: 0 4px;
 }
+
 
 #gallery .column {
   display: inline-block;
@@ -37,17 +40,20 @@
   break-inside: avoid;
 }
 
+
 @media screen and (max-width: 800px) {
   #gallery {
     column-count: 2;
   }
 }
 
+
 @media screen and (max-width: 600px) {
   #gallery {
     column-count: 1;
   }
 }
+
 
     .image-container {
       position: relative;
@@ -56,16 +62,20 @@
       transition: transform 0.2s ease-in-out;
     }
 
-    .image-container img {
+
+    .image-container img,
+    .image-container video {
       width: 100%;
       vertical-align: middle;
       display: block;
     }
 
+
     .image-container:hover {
       transform: scale(1.05);
       cursor: pointer;
     }
+
 
     .image-overlay {
       position: absolute;
@@ -81,9 +91,11 @@
       font-size: 0.875rem;
     }
 
+
     .image-container:hover .image-overlay {
       opacity: 1;
     }
+
 
     /* ========================
        🔍 MODAL / LIGHTBOX + GLITTER
@@ -101,7 +113,9 @@
       background-color: rgba(255,255,255,0.9);
     }
 
-    .modal-content {
+
+    .modal-content,
+    .modal-video {
       margin: auto;
       display: block;
       max-width: 80%;
@@ -112,19 +126,27 @@
       cursor: zoom-in;
     }
 
+    .modal-video {
+      cursor: default;
+    }
+
+
     .modal-content.zoomed {
       cursor: grab;
       max-width: none;
     }
 
+
     .modal-content.dragging {
       cursor: grabbing;
     }
+
 
     @keyframes zoom-in {
       from { transform: scale(0.1); }
       to   { transform: scale(1); }
     }
+
 
     .close {
       position: absolute;
@@ -137,12 +159,14 @@
       z-index: 1;
     }
 
+
     .close:hover,
     .close:focus {
       color: #ff69b4;
       text-decoration: none;
       cursor: pointer;
     }
+
 
     #glitter-canvas {
       position: absolute;
@@ -151,6 +175,7 @@
       z-index: 0;
       pointer-events: none;
     }
+
 
     /* ========================
        🔙 BACK BUTTON
@@ -176,18 +201,22 @@
       transition: all 0.3s ease;
     }
 
+
     .back-button:hover {
       transform: scale(1.1);
       background-color: var(--color-accent-pastelpink);
       color: var(--color-primary-bg);
     }
 
+
     /* Ensure fixed things under loader */
     header, #floating-image, .fixed { z-index: 10; }
     </style>
 </head>
 
+
 <body class="antialiased">
+
 
   <!-- 🎀 FLOATING RIBBON START 🎀 -->
   <div class="fixed top-9 left-1/2 -translate-x-1/2 z-50 hidden md:block">
@@ -204,6 +233,7 @@
   </div>
   <!-- 🎀 FLOATING RIBBON END 🎀 -->
 
+
   <!-- 🎀 FLOATING LACE HEADER START 🎀 -->
   <div class="fixed top-20 left-0 right-0 z-10 hidden md:block w-full">
     <div class="w-full mx-auto">
@@ -218,6 +248,7 @@
     </div>
   </div>
   <!-- 🎀 FLOATING LACE HEADER END 🎀 -->
+
 
   <!-- 💖 TOP SOCIAL BAR START 💖 -->
   <div id="top-social-bar"
@@ -252,6 +283,7 @@
           The Candie Box <span class="text-xl">ʚ ♡ ɞ</span>
         </a>
       </h1>
+
 
       <nav class="hidden sm:block">
         <a href="./Gallery.html"
@@ -297,14 +329,18 @@
           <div class="mt-12">
             <section class="mt-9"></section>
 
-            <!-- 📷 IMAGE GRID -->
+
+            <!-- 📷 IMAGE + VIDEO GRID -->
     <div class="row">
   <div class="column"><!-- empty left padding column --></div>
 
+
   <div id="gallery"></div>
+
 
   <div class="column"><!-- empty right padding column --></div>
 </div>
+
 
 <script>
 const owner = "CandyCode551";
@@ -312,10 +348,13 @@ const repo = "TheCandieBox";
 const folderPath = "img/gallery";
 const branch = "main";
 
+
 const gallery = document.getElementById("gallery");
+
 
 function parseDateFromFilename(filename) {
   const cleanName = filename.replace(/\.[^.]+$/, "");
+
 
   const patterns = [
     /\[(\d{1,2})-(\d{1,2})-(\d{2,4})\]/,   // [5-17-16]
@@ -323,21 +362,27 @@ function parseDateFromFilename(filename) {
     /(\d{1,2})-(\d{1,2})-(\d{2,4})/        // 5-17-16 anywhere
   ];
 
+
   for (const pattern of patterns) {
     const match = cleanName.match(pattern);
     if (!match) continue;
 
+
     // 👇 month, then day, then year (MM-DD-YY or MM-DD-YYYY)
     let [, month, day, year] = match;
+
 
     month = parseInt(month, 10);
     day   = parseInt(day, 10);
     year  = parseInt(year, 10);
 
+
     // Turn 16 → 2016
     if (year < 100) year += 2000;
 
+
     const date = new Date(year, month - 1, day);
+
 
     // validate the date we just built
     if (
@@ -349,89 +394,129 @@ function parseDateFromFilename(filename) {
     }
   }
 
+
   return null;
 }
-
+function cleanDisplayName(filename) {
+  return filename
+    .replace(/\.(png|jpe?g|gif|webp|mp4)$/i, "")
+    .replace(/\s*[\[\(]\d{1,2}-\d{1,2}-\d{2,4}[\]\)]\s*/g, "")
+    .replace(/\s+\d{1,2}-\d{1,2}-\d{2,4}$/g, "")
+    .trim();
+}
 async function loadGalleryFromGitHub() {
   try {
     const url = `https://api.github.com/repos/${owner}/${repo}/contents/${folderPath}?ref=${branch}`;
     const res = await fetch(url);
     const files = await res.json();
 
+
+    console.log("GitHub URL:", url);
+    console.log("GitHub status:", res.status);
+    console.log("GitHub response:", files);
+
+
     if (!Array.isArray(files)) {
-      console.table(
-  imageFiles.map(file => ({
-    name: file.name,
-    parsedDate: file.parsedDate ? file.parsedDate.toISOString().split("T")[0] : "NO DATE"
-  }))
-);
-      gallery.innerHTML = `<p>GitHub API error: ${files.message || "Unknown error"}</p>`;
+      gallery.innerHTML = `<p style="color:black;">GitHub API error: ${files.message || "Unknown error"}</p>`;
       return;
     }
 
-    const imageFiles = files
+
+    const mediaFiles = files
       .filter(file =>
         file.type === "file" &&
-        /\.(png|jpe?g|gif|webp)$/i.test(file.name)
+        /\.(png|jpe?g|gif|webp|mp4)$/i.test(file.name)
       )
       .map(file => ({
         ...file,
-        parsedDate: parseDateFromFilename(file.name)
+        parsedDate: parseDateFromFilename(file.name),
+        isVideo: /\.mp4$/i.test(file.name)
       }))
       .sort((a, b) => {
-  if (a.parsedDate && b.parsedDate) {
-    return b.parsedDate - a.parsedDate; // newest first
-  }
-  if (a.parsedDate && !b.parsedDate) return -1;
-  if (!a.parsedDate && b.parsedDate) return 1;
-  return a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: "base" });
-});
+        if (a.parsedDate && b.parsedDate) return b.parsedDate - a.parsedDate;
+        if (a.parsedDate && !b.parsedDate) return -1;
+        if (!a.parsedDate && b.parsedDate) return 1;
+        return a.name.localeCompare(b.name, undefined, {
+          numeric: true,
+          sensitivity: "base"
+        });
+      });
+
+
+    console.table(
+      mediaFiles.map(file => ({
+        name: file.name,
+        parsedDate: file.parsedDate
+          ? file.parsedDate.toISOString().split("T")[0]
+          : "NO DATE",
+        type: file.isVideo ? "VIDEO" : "IMAGE"
+      }))
+    );
+
+
+    if (mediaFiles.length === 0) {
+      gallery.innerHTML = `<p style="color:black;">No matching files found.</p>`;
+      return;
+    }
+
 
     gallery.innerHTML = "";
 
-    imageFiles.forEach(file => {
-      const displayName = file.name
-        .replace(/\.(png|jpe?g|gif|webp)$/i, "")
-        .replace(/\[\d{1,2}-\d{1,2}-\d{2,4}\]/, "")
-        .trim();
+
+    mediaFiles.forEach(file => {
+      const displayName = cleanDisplayName(file.name);
+
 
       const wrap = document.createElement("div");
       wrap.className = "column";
 
-      wrap.innerHTML = `
-        <div class="image-container">
-          <img src="${file.download_url}" alt="${displayName}" loading="lazy">
-          <div class="image-overlay">${displayName || file.name}</div>
-        </div>
-      `;
+
+      if (file.isVideo) {
+        wrap.innerHTML = `
+          <div class="image-container" data-type="video">
+            <video
+              autoplay
+              loop
+              muted
+              playsinline
+              preload="metadata"
+              disablepictureinpicture
+              style="width:100%; display:block;"
+            >
+              <source src="${file.download_url}" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+            <div class="image-overlay">${displayName || file.name}</div>
+          </div>
+        `;
+      } else {
+        wrap.innerHTML = `
+          <div class="image-container" data-type="image">
+            <img src="${file.download_url}" alt="${displayName}" loading="lazy">
+            <div class="image-overlay">${displayName || file.name}</div>
+          </div>
+        `;
+      }
+
 
       gallery.appendChild(wrap);
     });
 
-    if (imageFiles.length === 0) {
-      gallery.innerHTML = `<p>No images found in GitHub folder.</p>`;
-    }
+    // Re-bind lightbox click handlers after gallery is built
+    bindLightbox();
+
   } catch (err) {
     console.error(err);
-    gallery.innerHTML = `<p>Failed to load gallery.</p>`;
+    gallery.innerHTML = `<p style="color:black;">Failed to load gallery.</p>`;
   }
-}
-
+} 
 loadGalleryFromGitHub();
 </script>
 
-    <section class="mt-9"></section>
-    <!-- 📷 IMAGE GRID END-->
 
-            <!-- 🎬 VIDEO GALLERY SECTION START 🎬 -->
-    <section id="video-gallery" class="mt-12">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div id="video-grid" class="row">
-          <!-- JS will insert video columns here -->
-        </div>
-      </div>
-    </section>
-    <!-- 🎬 VIDEO GALLERY SECTION END 🎬 -->
+    <section class="mt-9"></section>
+    <!-- 📷 IMAGE + VIDEO GRID END-->
+
 
           </div>
         </div>
@@ -441,6 +526,7 @@ loadGalleryFromGitHub();
   <!-- 👩‍🎨 WHITE SQUARE END 👩‍🎨 -->
 </main>
 
+
   
   <!-- 🦶 FOOTER START 🦶 -->
   <footer class="bg-title-pink text-white rounded-t-lg">
@@ -448,6 +534,7 @@ loadGalleryFromGitHub();
       <p>&copy; <span id="year"></span> The Candie Box™. All Rights Reserved. | Cute Anime Commissions & Design</p>
     </div>
   </footer>
+
 
   <!-- 🖼️ FIXED FOOTER IMAGE START 🖼️ -->
   <div class="fixed bottom-0 left-0 right-0 hidden md:block">
@@ -465,6 +552,7 @@ loadGalleryFromGitHub();
   </div>
   <!-- 🖼️ FIXED FOOTER IMAGE END 🖼️ -->
   <!-- 🦶 FOOTER END 🦶 -->
+
 
 
 
@@ -486,6 +574,13 @@ loadGalleryFromGitHub();
 </button>
 
 
+  <!-- 🔍 MODAL / LIGHTBOX -->
+  <div id="myModal" class="modal">
+    <span class="close">&times;</span>
+    <canvas id="glitter-canvas"></canvas>
+    <img class="modal-content" id="modal-img" alt="" style="display:none;">
+    <video class="modal-video" id="modal-video" autoplay loop muted playsinline style="display:none;"></video>
+  </div>
 
 
   <!-- 📜 SCRIPTS START 📜 -->
@@ -493,10 +588,12 @@ loadGalleryFromGitHub();
     // 🗓️ Current year in footer
     document.getElementById('year').textContent = new Date().getFullYear();
 
+
     // 💖 Adjust layout for top social bar
     (function () {
       const bar = document.getElementById('top-social-bar');
       const header = document.querySelector('header');
+
 
       function adjustLayout() {
         if (!bar) return;
@@ -504,6 +601,7 @@ loadGalleryFromGitHub();
         document.body.style.paddingTop = h + 'px';
         if (header) header.style.top = h + 'px';
       }
+
 
       window.addEventListener('load', adjustLayout);
       window.addEventListener('resize', adjustLayout);
@@ -513,25 +611,31 @@ loadGalleryFromGitHub();
       });
     })();
 
+
     // ✨ Slideshow logic (unchanged)
     let slideIndex = 0;
     let slideInterval;
+
 
     function showSlides() {
       let i;
       const slides = document.getElementsByClassName("mySlides");
       const dots = document.getElementsByClassName("dot");
 
+
       for (i = 0; i < slides.length; i++) {
         slides[i].style.display = "none";
       }
 
+
       slideIndex++;
       if (slideIndex > slides.length) { slideIndex = 1; }
+
 
       for (i = 0; i < dots.length; i++) {
         dots[i].className = dots[i].className.replace(" active", "");
       }
+
 
       if (slides[slideIndex - 1]) {
         slides[slideIndex - 1].style.display = "block";
@@ -539,17 +643,20 @@ loadGalleryFromGitHub();
       }
     }
 
+
     function plusSlides(n) {
       clearInterval(slideInterval);
       showSlidesManual(slideIndex += n);
       slideInterval = setInterval(showSlides, 4000);
     }
 
+
     function currentSlide(n) {
       clearInterval(slideInterval);
       showSlidesManual(slideIndex = n);
       slideInterval = setInterval(showSlides, 4000);
     }
+
 
     function showSlidesManual(n) {
       let i;
@@ -558,6 +665,7 @@ loadGalleryFromGitHub();
       if (n > slides.length) { slideIndex = 1; }
       if (n < 1) { slideIndex = slides.length; }
 
+
       for (i = 0; i < slides.length; i++) {
         slides[i].style.display = "none";
       }
@@ -565,30 +673,36 @@ loadGalleryFromGitHub();
         dots[i].className = dots[i].className.replace(" active", "");
       }
 
+
       if (slides[slideIndex - 1]) {
         slides[slideIndex - 1].style.display = "block";
         dots[slideIndex - 1].className += " active";
       }
     }
 
+
     document.addEventListener('DOMContentLoaded', () => {
       showSlides();
       slideInterval = setInterval(showSlides, 4000);
     });
 
+
     // 💕 Heart trail + click effect (unchanged)
     let trailCounter = 0;
     const HEART_SPAWN_FREQUENCY = 12;
+
 
     function createTrailElement(x, y, className, content, duration) {
       const element = document.createElement('span');
       element.textContent = content;
       element.className = 'trail-element ' + className;
 
+
       const dx = (Math.random() - 0.5) * 40;
       const dy = -(Math.random() * 80 + 100);
       const rotStart = (Math.random() * 90) - 45;
       const rotEnd = rotStart + (Math.random() > 0.5 ? 90 : -90);
+
 
       element.style.left = `${x}px`;
       element.style.top = `${y}px`;
@@ -598,20 +712,25 @@ loadGalleryFromGitHub();
       element.style.setProperty('--rot-start', `${rotStart}deg`);
       element.style.setProperty('--rot-end', `${rotEnd}deg`);
 
+
       document.body.appendChild(element);
+
 
       setTimeout(() => element.remove(), duration * 1000);
     }
+
 
     document.addEventListener('mousemove', (e) => {
       trailCounter++;
       const x = e.clientX;
       const y = e.clientY;
 
+
       if (trailCounter % HEART_SPAWN_FREQUENCY === 0) {
         createTrailElement(x, y, 'heart-trail', '✧', 3.5);
       }
     });
+
 
     document.addEventListener('click', (e) => {
       const clickHeart = document.createElement('span');
@@ -623,9 +742,11 @@ loadGalleryFromGitHub();
       setTimeout(() => clickHeart.remove(), 600);
     });
 
+
     // 🔝 Back to top + header/footer animations
     const backToTopButton = document.getElementById("back-to-top-btn");
     const scrollThreshold = 200;
+
 
     window.addEventListener('scroll', () => {
       const headerContainer = document.getElementById('header-container');
@@ -634,12 +755,15 @@ loadGalleryFromGitHub();
       const laceImg = document.getElementById('header-lace');
       const backbtn = document.getElementById('backbtn');
 
+
       const scrollY = window.scrollY || document.documentElement.scrollTop;
       const viewportH = window.innerHeight;
       const docH = document.documentElement.scrollHeight;
 
+
       const fromTop = scrollY > 50;
       const nearBottom = scrollY + viewportH > docH - 50;
+
 
       // shrink header + animate lace/footer
       if (fromTop && !nearBottom) {
@@ -647,6 +771,7 @@ loadGalleryFromGitHub();
         headerContainer.classList.add('py-1');
         headerTitle.classList.remove('text-3xl');
         headerTitle.classList.add('text-2xl');
+
 
         if (laceImg) {
           laceImg.style.opacity = "0.9";
@@ -666,6 +791,7 @@ loadGalleryFromGitHub();
         headerTitle.classList.add('text-3xl');
         headerTitle.classList.remove('text-2xl');
 
+
         if (laceImg) {
           laceImg.style.opacity = "1";
           laceImg.style.transform = "translateY(0)";
@@ -679,6 +805,7 @@ loadGalleryFromGitHub();
           backbtn.style.transform = "translateY(0)";
         }
       }
+
 
       // back‑to‑top button
       if (scrollY > scrollThreshold) {
@@ -696,14 +823,17 @@ loadGalleryFromGitHub();
       }
     });
 
+
     backToTopButton.addEventListener("click", () => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   </script>
 
+
   <script>
   document.addEventListener('DOMContentLoaded', function () {
     const birthDate = new Date(2003, 5, 17); // May 17, 2003
+
 
     function getAge(dob) {
       const today = new Date();
@@ -714,6 +844,7 @@ loadGalleryFromGitHub();
       }
       return age;
     }
+
 
     const ageSpan = document.getElementById('age');
     if (ageSpan) {
@@ -727,130 +858,124 @@ loadGalleryFromGitHub();
     const btn = document.getElementById('magic-btn');
     if (!btn) return;
 
+
     function handleMove(e) {
       const rect = btn.getBoundingClientRect();
       const rawX = e.clientX - rect.left;
 
+
       // offset sheen 20px to the left of the cursor
       const sheenX = rawX - 20;
+
 
       // clamp inside button so it doesn't wander too far
       const clampedX = Math.max(0, Math.min(rect.width, sheenX));
 
+
       // -0.5 to 0.5 for tilt
       const t = (rawX / rect.width) - 0.5;
 
+
       btn.style.setProperty('--x', clampedX);
+
 
       const rotateY = t * 16;
       btn.style.transform =
         `translateY(-4px) scale(1.04) rotateY(${rotateY}deg)`;
     }
 
+
     function handleLeave() {
       btn.style.transform = '';
       btn.style.removeProperty('--x');
     }
+
 
     btn.addEventListener('mousemove', handleMove);
     btn.addEventListener('mouseleave', handleLeave);
   })();
 </script>
 
-<script>
-      const videoFiles = [
-        "babyvid.mp4",
-      ];
 
-      const videoGrid = document.getElementById("video-grid");
-
-      videoFiles.forEach(name => {
-        const wrap = document.createElement("div");
-        wrap.className = "column";
-
-        wrap.innerHTML = `
-          <div class="image-container">
-            <video
-              autoplay
-              loop
-              muted
-              playsinline
-              class="w-full h-full object-cover"
-            >
-              <source src="img/gallery/${name}" type="video/mp4">
-              Your browser does not support the video tag.
-            </video>
-          </div>
-        `;
-
-        videoGrid.appendChild(wrap);
-      });
-    </script>
-         
-      </div>
-    </div>
-  </div>
-</div>
-
-    </section>
-
-<!-- 👩‍🎨 WHITE SQUAARE END👩‍🎨 -->
-    
-  </main>
-
-  <!-- 🔍 MODAL / LIGHTBOX -->
-  <div id="myModal" class="modal">
-    <span class="close">&times;</span>
-    <canvas id="glitter-canvas"></canvas>
-    <img class="modal-content" id="modal-img" alt="">
-  </div>
-
-  <!-- 📜 SCRIPTS -->
+  <!-- 📜 LIGHTBOX / MODAL SCRIPT -->
   <script>
     const modal = document.getElementById("myModal");
     const modalImg = document.getElementById("modal-img");
-    const images = document.querySelectorAll(".image-container");
+    const modalVideo = document.getElementById("modal-video");
     const canvas = document.getElementById('glitter-canvas');
     const ctx = canvas.getContext('2d');
     let particles = [];
     let animationFrameId;
+
 
     let isDragging = false;
     let didDrag = false;
     let startX, startY;
     let translateX = 0, translateY = 0;
 
+
     const zoomScale = 1.75;
 
-    images.forEach(container => {
-      container.onclick = function () {
-        modal.style.display = "block";
-        modalImg.src = this.querySelector('img')?.src || this.querySelector('video source')?.src || "";
-        startGlitter();
 
-        modalImg.classList.remove("zoomed", "dragging");
-        modalImg.style.transform = 'scale(1)';
-        translateX = 0;
-        translateY = 0;
-      }
-    });
+    // This function is called after the gallery loads to bind click events
+    function bindLightbox() {
+      const containers = document.querySelectorAll(".image-container");
+      containers.forEach(container => {
+        container.onclick = function () {
+          const type = this.getAttribute("data-type");
+          modal.style.display = "block";
+          startGlitter();
+
+          // Reset zoom/drag state
+          modalImg.classList.remove("zoomed", "dragging");
+          modalImg.style.transform = 'scale(1)';
+          translateX = 0;
+          translateY = 0;
+
+          if (type === "video") {
+            // Show video in modal
+            const videoSrc = this.querySelector("video source")?.src || this.querySelector("video")?.src || "";
+            modalImg.style.display = "none";
+            modalVideo.style.display = "block";
+            modalVideo.src = videoSrc;
+            modalVideo.play();
+          } else {
+            // Show image in modal
+            const imgSrc = this.querySelector("img")?.src || "";
+            modalVideo.style.display = "none";
+            modalVideo.pause();
+            modalVideo.removeAttribute("src");
+            modalImg.style.display = "block";
+            modalImg.src = imgSrc;
+          }
+        };
+      });
+    }
+
 
     const span = document.getElementsByClassName("close")[0];
     span.onclick = function () {
       modal.style.display = "none";
+      modalVideo.pause();
+      modalVideo.removeAttribute("src");
       stopGlitter();
     }
+
 
     window.addEventListener('click', (event) => {
       if (event.target === modal) {
         modal.style.display = "none";
+        modalVideo.pause();
+        modalVideo.removeAttribute("src");
         stopGlitter();
       }
     });
 
+
     modalImg.addEventListener('click', (e) => {
       e.stopPropagation();
       if (didDrag) return;
+
 
       const isZoomed = modalImg.classList.contains('zoomed');
       if (isZoomed) {
@@ -864,6 +989,7 @@ loadGalleryFromGitHub();
       }
     });
 
+
     modalImg.addEventListener('mousedown', (e) => {
       if (!modalImg.classList.contains('zoomed')) return;
       e.preventDefault();
@@ -874,6 +1000,7 @@ loadGalleryFromGitHub();
       startY = e.clientY - translateY;
     });
 
+
     window.addEventListener('mousemove', (e) => {
       if (!isDragging) return;
       didDrag = true;
@@ -881,6 +1008,7 @@ loadGalleryFromGitHub();
       translateY = e.clientY - startY;
       modalImg.style.transform = `scale(${zoomScale}) translate(${translateX}px, ${translateY}px)`;
     });
+
 
     window.addEventListener('mouseup', () => {
       setTimeout(() => {
@@ -890,59 +1018,17 @@ loadGalleryFromGitHub();
       modalImg.classList.remove('dragging');
     });
 
-    let trailCounter = 0;
-    const HEART_SPAWN_FREQUENCY = 12;
 
-    function createTrailElement(x, y, className, content, duration) {
-      const element = document.createElement('span');
-      element.textContent = content;
-      element.className = 'trail-element ' + className;
-
-      const dx = (Math.random() - 0.5) * 40;
-      const dy = -(Math.random() * 80 + 100);
-      const rotStart = (Math.random() * 90) - 45;
-      const rotEnd = rotStart + (Math.random() > 0.5 ? 90 : -90);
-
-      element.style.left = `${x}px`;
-      element.style.top = `${y}px`;
-      element.style.animationDuration = `${duration}s`;
-      element.style.setProperty('--dx', `${dx}px`);
-      element.style.setProperty('--dy', `${dy}px`);
-      element.style.setProperty('--rot-start', `${rotStart}deg`);
-      element.style.setProperty('--rot-end', `${rotEnd}deg`);
-
-      document.body.appendChild(element);
-      setTimeout(() => element.remove(), duration * 1000);
-    }
-
-    document.addEventListener('mousemove', (e) => {
-      trailCounter++;
-      const x = e.clientX;
-      const y = e.clientY;
-      if (trailCounter % HEART_SPAWN_FREQUENCY === 0) {
-        createTrailElement(x, y, 'heart-trail', '♡', 3.5);
-      }
-    });
-
-    document.addEventListener('click', (e) => {
-      if (e.target.closest('a, button, .image-container, .modal-content, .close')) return;
-
-      const clickHeart = document.createElement('span');
-      clickHeart.textContent = '♡';
-      clickHeart.className = 'trail-element click-heart';
-      clickHeart.style.left = `${e.clientX - 25}px`;
-      clickHeart.style.top = `${e.clientY - 25}px`;
-      document.body.appendChild(clickHeart);
-      setTimeout(() => clickHeart.remove(), 600);
-    });
-
+    // Glitter particles
     const glitterChars = ['✧', '⟡'];
     const glitterColors = ['#FFFFFF', '#FFB8DC', '#FFE2F5', '#F0F8FF'];
+
 
     function resizeCanvas() {
       canvas.width = modal.clientWidth;
       canvas.height = modal.clientHeight;
     }
+
 
     function createParticles() {
       particles = [];
@@ -960,6 +1046,7 @@ loadGalleryFromGitHub();
         });
       }
     }
+
 
     function drawParticles() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -979,10 +1066,12 @@ loadGalleryFromGitHub();
       ctx.globalAlpha = 1;
     }
 
+
     function animateGlitter() {
       drawParticles();
       animationFrameId = requestAnimationFrame(animateGlitter);
     }
+
 
     function startGlitter() {
       resizeCanvas();
@@ -990,14 +1079,17 @@ loadGalleryFromGitHub();
       animateGlitter();
     }
 
+
     function stopGlitter() {
       cancelAnimationFrame(animationFrameId);
       ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
 
+
     window.addEventListener('resize', resizeCanvas);
   </script>
   <!-- 📜 SCRIPTS END 📜 -->
+
 
 </body>
 </html>
