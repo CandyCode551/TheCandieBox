@@ -114,10 +114,6 @@
       will-change: transform;
     }
 
-    .modal-video {
-      cursor: default;
-    }
-
 
     .modal-content.zoomed {
       cursor: grab;
@@ -136,23 +132,51 @@
     }
 
 
-    .close {
+    /* Modal top-bar buttons (close + download) */
+    .modal-btn-bar {
       position: absolute;
       top: 15px;
-      right: 35px;
-      color: #333;
-      font-size: 40px;
-      font-weight: bold;
-      transition: 0.3s;
-      z-index: 1;
+      right: 20px;
+      z-index: 2;
+      display: flex;
+      gap: 8px;
+      align-items: center;
     }
 
-
-    .close:hover,
-    .close:focus {
-      color: #ff69b4;
-      text-decoration: none;
+    .modal-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 2px solid #faa1c9;
+      background: rgba(255, 255, 255, 0.9);
+      color: #555;
+      font-size: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       cursor: pointer;
+      transition: all 0.25s ease;
+      text-decoration: none;
+      line-height: 1;
+      backdrop-filter: blur(4px);
+    }
+
+    .modal-btn:hover {
+      background: #faa1c9;
+      color: #fff;
+      border-color: #faa1c9;
+      transform: scale(1.1);
+    }
+
+    .modal-btn.close-btn {
+      font-size: 26px;
+      font-weight: bold;
+    }
+
+    /* Video in lightbox: show native controls */
+    .modal-video {
+      cursor: default;
+      border-radius: 8px;
     }
 
 
@@ -210,6 +234,37 @@
       color: var(--color-primary-bg);
     }
 
+
+    /* 🔄 Infinite-scroll loader */
+    #gallery-loader {
+      text-align: center;
+      padding: 2rem 0;
+      color: #faa1c9;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1rem;
+      display: none;  /* shown by JS when loading */
+    }
+
+    #gallery-loader .spinner {
+      display: inline-block;
+      width: 28px;
+      height: 28px;
+      border: 3px solid #ffe2f5;
+      border-top-color: #faa1c9;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    #scroll-sentinel {
+      width: 100%;
+      height: 1px;
+    }
 
     /* Ensure fixed things under loader */
     header, #floating-image, .fixed { z-index: 10; }
@@ -296,7 +351,7 @@
            class="text-lg font-medium text-gray-600 hover:text-pink-accent mx-3 transition duration-150">
           Commission
         </a>
-        <a href="#contact"
+        <a href="./index.html#contact"
            class="text-lg font-medium text-gray-600 hover:text-pink-accent mx-3 transition duration-150">
           Contact
         </a>
@@ -342,6 +397,10 @@
 
   <div class="column"><!-- empty right padding column --></div>
 </div>
+
+<!-- Infinite-scroll loader + sentinel -->
+<div id="gallery-loader"><span class="spinner"></span> Loading more…</div>
+<div id="scroll-sentinel"></div>
 
 
 <script>
@@ -431,29 +490,22 @@ function layoutMasonry() {
 
   const numCols = getColumnCount();
   const containerWidth = gallery.clientWidth;
-  if (containerWidth === 0) return; // not visible yet
+  if (containerWidth === 0) return;
 
   const colWidth = (containerWidth - MASONRY_GAP * (numCols - 1)) / numCols;
   const colHeights = new Array(numCols).fill(0);
 
   items.forEach(item => {
-    // Set width first so the browser can calculate height
     item.style.position = 'absolute';
     item.style.width = colWidth + 'px';
 
-    // Find the shortest column
     const shortest = colHeights.indexOf(Math.min(...colHeights));
-    const leftPos = shortest * (colWidth + MASONRY_GAP);
-    const topPos = colHeights[shortest];
+    item.style.left = shortest * (colWidth + MASONRY_GAP) + 'px';
+    item.style.top  = colHeights[shortest] + 'px';
 
-    item.style.left = leftPos + 'px';
-    item.style.top = topPos + 'px';
-
-    // Update column height (offsetHeight includes the rendered content)
     colHeights[shortest] += item.offsetHeight + MASONRY_GAP;
   });
 
-  // Set container height so content below flows correctly
   gallery.style.height = Math.max(...colHeights) + 'px';
 }
 
@@ -465,25 +517,120 @@ window.addEventListener('resize', () => {
 });
 
 
+/* ========================
+   📦 BATCH LOADING + INFINITE SCROLL
+   ======================== */
+const BATCH_SIZE = 12;
+let allMediaFiles = [];
+let loadedCount = 0;
+let isLoadingBatch = false;
+
+const galleryLoader = document.getElementById('gallery-loader');
+const scrollSentinel = document.getElementById('scroll-sentinel');
+
+
+/* 🎬 Video visibility observer — only play videos in viewport */
+const videoVisObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    const vid = entry.target;
+    if (entry.isIntersecting) {
+      vid.play().catch(() => {});
+    } else {
+      vid.pause();
+    }
+  });
+}, { threshold: 0.15 });
+
+
+function renderBatch() {
+  if (isLoadingBatch || loadedCount >= allMediaFiles.length) return;
+  isLoadingBatch = true;
+  galleryLoader.style.display = 'block';
+
+  const batch = allMediaFiles.slice(loadedCount, loadedCount + BATCH_SIZE);
+
+  batch.forEach(file => {
+    const displayName = cleanDisplayName(file.name);
+    const wrap = document.createElement('div');
+    wrap.className = 'column';
+
+    if (file.isVideo) {
+      wrap.innerHTML = `
+        <div class="image-container" data-type="video" data-full-src="${file.download_url}">
+          <video
+            loop
+            muted
+            playsinline
+            preload="none"
+            disablepictureinpicture
+            style="width:100%; display:block;"
+          >
+            <source src="${file.download_url}" type="video/mp4">
+          </video>
+          <div class="image-overlay">${displayName || file.name}</div>
+        </div>
+      `;
+      const vid = wrap.querySelector('video');
+      if (vid) {
+        vid.addEventListener('loadeddata', requestMasonryLayout);
+        videoVisObserver.observe(vid);  // play only when visible
+      }
+    } else {
+      wrap.innerHTML = `
+        <div class="image-container" data-type="image" data-full-src="${file.download_url}">
+          <img src="${file.download_url}" alt="${displayName}" decoding="async">
+          <div class="image-overlay">${displayName || file.name}</div>
+        </div>
+      `;
+      const img = wrap.querySelector('img');
+      if (img) img.addEventListener('load', requestMasonryLayout);
+    }
+
+    gallery.appendChild(wrap);
+  });
+
+  loadedCount += batch.length;
+
+  layoutMasonry();
+  bindLightbox();
+
+  isLoadingBatch = false;
+
+  // Hide loader if all items are loaded
+  if (loadedCount >= allMediaFiles.length) {
+    galleryLoader.style.display = 'none';
+  }
+}
+
+
+/* Infinite-scroll observer: load next batch when sentinel nears viewport */
+const scrollObserver = new IntersectionObserver((entries) => {
+  if (entries[0].isIntersecting && loadedCount < allMediaFiles.length) {
+    renderBatch();
+  }
+}, { rootMargin: '400px' });  // trigger 400px before sentinel is visible
+
+scrollObserver.observe(scrollSentinel);
+
+
 async function loadGalleryFromGitHub() {
   try {
+    galleryLoader.style.display = 'block';
+
     const url = `https://api.github.com/repos/${owner}/${repo}/contents/${folderPath}?ref=${branch}`;
     const res = await fetch(url);
     const files = await res.json();
 
-
     console.log("GitHub URL:", url);
     console.log("GitHub status:", res.status);
-    console.log("GitHub response:", files);
-
 
     if (!Array.isArray(files)) {
       gallery.innerHTML = `<p style="color:black;">GitHub API error: ${files.message || "Unknown error"}</p>`;
+      galleryLoader.style.display = 'none';
       return;
     }
 
-
-    const mediaFiles = files
+    allMediaFiles = files
       .filter(file =>
         file.type === "file" &&
         /\.(png|jpe?g|gif|webp|mp4)$/i.test(file.name)
@@ -503,81 +650,24 @@ async function loadGalleryFromGitHub() {
         });
       });
 
+    console.log(`Found ${allMediaFiles.length} files, loading first ${BATCH_SIZE}…`);
 
-    console.table(
-      mediaFiles.map(file => ({
-        name: file.name,
-        parsedDate: file.parsedDate
-          ? file.parsedDate.toISOString().split("T")[0]
-          : "NO DATE",
-        type: file.isVideo ? "VIDEO" : "IMAGE"
-      }))
-    );
-
-
-    if (mediaFiles.length === 0) {
+    if (allMediaFiles.length === 0) {
       gallery.innerHTML = `<p style="color:black;">No matching files found.</p>`;
+      galleryLoader.style.display = 'none';
       return;
     }
 
-
-    gallery.innerHTML = "";
-
-
-    mediaFiles.forEach(file => {
-      const displayName = cleanDisplayName(file.name);
-
-
-      const wrap = document.createElement("div");
-      wrap.className = "column";
-
-
-      if (file.isVideo) {
-        wrap.innerHTML = `
-          <div class="image-container" data-type="video">
-            <video
-              autoplay
-              loop
-              muted
-              playsinline
-              preload="metadata"
-              disablepictureinpicture
-              style="width:100%; display:block;"
-            >
-              <source src="${file.download_url}" type="video/mp4">
-              Your browser does not support the video tag.
-            </video>
-            <div class="image-overlay">${displayName || file.name}</div>
-          </div>
-        `;
-        // Re-layout when video dimensions are known
-        const vid = wrap.querySelector('video');
-        if (vid) vid.addEventListener('loadeddata', requestMasonryLayout);
-      } else {
-        wrap.innerHTML = `
-          <div class="image-container" data-type="image">
-            <img src="${file.download_url}" alt="${displayName}">
-            <div class="image-overlay">${displayName || file.name}</div>
-          </div>
-        `;
-        // Re-layout when image dimensions are known
-        const img = wrap.querySelector('img');
-        if (img) img.addEventListener('load', requestMasonryLayout);
-      }
-
-
-      gallery.appendChild(wrap);
-    });
-
-    // Initial masonry layout + re-bind lightbox
-    layoutMasonry();
-    bindLightbox();
+    gallery.innerHTML = '';
+    loadedCount = 0;
+    renderBatch();  // load first batch
 
   } catch (err) {
     console.error(err);
     gallery.innerHTML = `<p style="color:black;">Failed to load gallery.</p>`;
+    galleryLoader.style.display = 'none';
   }
-} 
+}
 loadGalleryFromGitHub();
 </script>
 
@@ -644,10 +734,14 @@ loadGalleryFromGitHub();
 
   <!-- 🔍 MODAL / LIGHTBOX -->
   <div id="myModal" class="modal">
-    <span class="close">&times;</span>
+    <!-- Top buttons -->
+    <div class="modal-btn-bar">
+      <button id="modal-download-btn" class="modal-btn" title="Download">⤓</button>
+      <button id="modal-close-btn" class="modal-btn close-btn" title="Close">&times;</button>
+    </div>
     <div id="sparkle-container" class="sparkle-container"></div>
     <img class="modal-content" id="modal-img" alt="" style="display:none;">
-    <video class="modal-video" id="modal-video" autoplay loop muted playsinline style="display:none;"></video>
+    <video class="modal-video" id="modal-video" autoplay loop muted playsinline controls style="display:none;"></video>
   </div>
 
 
@@ -971,12 +1065,18 @@ loadGalleryFromGitHub();
     const modalImg = document.getElementById("modal-img");
     const modalVideo = document.getElementById("modal-video");
     const sparkleContainer = document.getElementById("sparkle-container");
+    const downloadBtn = document.getElementById("modal-download-btn");
+    const closeBtn = document.getElementById("modal-close-btn");
 
     let isDragging = false;
     let didDrag = false;
     let startX, startY;
     let translateX = 0, translateY = 0;
     let dragRaf = null;
+
+    // Track current media for download
+    let currentMediaUrl = "";
+    let currentMediaName = "download";
 
     const zoomScale = 1.75;
 
@@ -985,14 +1085,57 @@ loadGalleryFromGitHub();
       modal.style.display = "none";
       modalVideo.pause();
       modalVideo.removeAttribute("src");
+      modalVideo.load(); // reset video element fully
       stopSparkles();
     }
 
-    /* ---- open lightbox (called after gallery builds) ---- */
+    /* ---- download (fetch-as-blob for cross-origin support) ---- */
+    function downloadCurrentMedia() {
+      if (!currentMediaUrl) return;
+
+      // Visual feedback
+      downloadBtn.textContent = "…";
+      downloadBtn.style.pointerEvents = "none";
+
+      fetch(currentMediaUrl)
+        .then(res => {
+          if (!res.ok) throw new Error("Network error");
+          return res.blob();
+        })
+        .then(blob => {
+          const blobUrl = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = blobUrl;
+          a.download = currentMediaName;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(blobUrl);
+        })
+        .catch(() => {
+          // Fallback: open in new tab
+          window.open(currentMediaUrl, "_blank");
+        })
+        .finally(() => {
+          downloadBtn.textContent = "\u2913";
+          downloadBtn.style.pointerEvents = "";
+        });
+    }
+
+    downloadBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      downloadCurrentMedia();
+    });
+
+    /* ---- open lightbox (called after each batch) ---- */
     function bindLightbox() {
-      document.querySelectorAll(".image-container").forEach(container => {
+      // Only bind containers that haven't been bound yet
+      document.querySelectorAll(".image-container:not([data-lb-bound])").forEach(container => {
+        container.setAttribute("data-lb-bound", "1");
         container.onclick = function () {
           const type = this.getAttribute("data-type");
+          // Use data-full-src for full-quality lightbox
+          const fullSrc = this.getAttribute("data-full-src") || "";
           modal.style.display = "block";
           startSparkles();
 
@@ -1002,27 +1145,36 @@ loadGalleryFromGitHub();
           translateX = 0;
           translateY = 0;
 
+          // Get the overlay text for a clean filename
+          const overlay = this.querySelector(".image-overlay");
+          const rawName = overlay ? overlay.textContent.trim() : "";
+
           if (type === "video") {
-            const src = this.querySelector("video source")?.src
-                     || this.querySelector("video")?.src || "";
+            currentMediaUrl = fullSrc;
+            currentMediaName = (rawName || "video") + ".mp4";
+
             modalImg.style.display = "none";
             modalVideo.style.display = "block";
-            modalVideo.src = src;
+            modalVideo.src = fullSrc;
+            modalVideo.muted = false; // unmute in lightbox
             modalVideo.play();
           } else {
-            const src = this.querySelector("img")?.src || "";
+            currentMediaUrl = fullSrc;
+            const ext = fullSrc.match(/\.(png|jpe?g|gif|webp)$/i)?.[0] || ".png";
+            currentMediaName = (rawName || "image") + ext;
+
             modalVideo.style.display = "none";
             modalVideo.pause();
             modalVideo.removeAttribute("src");
             modalImg.style.display = "block";
-            modalImg.src = src;
+            modalImg.src = fullSrc;  // full-res in lightbox
           }
         };
       });
     }
 
     /* ---- close handlers ---- */
-    document.querySelector("#myModal .close").onclick = closeModal;
+    closeBtn.onclick = (e) => { e.stopPropagation(); closeModal(); };
 
     window.addEventListener("click", (e) => {
       if (e.target === modal) closeModal();
@@ -1032,7 +1184,7 @@ loadGalleryFromGitHub();
       if (e.key === "Escape" && modal.style.display === "block") closeModal();
     });
 
-    /* ---- click-to-zoom ---- */
+    /* ---- click-to-zoom (images only) ---- */
     modalImg.addEventListener("click", (e) => {
       e.stopPropagation();
       if (didDrag) return;
