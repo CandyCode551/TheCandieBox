@@ -314,18 +314,39 @@ const branch = "main";
 
 const gallery = document.getElementById("gallery");
 
-function parseDateFromFilename(filename) {
-  const match = filename.match(/\[(\d{1,2})-(\d{1,2})-(\d{2,4})\]/);
-  if (!match) return null;
+ function parseDateFromFilename(filename) {
+  const cleanName = filename.replace(/\.[^.]+$/, "");
 
-  let [, day, month, year] = match;
-  day = parseInt(day, 10);
-  month = parseInt(month, 10) - 1;
-  year = parseInt(year, 10);
+  const patterns = [
+    /\[(\d{1,2})-(\d{1,2})-(\d{2,4})\]/,   // [3-5-21]
+    /\((\d{1,2})-(\d{1,2})-(\d{2,4})\)/,   // (3-5-21)
+    /(\d{1,2})-(\d{1,2})-(\d{2,4})/        // 3-5-21 anywhere
+  ];
 
-  if (year < 100) year += 2000;
+  for (const pattern of patterns) {
+    const match = cleanName.match(pattern);
+    if (!match) continue;
 
-  return new Date(year, month, day);
+    let [, month, day, year] = match;
+
+    month = parseInt(month, 10);
+    day = parseInt(day, 10);
+    year = parseInt(year, 10);
+
+    if (year < 100) year += 2000;
+
+    const date = new Date(year, month - 1, day);
+
+    if (
+      date.getFullYear() === year &&
+      date.getMonth() === month - 1 &&
+      date.getDate() === day
+    ) {
+      return date;
+    }
+  }
+
+  return null;
 }
 
 async function loadGalleryFromGitHub() {
@@ -349,11 +370,15 @@ async function loadGalleryFromGitHub() {
         parsedDate: parseDateFromFilename(file.name)
       }))
       .sort((a, b) => {
-        if (!a.parsedDate && !b.parsedDate) return 0;
-        if (!a.parsedDate) return 1;
-        if (!b.parsedDate) return -1;
-        return b.parsedDate - a.parsedDate;
-      });
+  if (a.parsedDate && b.parsedDate) {
+    return b.parsedDate - a.parsedDate; // newest first
+  }
+
+  if (a.parsedDate && !b.parsedDate) return -1;
+  if (!a.parsedDate && b.parsedDate) return 1;
+
+  return a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: "base" });
+});
 
     gallery.innerHTML = "";
 
