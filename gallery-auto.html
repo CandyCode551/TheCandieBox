@@ -1,9 +1,87 @@
-<!-- GENERATED FILE: do not edit by hand -->
-<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-  <!-- script will inject <figure> items here -->
-</div>
-{
-  "scripts": {
-    "build:gallery": "node build-gallery.mjs"
+<div id="gallery" class="row"></div>
+
+<script>
+const owner = "CandyCode551";
+const repo = "TheCandieBox";
+const folderPath = "img/gallery";
+const branch = "main";
+
+const gallery = document.getElementById("gallery");
+
+function parseDateFromFilename(filename) {
+  const match = filename.match(/\[(\d{1,2})-(\d{1,2})-(\d{2,4})\]/);
+  if (!match) return null;
+
+  let [, day, month, year] = match;
+  day = parseInt(day, 10);
+  month = parseInt(month, 10) - 1;
+  year = parseInt(year, 10);
+
+  if (year < 100) year += 2000;
+
+  return new Date(year, month, day);
+}
+
+async function loadGalleryFromGitHub() {
+  try {
+    const url = `https://api.github.com/repos/${owner}/${repo}/contents/${folderPath}?ref=${branch}`;
+    const res = await fetch(url);
+    const files = await res.json();
+
+    console.log("GitHub response:", files);
+
+    if (!Array.isArray(files)) {
+      gallery.innerHTML = `<p>GitHub API error: ${files.message || "Unknown error"}</p>`;
+      return;
+    }
+
+    const imageFiles = files
+      .filter(file =>
+        file.type === "file" &&
+        /\.(png|jpe?g|gif|webp)$/i.test(file.name)
+      )
+      .map(file => ({
+        ...file,
+        parsedDate: parseDateFromFilename(file.name)
+      }))
+      .sort((a, b) => {
+        if (!a.parsedDate && !b.parsedDate) return 0;
+        if (!a.parsedDate) return 1;
+        if (!b.parsedDate) return -1;
+        return b.parsedDate - a.parsedDate;
+      });
+
+    console.log("Filtered image files:", imageFiles);
+
+    gallery.innerHTML = "";
+
+    imageFiles.forEach(file => {
+      const displayName = file.name
+        .replace(/\.(png|jpe?g|gif|webp)$/i, "")
+        .replace(/\[\d{1,2}-\d{1,2}-\d{2,4}\]/, "")
+        .trim();
+
+      const wrap = document.createElement("div");
+      wrap.className = "column";
+
+      wrap.innerHTML = `
+        <div class="image-container">
+          <img src="${file.download_url}" alt="${displayName}" loading="lazy">
+          <div class="image-overlay">${displayName || file.name}</div>
+        </div>
+      `;
+
+      gallery.appendChild(wrap);
+    });
+
+    if (imageFiles.length === 0) {
+      gallery.innerHTML = `<p>No images found in GitHub folder.</p>`;
+    }
+  } catch (err) {
+    console.error(err);
+    gallery.innerHTML = `<p>Failed to load gallery.</p>`;
   }
 }
+
+loadGalleryFromGitHub();
+</script>

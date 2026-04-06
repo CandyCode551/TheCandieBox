@@ -1,4 +1,296 @@
-<div id="gallery" class="row"></div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- 🌸 Meta & Icons -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Candie Box | Gallery</title>
+  <link rel="icon" type="image/png" href="img/Gif/Candie_Box/WAEGSsg.png">
+
+  <!-- 🎨 Styles -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* ========================
+       📷 GALLERY GRID
+       ======================== */
+    .row {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0 4px;
+}
+
+.column {
+  flex: 33.3333%;
+  max-width: 33.3333%;
+  padding: 0 4px;
+}
+
+/* On smaller screens, stack better */
+@media screen and (max-width: 800px) {
+  .column { flex: 50%; max-width: 50%; }
+}
+
+@media screen and (max-width: 600px) {
+  .column { flex: 100%; max-width: 100%; }
+}
+
+    .image-container {
+      position: relative;
+      margin-top: 8px;
+      overflow: hidden;
+      transition: transform 0.2s ease-in-out;
+    }
+
+    .image-container img {
+      width: 100%;
+      vertical-align: middle;
+      display: block;
+    }
+
+    .image-container:hover {
+      transform: scale(1.05);
+      cursor: pointer;
+    }
+
+    .image-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(0,0,0,0.6);
+      color: #fff;
+      text-align: center;
+      padding: 8px 0;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      font-size: 0.875rem;
+    }
+
+    .image-container:hover .image-overlay {
+      opacity: 1;
+    }
+
+    /* ========================
+       🔍 MODAL / LIGHTBOX + GLITTER
+       ======================== */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      padding-top: 60px;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(255,255,255,0.9);
+    }
+
+    .modal-content {
+      margin: auto;
+      display: block;
+      max-width: 80%;
+      max-height: 80vh;
+      animation: zoom-in 0.4s;
+      transition: transform 0.3s ease-in-out;
+      position: relative;
+      cursor: zoom-in;
+    }
+
+    .modal-content.zoomed {
+      cursor: grab;
+      max-width: none;
+    }
+
+    .modal-content.dragging {
+      cursor: grabbing;
+    }
+
+    @keyframes zoom-in {
+      from { transform: scale(0.1); }
+      to   { transform: scale(1); }
+    }
+
+    .close {
+      position: absolute;
+      top: 15px;
+      right: 35px;
+      color: #333;
+      font-size: 40px;
+      font-weight: bold;
+      transition: 0.3s;
+      z-index: 1;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: #ff69b4;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    #glitter-canvas {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* ========================
+       🔙 BACK BUTTON
+       ======================== */
+    .back-button {
+      position: fixed;
+      top: 14rem;
+      left: 1.5rem;
+      z-index: 50;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background-color: #ffff;
+      outline: 1px solid #faa1c9;
+      border: 2px solid var(--color-accent-pastelpink);
+      font-size: 24px;
+      color: var(--color-text-dark);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+    }
+
+    .back-button:hover {
+      transform: scale(1.1);
+      background-color: var(--color-accent-pastelpink);
+      color: var(--color-primary-bg);
+    }
+
+    /* Ensure fixed things under loader */
+    header, #floating-image, .fixed { z-index: 10; }
+    </style>
+</head>
+
+<body class="antialiased">
+
+  <!-- 🎀 FLOATING RIBBON START 🎀 -->
+  <div class="fixed top-9 left-1/2 -translate-x-1/2 z-50 hidden md:block">
+    <a href="./index.html" title="Home">
+      <div class="rounded-full">
+        <img
+          src="https://static.wixstatic.com/media/628285_fd030053b925402b995229b905418ab0~mv2.png/v1/fill/w_190,h_170,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Ribbon.png"
+          onerror="this.onerror=null; this.src='https://placehold.co/80x80/FFF0F5/DB2777?text=💖'"
+          alt="Ribbon Decoration"
+          class="rounded-full w-20 h-20 object-cover"
+        >
+      </div>
+    </a>
+  </div>
+  <!-- 🎀 FLOATING RIBBON END 🎀 -->
+
+  <!-- 🎀 FLOATING LACE HEADER START 🎀 -->
+  <div class="fixed top-20 left-0 right-0 z-10 hidden md:block w-full">
+    <div class="w-full mx-auto">
+      <div class="relative w-full header-lace-wrapper">
+        <img
+          id="header-lace"
+          src="img/WebHeader.png"
+          alt="Decorative Banner Image"
+          class="w-full h-auto footer-shadow"
+        >
+      </div>
+    </div>
+  </div>
+  <!-- 🎀 FLOATING LACE HEADER END 🎀 -->
+
+  <!-- 💖 TOP SOCIAL BAR START 💖 -->
+  <div id="top-social-bar"
+     class="w-full bg-[#f3b9d2] text-white fixed top-0 left-0 z-30">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-6 flex items-center justify-end space-x-2">
+      <a href="https://vgen.co/candie_cake" target="_blank" rel="noopener"
+         class="text-sm font-medium hover:underline" aria-label="Vgen">
+        <img src="img/ico/vgen.png" alt="Vgen" class="w-7 h-7 inline-block">
+      </a>
+      <a href="https://twitter.com/candie_cake" target="_blank" rel="noopener"
+         class="text-sm font-medium hover:underline" aria-label="Twitter">
+        <img src="img/ico/twitter.png" alt="Twitter" class="w-6 h-6 inline-block">
+      </a>
+      <a href="https://instagram.com/candie__cake" target="_blank" rel="noopener"
+         class="text-sm font-medium hover:underline" aria-label="Instagram">
+        <img src="img/ico/instagram.png" alt="Instagram" class="w-6 h-6 inline-block">
+      </a>
+    </div>
+  </div>
+  <!-- 💖 TOP SOCIAL BAR END 💖 -->
+ <!-- 🔙 Back Button -->
+  <a href="./index.html" title="Back to Home">
+  <button id="backbtn" class="back-button">←</button>
+</a>
+  <!-- 🍬 HEADER & NAVIGATION START 🍬 -->
+  <header class="bg-white shadow-md sticky top-0 z-20 transition-all duration-300">
+    <div id="header-container"
+         class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex justify-between items-center transition-all duration-300">
+      <h1 id="header-title"
+          class="text-3xl font-fredoka font-bold text-title-pink tracking-wide transition-all duration-300">
+        <a href="./index.html#commissions" title="Home">
+          The Candie Box <span class="text-xl">ʚ ♡ ɞ</span>
+        </a>
+      </h1>
+
+      <nav class="hidden sm:block">
+        <a href="./Gallery.html"
+           class="text-lg font-medium text-gray-600 hover:text-pink-accent mx-3 transition duration-150">
+          Gallery
+        </a>
+        <a href="https://vgen.co/candie_cake"
+           class="text-lg font-medium text-gray-600 hover:text-pink-accent mx-3 transition duration-150">
+          Commission
+        </a>
+        <a href="#contact"
+           class="text-lg font-medium text-gray-600 hover:text-pink-accent mx-3 transition duration-150">
+          Contact
+        </a>
+      </nav>
+    </div>
+    
+  </header>
+  <!-- 🍬 HEADER & NAVIGATION END 🍬 -->
+<main>
+  
+<button
+  id="back-to-top-btn"
+  title="Go to top"
+  style= "outline: 1px solid #faa1c9;"
+  class="fixed bottom-6 right-6
+         flex items-center justify-center
+         w-10 h-10
+         !bg-white
+         rounded-full
+         !border !border-[#f0bcd6]
+         shadow-md
+         transition-transform duration-200 hover:-translate-y-1"
+>
+  <img src="img/Backtotop.png" alt="Back to top" class="">
+</button>
+  <!-- 👩‍🎨 WHITE SQUARE START 👩‍🎨 -->
+  <section id="gallery-section" class="py-20 sm:py-24">
+    <div class="max-w-6xl mx-auto bg-white p-8 rounded-3xl shadow-lg">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center md:text-left">
+          <!-- 🌸 MAIN CONTENT -->
+          <div class="mt-12">
+            <section class="mt-9"></section>
+
+            <!-- 📷 IMAGE GRID -->
+    <div class="row">
+  <div class="column"><!-- empty left padding column --></div>
+
+  <div id="gallery" class="row"></div>
+
+  <div class="column"><!-- empty right padding column --></div>
+</div>
 
 <script>
 const owner = "CandyCode551";
@@ -28,8 +320,6 @@ async function loadGalleryFromGitHub() {
     const res = await fetch(url);
     const files = await res.json();
 
-    console.log("GitHub response:", files);
-
     if (!Array.isArray(files)) {
       gallery.innerHTML = `<p>GitHub API error: ${files.message || "Unknown error"}</p>`;
       return;
@@ -50,8 +340,6 @@ async function loadGalleryFromGitHub() {
         if (!b.parsedDate) return -1;
         return b.parsedDate - a.parsedDate;
       });
-
-    console.log("Filtered image files:", imageFiles);
 
     gallery.innerHTML = "";
 
@@ -85,3 +373,585 @@ async function loadGalleryFromGitHub() {
 
 loadGalleryFromGitHub();
 </script>
+
+    <section class="mt-9"></section>
+    <!-- 📷 IMAGE GRID END-->
+
+            <!-- 🎬 VIDEO GALLERY SECTION START 🎬 -->
+    <section id="video-gallery" class="mt-12">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div id="video-grid" class="row">
+          <!-- JS will insert video columns here -->
+        </div>
+      </div>
+    </section>
+    <!-- 🎬 VIDEO GALLERY SECTION END 🎬 -->
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- 👩‍🎨 WHITE SQUARE END 👩‍🎨 -->
+</main>
+
+  
+  <!-- 🦶 FOOTER START 🦶 -->
+  <footer class="bg-title-pink text-white rounded-t-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center text-sm">
+      <p>&copy; <span id="year"></span> The Candie Box™. All Rights Reserved. | Cute Anime Commissions & Design</p>
+    </div>
+  </footer>
+
+  <!-- 🖼️ FIXED FOOTER IMAGE START 🖼️ -->
+  <div class="fixed bottom-0 left-0 right-0 hidden md:block">
+    <div class="w-full max-w-9xl mx-auto px-8">
+      <div class="relative w-full overflow-hidden rounded-t-xl">
+        <img
+          id="floating-footer-image"
+          src="img/Footer.png"
+          onerror="this.onerror=null; this.src='https://placehold.co/1200x200/F472B6/DB2777?text=Cute+Banner+Image+Placeholder'"
+          alt="Decorative Banner Image"
+          class="object-cover z-0 rounded-t-xl footer-shadow"
+          style="position: fixed; left: 0; bottom: -35px; width: 100vw; height: 8rem; transition: 0.4s;">
+      </div>
+    </div>
+  </div>
+  <!-- 🖼️ FIXED FOOTER IMAGE END 🖼️ -->
+  <!-- 🦶 FOOTER END 🦶 -->
+
+
+
+<!-- ⌚ BACK TO TOP BUTTON WITH GIF -->
+<button
+  id="back-to-top-btn"
+  title="Go to top"
+  style= "outline: 1px solid #faa1c9;"
+  class="fixed bottom-6 right-6
+         flex items-center justify-center
+         w-10 h-10
+         !bg-white
+         rounded-full
+         !border !border-[#f0bcd6]
+         shadow-md
+         transition-transform duration-200 hover:-translate-y-1"
+>
+  <img src="img/Backtotop.png" alt="Back to top" class="">
+</button>
+
+
+
+
+  <!-- 📜 SCRIPTS START 📜 -->
+  <script>
+    // 🗓️ Current year in footer
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // 💖 Adjust layout for top social bar
+    (function () {
+      const bar = document.getElementById('top-social-bar');
+      const header = document.querySelector('header');
+
+      function adjustLayout() {
+        if (!bar) return;
+        const h = bar.offsetHeight;
+        document.body.style.paddingTop = h + 'px';
+        if (header) header.style.top = h + 'px';
+      }
+
+      window.addEventListener('load', adjustLayout);
+      window.addEventListener('resize', adjustLayout);
+      new MutationObserver(adjustLayout).observe(document.documentElement, {
+        childList: true,
+        subtree: true
+      });
+    })();
+
+    // ✨ Slideshow logic (unchanged)
+    let slideIndex = 0;
+    let slideInterval;
+
+    function showSlides() {
+      let i;
+      const slides = document.getElementsByClassName("mySlides");
+      const dots = document.getElementsByClassName("dot");
+
+      for (i = 0; i < slides.length; i++) {
+        slides[i].style.display = "none";
+      }
+
+      slideIndex++;
+      if (slideIndex > slides.length) { slideIndex = 1; }
+
+      for (i = 0; i < dots.length; i++) {
+        dots[i].className = dots[i].className.replace(" active", "");
+      }
+
+      if (slides[slideIndex - 1]) {
+        slides[slideIndex - 1].style.display = "block";
+        dots[slideIndex - 1].className += " active";
+      }
+    }
+
+    function plusSlides(n) {
+      clearInterval(slideInterval);
+      showSlidesManual(slideIndex += n);
+      slideInterval = setInterval(showSlides, 4000);
+    }
+
+    function currentSlide(n) {
+      clearInterval(slideInterval);
+      showSlidesManual(slideIndex = n);
+      slideInterval = setInterval(showSlides, 4000);
+    }
+
+    function showSlidesManual(n) {
+      let i;
+      const slides = document.getElementsByClassName("mySlides");
+      const dots = document.getElementsByClassName("dot");
+      if (n > slides.length) { slideIndex = 1; }
+      if (n < 1) { slideIndex = slides.length; }
+
+      for (i = 0; i < slides.length; i++) {
+        slides[i].style.display = "none";
+      }
+      for (i = 0; i < dots.length; i++) {
+        dots[i].className = dots[i].className.replace(" active", "");
+      }
+
+      if (slides[slideIndex - 1]) {
+        slides[slideIndex - 1].style.display = "block";
+        dots[slideIndex - 1].className += " active";
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      showSlides();
+      slideInterval = setInterval(showSlides, 4000);
+    });
+
+    // 💕 Heart trail + click effect (unchanged)
+    let trailCounter = 0;
+    const HEART_SPAWN_FREQUENCY = 12;
+
+    function createTrailElement(x, y, className, content, duration) {
+      const element = document.createElement('span');
+      element.textContent = content;
+      element.className = 'trail-element ' + className;
+
+      const dx = (Math.random() - 0.5) * 40;
+      const dy = -(Math.random() * 80 + 100);
+      const rotStart = (Math.random() * 90) - 45;
+      const rotEnd = rotStart + (Math.random() > 0.5 ? 90 : -90);
+
+      element.style.left = `${x}px`;
+      element.style.top = `${y}px`;
+      element.style.animationDuration = `${duration}s`;
+      element.style.setProperty('--dx', `${dx}px`);
+      element.style.setProperty('--dy', `${dy}px`);
+      element.style.setProperty('--rot-start', `${rotStart}deg`);
+      element.style.setProperty('--rot-end', `${rotEnd}deg`);
+
+      document.body.appendChild(element);
+
+      setTimeout(() => element.remove(), duration * 1000);
+    }
+
+    document.addEventListener('mousemove', (e) => {
+      trailCounter++;
+      const x = e.clientX;
+      const y = e.clientY;
+
+      if (trailCounter % HEART_SPAWN_FREQUENCY === 0) {
+        createTrailElement(x, y, 'heart-trail', '✧', 3.5);
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      const clickHeart = document.createElement('span');
+      clickHeart.textContent = '♡';
+      clickHeart.className = 'trail-element click-heart';
+      clickHeart.style.left = `${e.clientX - 25}px`;
+      clickHeart.style.top = `${e.clientY - 25}px`;
+      document.body.appendChild(clickHeart);
+      setTimeout(() => clickHeart.remove(), 600);
+    });
+
+    // 🔝 Back to top + header/footer animations
+    const backToTopButton = document.getElementById("back-to-top-btn");
+    const scrollThreshold = 200;
+
+    window.addEventListener('scroll', () => {
+      const headerContainer = document.getElementById('header-container');
+      const headerTitle = document.getElementById('header-title');
+      const footerImg = document.getElementById('floating-footer-image');
+      const laceImg = document.getElementById('header-lace');
+      const backbtn = document.getElementById('backbtn');
+
+      const scrollY = window.scrollY || document.documentElement.scrollTop;
+      const viewportH = window.innerHeight;
+      const docH = document.documentElement.scrollHeight;
+
+      const fromTop = scrollY > 50;
+      const nearBottom = scrollY + viewportH > docH - 50;
+
+      // shrink header + animate lace/footer
+      if (fromTop && !nearBottom) {
+        headerContainer.classList.remove('py-3.5');
+        headerContainer.classList.add('py-1');
+        headerTitle.classList.remove('text-3xl');
+        headerTitle.classList.add('text-2xl');
+
+        if (laceImg) {
+          laceImg.style.opacity = "0.9";
+          laceImg.style.transform = "translateY(-80px)";
+        }
+        if (footerImg) {
+          footerImg.style.opacity = "0.2";
+          footerImg.style.transform = "translateY(100px)";
+        }
+        if (backbtn) {
+          backbtn.style.opacity = "1";
+          backbtn.style.transform = "translateY(-80px)";
+        }
+      } else {
+        headerContainer.classList.add('py-3.5');
+        headerContainer.classList.remove('py-1');
+        headerTitle.classList.add('text-3xl');
+        headerTitle.classList.remove('text-2xl');
+
+        if (laceImg) {
+          laceImg.style.opacity = "1";
+          laceImg.style.transform = "translateY(0)";
+        }
+        if (footerImg) {
+          footerImg.style.opacity = "1";
+          footerImg.style.transform = "translateY(0)";
+        }
+        if (backbtn) {
+          backbtn.style.opacity = "1";
+          backbtn.style.transform = "translateY(0)";
+        }
+      }
+
+      // back‑to‑top button
+      if (scrollY > scrollThreshold) {
+        backToTopButton.style.display = "block";
+        setTimeout(() => {
+          backToTopButton.style.opacity = "1";
+          backToTopButton.style.transform = "translateY(0)";
+        }, 10);
+      } else {
+        backToTopButton.style.opacity = "0";
+        backToTopButton.style.transform = "translateY(20px)";
+        setTimeout(() => {
+          backToTopButton.style.display = "none";
+        }, 300);
+      }
+    });
+
+    backToTopButton.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const birthDate = new Date(2003, 5, 17); // May 17, 2003
+
+    function getAge(dob) {
+      const today = new Date();
+      let age = today.getFullYear() - dob.getFullYear();
+      const m = today.getMonth() - dob.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+        age--;
+      }
+      return age;
+    }
+
+    const ageSpan = document.getElementById('age');
+    if (ageSpan) {
+      ageSpan.textContent = getAge(birthDate);
+    } else {
+      console.warn('Age span not found');
+    }
+  });
+  // ✨ Button Sheen
+  (function () {
+    const btn = document.getElementById('magic-btn');
+    if (!btn) return;
+
+    function handleMove(e) {
+      const rect = btn.getBoundingClientRect();
+      const rawX = e.clientX - rect.left;
+
+      // offset sheen 20px to the left of the cursor
+      const sheenX = rawX - 20;
+
+      // clamp inside button so it doesn't wander too far
+      const clampedX = Math.max(0, Math.min(rect.width, sheenX));
+
+      // -0.5 to 0.5 for tilt
+      const t = (rawX / rect.width) - 0.5;
+
+      btn.style.setProperty('--x', clampedX);
+
+      const rotateY = t * 16;
+      btn.style.transform =
+        `translateY(-4px) scale(1.04) rotateY(${rotateY}deg)`;
+    }
+
+    function handleLeave() {
+      btn.style.transform = '';
+      btn.style.removeProperty('--x');
+    }
+
+    btn.addEventListener('mousemove', handleMove);
+    btn.addEventListener('mouseleave', handleLeave);
+  })();
+</script>
+
+<script>
+      const videoFiles = [
+        "babyvid.mp4",
+      ];
+
+      const videoGrid = document.getElementById("video-grid");
+
+      videoFiles.forEach(name => {
+        const wrap = document.createElement("div");
+        wrap.className = "column";
+
+        wrap.innerHTML = `
+          <div class="image-container">
+            <video
+              autoplay
+              loop
+              muted
+              playsinline
+              class="w-full h-full object-cover"
+            >
+              <source src="img/gallery/${name}" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        `;
+
+        videoGrid.appendChild(wrap);
+      });
+    </script>
+         
+      </div>
+    </div>
+  </div>
+</div>
+
+    </section>
+
+<!-- 👩‍🎨 WHITE SQUAARE END👩‍🎨 -->
+    
+  </main>
+
+  <!-- 🔍 MODAL / LIGHTBOX -->
+  <div id="myModal" class="modal">
+    <span class="close">&times;</span>
+    <canvas id="glitter-canvas"></canvas>
+    <img class="modal-content" id="modal-img" alt="">
+  </div>
+
+  <!-- 📜 SCRIPTS -->
+  <script>
+    const modal = document.getElementById("myModal");
+    const modalImg = document.getElementById("modal-img");
+    const images = document.querySelectorAll(".image-container");
+    const canvas = document.getElementById('glitter-canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    let animationFrameId;
+
+    let isDragging = false;
+    let didDrag = false;
+    let startX, startY;
+    let translateX = 0, translateY = 0;
+
+    const zoomScale = 1.75;
+
+    images.forEach(container => {
+      container.onclick = function () {
+        modal.style.display = "block";
+        modalImg.src = this.querySelector('img')?.src || this.querySelector('video source')?.src || "";
+        startGlitter();
+
+        modalImg.classList.remove("zoomed", "dragging");
+        modalImg.style.transform = 'scale(1)';
+        translateX = 0;
+        translateY = 0;
+      }
+    });
+
+    const span = document.getElementsByClassName("close")[0];
+    span.onclick = function () {
+      modal.style.display = "none";
+      stopGlitter();
+    }
+
+    window.addEventListener('click', (event) => {
+      if (event.target === modal) {
+        modal.style.display = "none";
+        stopGlitter();
+      }
+    });
+
+    modalImg.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (didDrag) return;
+
+      const isZoomed = modalImg.classList.contains('zoomed');
+      if (isZoomed) {
+        modalImg.classList.remove('zoomed');
+        modalImg.style.transform = 'scale(1)';
+        translateX = 0;
+        translateY = 0;
+      } else {
+        modalImg.classList.add('zoomed');
+        modalImg.style.transform = `scale(${zoomScale})`;
+      }
+    });
+
+    modalImg.addEventListener('mousedown', (e) => {
+      if (!modalImg.classList.contains('zoomed')) return;
+      e.preventDefault();
+      isDragging = true;
+      didDrag = false;
+      modalImg.classList.add('dragging');
+      startX = e.clientX - translateX;
+      startY = e.clientY - translateY;
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      didDrag = true;
+      translateX = e.clientX - startX;
+      translateY = e.clientY - startY;
+      modalImg.style.transform = `scale(${zoomScale}) translate(${translateX}px, ${translateY}px)`;
+    });
+
+    window.addEventListener('mouseup', () => {
+      setTimeout(() => {
+        isDragging = false;
+        didDrag = false;
+      }, 0);
+      modalImg.classList.remove('dragging');
+    });
+
+    let trailCounter = 0;
+    const HEART_SPAWN_FREQUENCY = 12;
+
+    function createTrailElement(x, y, className, content, duration) {
+      const element = document.createElement('span');
+      element.textContent = content;
+      element.className = 'trail-element ' + className;
+
+      const dx = (Math.random() - 0.5) * 40;
+      const dy = -(Math.random() * 80 + 100);
+      const rotStart = (Math.random() * 90) - 45;
+      const rotEnd = rotStart + (Math.random() > 0.5 ? 90 : -90);
+
+      element.style.left = `${x}px`;
+      element.style.top = `${y}px`;
+      element.style.animationDuration = `${duration}s`;
+      element.style.setProperty('--dx', `${dx}px`);
+      element.style.setProperty('--dy', `${dy}px`);
+      element.style.setProperty('--rot-start', `${rotStart}deg`);
+      element.style.setProperty('--rot-end', `${rotEnd}deg`);
+
+      document.body.appendChild(element);
+      setTimeout(() => element.remove(), duration * 1000);
+    }
+
+    document.addEventListener('mousemove', (e) => {
+      trailCounter++;
+      const x = e.clientX;
+      const y = e.clientY;
+      if (trailCounter % HEART_SPAWN_FREQUENCY === 0) {
+        createTrailElement(x, y, 'heart-trail', '♡', 3.5);
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      if (e.target.closest('a, button, .image-container, .modal-content, .close')) return;
+
+      const clickHeart = document.createElement('span');
+      clickHeart.textContent = '♡';
+      clickHeart.className = 'trail-element click-heart';
+      clickHeart.style.left = `${e.clientX - 25}px`;
+      clickHeart.style.top = `${e.clientY - 25}px`;
+      document.body.appendChild(clickHeart);
+      setTimeout(() => clickHeart.remove(), 600);
+    });
+
+    const glitterChars = ['✧', '⟡'];
+    const glitterColors = ['#FFFFFF', '#FFB8DC', '#FFE2F5', '#F0F8FF'];
+
+    function resizeCanvas() {
+      canvas.width = modal.clientWidth;
+      canvas.height = modal.clientHeight;
+    }
+
+    function createParticles() {
+      particles = [];
+      const particleCount = 100;
+      for (let i = 0; i < particleCount; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          size: Math.random() * 10 + 20,
+          opacity: Math.random(),
+          opacityDirection: Math.random() > 0.5 ? 0.1 : -0.2,
+          speed: Math.random() * 0.02 + 0.01,
+          color: glitterColors[Math.floor(Math.random() * glitterColors.length)],
+          char: glitterChars[Math.floor(Math.random() * glitterChars.length)]
+        });
+      }
+    }
+
+    function drawParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.opacity += p.speed * p.opacityDirection;
+        if (p.opacity > 1 || p.opacity < 0) {
+          p.opacityDirection *= -1;
+          p.opacity = Math.max(0, Math.min(1, p.opacity));
+        }
+        ctx.globalAlpha = p.opacity;
+        ctx.fillStyle = p.color;
+        ctx.font = `${p.size}px Fredoka`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(p.char, p.x, p.y);
+      });
+      ctx.globalAlpha = 1;
+    }
+
+    function animateGlitter() {
+      drawParticles();
+      animationFrameId = requestAnimationFrame(animateGlitter);
+    }
+
+    function startGlitter() {
+      resizeCanvas();
+      createParticles();
+      animateGlitter();
+    }
+
+    function stopGlitter() {
+      cancelAnimationFrame(animationFrameId);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+  </script>
+  <!-- 📜 SCRIPTS END 📜 -->
+
+</body>
+</html>
