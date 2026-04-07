@@ -1,0 +1,5 @@
+make gallery images fade in as you scroll
+Filter sections for gallery
+
+fix index glitch loop
+Pop up I like to show my old work the more you scroll the more you will see where I came from
