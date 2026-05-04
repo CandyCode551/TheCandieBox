@@ -1,116 +1,306 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>TOS page</title>
-    <style>
-        /* 📌 NEW: Styling for the Button */
-        button {
-            /* Shape and Size */
-            width: 60px;
-            height: 60px;
-            border-radius: 50%; /* Makes it a circle */
-            
-            /* Color and Border */
-            background-color: #ffe7f4; /* Light pink background */
-            border: 1px solid rgba(224, 162, 195); /* Thin, subtle border */
-            
-            /* Text (Arrow) Styling */
-            font-size: 24px;
-            color: #695d63;
-            cursor: pointer;
-            
-            /* Positioning (if you want it floating, otherwise keep it simple) */
-            display: block;
-            margin-bottom: 30px; /* Space below the button */
-        }
-        /* Styling for the H2 (Main Title) */
-        h2 {
-            font-weight: bold;
-            font-size: 20px; 
-            color: #3b3b3b;
-            margin-top: 50px;
-            margin-bottom: 0px;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TOS</title>
+   <!-- 🎨 Styles -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📜</text></svg>">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* 🎨 Theme */
+    :root {
+      --bg: #fff1f7;
+      --bg-2: #ffdbe9;
+      --surface: rgba(255, 255, 255, 0.78);
+      --surface-strong: #fff8fb;
+      --text: #4a2135;
+      --muted: #885a6d;
+      --border: rgba(132, 63, 95, 0.16);
+      --accent: #e15b97;
+      --accent-dark: #b93d75;
+      --accent-soft: #ffe1ee;
+      --shadow: 0 22px 55px rgba(176, 74, 121, 0.14);
+      --radius: 24px;
+      --content: 880px;
+    }
 
-        /* 📌 MODIFIED: Styling for Section Headings (H3) */
-        h3 {
-            font-size: 13px; /* MATCHES 'p' font-size */
-            font-weight: normal; /* Removes the bolding */
-            font-style: italic; /* Keeps the text italicized */
-            margin-top: 25px; /* Keeps the space ABOVE the heading */
-            color: #3b3b3b;
-            margin-bottom: 0px; /* REMOVES distance underneath */
-        }
-        /* Styling for the Bulleted List (UL) */
-        ul {
-            padding-left: 0; 
-            margin-top: 10px;
-            margin-bottom: 20px;
-            color: #3b3b3b;
-            list-style-type: none; 
-        }
+    /* 🧼 Reset */
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      
+      color: var(--text);
+      line-height: 1.72;
+      background:
+        radial-gradient(circle at top left, rgba(255, 255, 255, 0.8), transparent 24%),
+        radial-gradient(circle at top right, rgba(225, 91, 151, 0.18), transparent 28%),
+        linear-gradient(180deg, var(--bg), var(--bg-2));
+    }
 
-        /* Styling for List Items (LI) */
-        li {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            color: #3b3b3b;
-            font-size: 13px; 
-            text-indent: -10px; 
-            padding-left: 10px;  
-            color: #3b3b3b;
-            line-height: 1.5;
-        }
+    a { color: inherit; }
 
-        /* Add a custom dash to mimic the original Wix list style */
-        li::before {
-            content: "— "; 
-            font-weight: bold;
-            color: #3b3b3b;
-        }
+    /* 🧭 Layout */
+    .page {
+      width: min(calc(100% - 2rem), var(--content));
+      margin: 0 auto;
+      padding: 1.25rem 0 5rem;
+    }
 
-        /* You may need this for overall look/font */
-        body {
-            font-family: Arial, sans-serif;
-            font-size: 16px; /* Set a default paragraph size */
-            color: #3b3b3b;
-            max-width: 800px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
-        
-        p {
-            line-height: 1.6;
-            color: #3b3b3b;
-            font-size: 13px; 
-        }
-    </style>
+    .topbar {
+  position: relative;      /* layer for the button */
+  width: 100%;
+  height: 0;               /* so it doesn't push content down */
+}
+
+    .back-button {
+  position: absolute;      /* take it out of normal flow */
+  top: 120px;               /* distance from the top of the window */
+  left: 190px;              /* distance from the left of the window */
+
+  width: 60px;
+  height: 60px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.68);
+  text-decoration: none;
+  color: var(--accent-dark);
+  font-size: 0.98rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  box-shadow: 0 8px 24px rgba(185, 61, 117, 0.08);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: transform 160ms ease, background 160ms ease, box-shadow 160ms ease;
+}
+.back-button-icon {
+  width: 30px;
+  height: 30px;
+  display: block;
+}
+    .back-button:hover {
+      transform: translateY(-1px);
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 12px 26px rgba(185, 61, 117, 0.12);
+      
+    }
+
+    .hero {
+      padding: 0.25rem 0 2rem;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.85rem;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent-dark);
+      border: 1px solid rgba(185, 61, 117, 0.1);
+      font-size: 0.92rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 1rem 0 0.75rem;
+      font-size: clamp(2.8rem, 7vw, 5rem);
+      line-height: 0.95;
+      letter-spacing: -0.04em;
+      color: #8b2f5b;
+    }
+
+    .intro {
+      max-width: 65ch;
+      font-size: 1.08rem;
+      color: var(--muted);
+    }
+
+    /* 📦 Content */
+    .card {
+      background: var(--surface);
+      border: 1px solid rgba(255, 255, 255, 0.55);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+
+    .section {
+      padding: 1.5rem 1.5rem 1.6rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .section:first-child {
+      border-top: 0;
+      padding-top: 1.75rem;
+    }
+
+    .section-title {
+      margin: 0 0 0.65rem;
+      font-size: 1.35rem;
+      line-height: 1.15;
+      color: #972f62;
+    }
+
+    p {
+      margin: 0;
+      font-size: 1.02rem;
+    }
+
+    p + p,
+    ul + p,
+    p + ul,
+    ul + ul { margin-top: 0.95rem; }
+
+    ul {
+      margin: 0;
+      padding-left: 1.25rem;
+    }
+
+    li + li { margin-top: 0.75rem; }
+
+    strong { color: var(--text); }
+
+    .footer-note {
+      padding: 1.15rem 1.5rem 1.5rem;
+      background: linear-gradient(180deg, rgba(255, 225, 238, 0.78), rgba(255, 240, 246, 0.45));
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.98rem;
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        width: min(calc(100% - 1rem), var(--content));
+        padding-top: 0.75rem;
+      }
+
+      .section { padding: 1.2rem 1rem 1.3rem; }
+      .footer-note { padding: 1rem; }
+      h1 { font-size: 2.65rem; }
+      .intro, p { font-size: 1rem; }
+      .back-button { padding: 0.72rem 0.92rem; }
+    }
+  </style>
 </head>
 <body>
-    <a href="./Homepage.html">
-    <button>←</button>
-    <a>
-        
-    <h2>TOS</h2>
-    <p>By engaging in a commission and making a payment, you ("the Commissioner") agree to be bound by the following Terms of Service ("Agreement") between you and Candie_Cake ("the Artist"). Please read this Agreement carefully before proceeding with your order.</p>
+      <!-- 🔙 Top left back button -->
+  <div class="topbar">
+      <a class="back-button" href="https://thecandiebox.com" aria-label="Go back">
+        <img src="./img/ico/arrow png.png" alt="" class="back-button-icon">
+      </a>
+    </div>
+  <!-- 🏠 Page -->
+  <main class="page">
 
-    <h3>Personal Usage:</h3>
-    <p>The commissioned artwork is for personal usage only. The Commissioner may not reproduce, distribute, or use the artwork for commercial purposes without the express written consent of the Artist.</p>
 
-    <h3>Commercial Usage:</h3>
-    <p>The commissioned artwork can be used for commercial purposes under the following pricing tiers:</p>
-    
-    <ul>
-        <li><strong>1.5x Price Tier:</strong> The Commissioner may use the artwork on monetized platforms such as TwitchTV and YouTube. It is required to provide proper credit to the artist by including a statement like "Art by Hyanna Natsu". The price for this tier is 1.5 times the original commission price.</li>
-        <li><strong>2x Price Tier:</strong> In addition to using the artwork on monetized platforms, the Commissioner is permitted to sell merchandise featuring the artwork. This pricing tier is specifically designed for small businesses. The price for this tier is 2 times the original commission price.</li>
-        <li><strong>3x Price Tier:</strong> This tier is intended for big businesses or high-selling products. The Commissioner can utilize the artwork for commercial purposes and expect significant sales. The price for this tier is 3 times the original commission price.</li>
-    </ul>
+    <!-- ✨ Intro -->
+    <header class="hero">
+      <div class="eyebrow">💗 Terms of Service</div>
+      <p class="intro"></p>
+    </header>
 
-    <h3>Ownership and Usage Rights:</h3>
-    <p>The Artist retains all rights, including intellectual property rights, to the commissioned artwork. The Commissioner may not claim ownership or authorship of the artwork. The Artist has the right to use, display, and reproduce the artwork for promotional or commercial purposes, including but not limited to, prints, merchandise, and online portfolios.</p>
+    <!-- 📦 Terms content -->
+    <section class="card" aria-label="Terms of Service sections">
+      <article class="section">
+        <h2 class="section-title">Personal Usage</h2>
+        <p>The commissioned artwork is for personal usage only. The Commissioner may not reproduce, distribute, or use the artwork for commercial purposes without the express written consent of the Artist.</p>
+      </article>
 
-    <h3>Sketch Approval and Payment:</h3>
-    <p>The Artist will provide a sketch for approval after receiving payment. Once the sketch is approved, further changes to the composition may incur additional charges.</p>
-    
-    </body>
+      <article class="section">
+        <h2 class="section-title">Commercial Usage</h2>
+        <p>The commissioned artwork can be used for commercial purposes under the following pricing tiers:</p>
+        <ul>
+          <li><strong>1x Price Tier:</strong> The Commissioner may use the artwork on monetized platforms such as TwitchTV and YouTube. It is required to provide proper credit to the artist by including a statement like "Art by Candie Cake". The price for this tier is equal to the original commission price.</li>
+          <li><strong>2x Price Tier:</strong> In addition to using the artwork on monetized platforms, the Commissioner is permitted to sell merchandise featuring the artwork. This pricing tier is specifically designed for small businesses. The price for this tier is 2 times the original commission price.</li>
+          <li><strong>3x Price Tier:</strong> This tier is intended for big businesses or high-selling products. The Commissioner can utilize the artwork for commercial purposes and expect significant sales. The price for this tier is 3 times the original commission price.</li>
+        </ul>
+      </article>
+
+      <article class="section">
+        <h2 class="section-title">Ownership and Usage Rights</h2>
+        <p>The Artist retains all rights, including intellectual property rights, to the commissioned artwork. The Commissioner may not claim ownership or authorship of the artwork. The Artist has the right to use, display, and reproduce the artwork for promotional or commercial purposes, including but not limited to, prints, merchandise, and online portfolios.</p>
+      </article>
+
+      <article class="section">
+        <h2 class="section-title">Payment</h2>
+        <p>Two-Step Payment Plan: first 50% at sketch approval, last 50% before final delivery.Rush Service: If you require a faster turnaround time, an expedited service fee of 1.5 times the original cost will apply. Please inform me in advance if you need this option.</p>
+      </article>
+
+      <article class="section">
+        <h2 class="section-title">Completion Time</h2>
+        <p>The completion time of the artwork varies based on complexity, ranging from 3 days to 3+ months. The Artist will provide an estimated completion time upon discussion with the Commissioner.</p>
+      </article>
+
+      <article class="section">
+        <h2 class="section-title">Rush Orders</h2>
+        <p>For faster completion or tight deadlines, the Artist may require additional fees. The details of any rush orders and associated charges will be discussed and agreed upon by both parties.</p>
+      </article>
+
+      <article class="section">
+        <h2 class="section-title">Minor Adjustments</h2>
+        <p>After completion of the artwork, the Commissioner is entitled to request small changes, such as color adjustments or adding small details, free of charge. The Artist will accommodate such requests within reasonable limits.</p>
+      </article>
+
+      <article class="section">
+        <h2 class="section-title">Major Revisions</h2>
+        <p>Significant changes to the artwork, including but not limited to composition, character design, or major alterations, may incur additional charges. The Commissioner will be notified of the additional costs and must provide approval before the revisions are made.</p>
+      </article>
+
+      <article class="section">
+        <h2 class="section-title">Artwork Delivery</h2>
+        <p>Upon completion, the Artist will provide the Commissioner with large and resized versions of the artwork. The Commissioner is advised not to post the full-size drawing publicly to protect the integrity of the artwork.</p>
+      </article>
+
+      <article class="section">
+        <h2 class="section-title">Layered Files</h2>
+        <p>Layered files of the artwork will be provided to the Commissioner for copyright commissions only. The Commissioner may not use or distribute the layered files without the Artist's written consent.</p>
+      </article>
+
+      <article class="section">
+        <h2 class="section-title">Private Artwork and Non-Disclosure</h2>
+        <p>If the Commissioner requests private artwork or wishes to withhold the artist from posting publicly, additional charges may apply. The details and fees for private artwork will be discussed and agreed upon separately.</p>
+      </article>
+
+      <article class="section">
+        <h2 class="section-title">Purchase of Digital Artwork</h2>
+        <p>The purchase of artwork is for digital files only, unless otherwise specified and agreed upon. No physical copies will be provided unless explicitly arranged between both parties.</p>
+      </article>
+
+      <article class="section">
+        <h2 class="section-title">Speedpaint Videos</h2>
+        <p>The Artist may choose to create a speedpaint video featuring the commissioned artwork. However, the inclusion of the artwork in a speedpaint video is at the discretion of the Artist and cannot be guaranteed.</p>
+      </article>
+
+      <article class="section">
+        <h2 class="section-title">Refunds</h2>
+        <p>Refunds are not offered for commissioned artwork unless agreed upon by both parties under exceptional circumstances. The Artist will make reasonable efforts to address any concerns or issues raised by the Commissioner.</p>
+      </article>
+
+      <article class="section">
+        <h2 class="section-title">Confidentiality and Privacy</h2>
+        <p>The Commissioner and the Artist shall not disclose each other's personal/contact details to any third parties without explicit consent from the other party.</p>
+      </article>
+
+      <article class="section">
+        <h2 class="section-title">Acceptance</h2>
+        <p>Payment of the invoice sent by the Artist implies acceptance of these terms and conditions.</p>
+      </article>
+
+      <div class="footer-note">By engaging in a commission and making a payment, you ("the Commissioner") agree to be bound by the following Terms of Service ("Agreement") between you and Candie_Cake ("the Artist"). Please read this Agreement carefully before proceeding with your order.</div>
+    </section>
+  </main>
+</body>
 </html>
